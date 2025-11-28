@@ -92,7 +92,7 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest>,
 		private String generatorId;
 
 		private List<NoteAudio> sources;
-		private PackedCollection<?> currentSource;
+		private PackedCollection currentSource;
 		private int currentIndex;
 
 		private Consumer<Boolean> success;
@@ -124,7 +124,7 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest>,
 				throw new IllegalArgumentException();
 
 			if (currentSource == null) {
-				currentSource = new PackedCollection<>(request.getSource().getSegment().getTotalSamples());
+				currentSource = new PackedCollection(request.getSource().getSegment().getTotalSamples());
 			}
 
 			currentSource.setMem(currentIndex,

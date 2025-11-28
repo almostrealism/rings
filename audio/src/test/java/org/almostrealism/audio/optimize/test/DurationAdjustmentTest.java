@@ -42,12 +42,12 @@ public class DurationAdjustmentTest implements CellFeatures, OptimizeFactorFeatu
 
 		TraversalPolicy adjustmentShape = shape(10 * sr, 1).traverse(1);
 
-		PackedCollection<?> adjustmentData = c(value(adjustmentShape, 0))
+		PackedCollection adjustmentData = c(value(adjustmentShape, 0))
 				.greaterThan(c(5.0), c(1.0), c(0.5))
 				.get().evaluate(WaveOutput.timeline.getValue().range(adjustmentShape).traverse(1));
 
 		WaveCell adjustment = new WaveCell(adjustmentData, clock);
-		Factor<PackedCollection<?>> factor = adjustment.toFactor();
+		Factor<PackedCollection> factor = adjustment.toFactor();
 
 		int count = 32;
 
@@ -68,10 +68,10 @@ public class DurationAdjustmentTest implements CellFeatures, OptimizeFactorFeatu
 		double repeat = factorForRepeat(1.0);
 		double speedUp = 4;
 
-		Producer<PackedCollection<?>> r = c(repeat);
-		Producer<PackedCollection<?>> su = c(speedUp);
+		Producer<PackedCollection> r = c(repeat);
+		Producer<PackedCollection> su = c(speedUp);
 
-		Producer<PackedCollection<?>> adjust = durationAdjustment(r, su, c(0.0), clock.time(sr));
+		Producer<PackedCollection> adjust = durationAdjustment(r, su, c(0.0), clock.time(sr));
 
 		int count = 32;
 

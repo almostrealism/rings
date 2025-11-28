@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class WaveDataAccumulator {
-	private Map<String, PackedCollection<?>> data;
+	private Map<String, PackedCollection> data;
 	private BiConsumer<String, WaveData> output;
 
 	public WaveDataAccumulator(BiConsumer<String, WaveData> output) {
@@ -34,9 +34,9 @@ public class WaveDataAccumulator {
 	}
 
 	public void process(String id, Generation.AudioSegment segment) {
-		PackedCollection<?> collection = data.get(id);
+		PackedCollection collection = data.get(id);
 		if (collection == null) {
-			collection = new PackedCollection<>(segment.getTotalSamples());
+			collection = new PackedCollection(segment.getTotalSamples());
 			data.put(id, collection);
 		}
 

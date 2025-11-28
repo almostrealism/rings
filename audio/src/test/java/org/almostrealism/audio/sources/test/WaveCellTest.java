@@ -51,7 +51,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 	public void push() throws IOException {
 		WaveCell cell = cell();
 		cell.setReceptor(protein -> {
-			Evaluable<? extends PackedCollection<?>> ev = protein.get();
+			Evaluable<? extends PackedCollection> ev = protein.get();
 			return () -> () -> System.out.println(ev.evaluate().toDouble(0));
 		});
 
@@ -132,7 +132,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 
 	@Test
 	public void assignment() {
-		PackedCollection<?> out = new PackedCollection<>(1);
+		PackedCollection out = new PackedCollection(1);
 		CellList cells = w(0, c(0), c(bpm(128).l(2)),
 				"Library/Snare Perc DD.wav")
 				.map(i -> new ReceptorCell<>(protein -> a(1, p(out), protein)));
@@ -147,11 +147,11 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 	public void internalClock() {
 		double rate = 2 * Math.PI / 1000;
 
-		PackedCollection<?> data = new PackedCollection<>(OutputLine.sampleRate).traverseEach();
+		PackedCollection data = new PackedCollection(OutputLine.sampleRate).traverseEach();
 		data.setMem(IntStream.range(0, OutputLine.sampleRate).mapToDouble(i -> Math.sin(i * rate)).toArray());
 
 		WaveCell cell = new WaveCell(data, OutputLine.sampleRate);
-		PackedCollection<?> out = new PackedCollection<>(1);
+		PackedCollection out = new PackedCollection(1);
 		cell.setReceptor(protein -> a(1, p(out), protein));
 
 		TemporalList tick = new TemporalList();
@@ -177,7 +177,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 	public void externalClock() {
 		double rate = 2 * Math.PI / 1000;
 
-		PackedCollection<?> data = new PackedCollection<>(OutputLine.sampleRate).traverseEach();
+		PackedCollection data = new PackedCollection(OutputLine.sampleRate).traverseEach();
 		data.setMem(IntStream.range(0, OutputLine.sampleRate).mapToDouble(i -> Math.sin(i * rate)).toArray());
 
 		TimeCell clock = new TimeCell();
@@ -191,7 +191,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 		temporals.add(() -> cell.push(c(0.0)));
 		temporals.add(tick);
 
-		PackedCollection<?> out = new PackedCollection<>(1);
+		PackedCollection out = new PackedCollection(1);
 		cell.setReceptor(protein -> a(1, p(out), protein));
 
 		OperationList op = new OperationList();

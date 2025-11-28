@@ -28,13 +28,13 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class MultiChannelAudioOutput {
-	private Map<ChannelInfo.StereoChannel, Receptor<PackedCollection<?>>> master;
-	private Map<ChannelInfo, Receptor<PackedCollection<?>>> stems;
-	private Map<ChannelInfo, Receptor<PackedCollection<?>>> measures;
+	private Map<ChannelInfo.StereoChannel, Receptor<PackedCollection>> master;
+	private Map<ChannelInfo, Receptor<PackedCollection>> stems;
+	private Map<ChannelInfo, Receptor<PackedCollection>> measures;
 
-	private Function<ChannelInfo.StereoChannel, Receptor<PackedCollection<?>>> masterFactory;
-	private Function<ChannelInfo, Receptor<PackedCollection<?>>> stemsFactory;
-	private Function<ChannelInfo, Receptor<PackedCollection<?>>> measuresFactory;
+	private Function<ChannelInfo.StereoChannel, Receptor<PackedCollection>> masterFactory;
+	private Function<ChannelInfo, Receptor<PackedCollection>> stemsFactory;
+	private Function<ChannelInfo, Receptor<PackedCollection>> measuresFactory;
 
 	public MultiChannelAudioOutput() {
 		this((Function) null, null, null);
@@ -51,7 +51,7 @@ public class MultiChannelAudioOutput {
 
 	public MultiChannelAudioOutput(
 			WaveOutput masterOut, List<WaveOutput> stemsOut,
-			Function<ChannelInfo, Receptor<PackedCollection<?>>> measuresFactory) {
+			Function<ChannelInfo, Receptor<PackedCollection>> measuresFactory) {
 		this(masterOut == null ? null :
 						(audioChannel) -> masterOut.getWriter(audioChannel.getIndex()),
 				stemsOut == null ? null :
@@ -61,9 +61,9 @@ public class MultiChannelAudioOutput {
 	}
 
 	public MultiChannelAudioOutput(
-			Function<ChannelInfo.StereoChannel, Receptor<PackedCollection<?>>> masterFactory,
-			Function<ChannelInfo, Receptor<PackedCollection<?>>> stemsFactory,
-			Function<ChannelInfo, Receptor<PackedCollection<?>>> measuresFactory) {
+			Function<ChannelInfo.StereoChannel, Receptor<PackedCollection>> masterFactory,
+			Function<ChannelInfo, Receptor<PackedCollection>> stemsFactory,
+			Function<ChannelInfo, Receptor<PackedCollection>> measuresFactory) {
 		this.masterFactory = masterFactory;
 		this.stemsFactory = stemsFactory;
 		this.measuresFactory = measuresFactory;
@@ -73,32 +73,32 @@ public class MultiChannelAudioOutput {
 		this.measures = measuresFactory == null ? null : new HashMap<>();
 	}
 
-	public Receptor<PackedCollection<?>> getMeasure(ChannelInfo.Voicing voicing,
+	public Receptor<PackedCollection> getMeasure(ChannelInfo.Voicing voicing,
 													ChannelInfo.StereoChannel audioChannel) {
-		Receptor<PackedCollection<?>> result =
+		Receptor<PackedCollection> result =
 				retrieve(measures, match(voicing).and(match(audioChannel)));
 		if (result != null) return result;
 
 		return getMeasure(new ChannelInfo(-1, voicing, audioChannel));
 	}
 
-	public Receptor<PackedCollection<?>> getStem(int patternChannel,
+	public Receptor<PackedCollection> getStem(int patternChannel,
 												 ChannelInfo.StereoChannel audioChannel) {
-		Receptor<PackedCollection<?>> result =
+		Receptor<PackedCollection> result =
 				retrieve(stems, match(patternChannel).and(match(audioChannel)));
 		if (result != null) return result;
 
 		return getStem(new ChannelInfo(patternChannel, audioChannel));
 	}
 
-	public List<Receptor<PackedCollection<?>>> getMeasures(ChannelInfo.StereoChannel audioChannel) {
+	public List<Receptor<PackedCollection>> getMeasures(ChannelInfo.StereoChannel audioChannel) {
 		return measures.keySet().stream()
 				.filter(match(audioChannel))
 				.map(measures::get)
 				.toList();
 	}
 
-	public Receptor<PackedCollection<?>> getMeasure(ChannelInfo channel) {
+	public Receptor<PackedCollection> getMeasure(ChannelInfo channel) {
 		if (measures == null) {
 			return null;
 		} else if (measuresFactory != null) {
@@ -108,7 +108,7 @@ public class MultiChannelAudioOutput {
 		}
 	}
 
-	public Receptor<PackedCollection<?>> getStem(ChannelInfo channel) {
+	public Receptor<PackedCollection> getStem(ChannelInfo channel) {
 		if (stems == null) {
 			return null;
 		} else if (stemsFactory != null) {
@@ -118,7 +118,7 @@ public class MultiChannelAudioOutput {
 		}
 	}
 
-	public Receptor<PackedCollection<?>> getMaster(ChannelInfo.StereoChannel channel) {
+	public Receptor<PackedCollection> getMaster(ChannelInfo.StereoChannel channel) {
 		if (master == null) {
 			return null;
 		} else if (masterFactory != null) {

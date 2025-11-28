@@ -23,7 +23,7 @@ import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
 public class DefaultEnvelopeComputationTest implements TestFeatures {
-	private static PackedCollection<?> input = new PackedCollection<>(1);
+	private static PackedCollection input = new PackedCollection(1);
 
 	static {
 		input.setMem(0, 0.5);
@@ -35,7 +35,7 @@ public class DefaultEnvelopeComputationTest implements TestFeatures {
 
 	@Test
 	public void evaluate() {
-		Evaluable<PackedCollection<?>> s = computation().get();
+		Evaluable<PackedCollection> s = computation().get();
 
 		input.setMem(0, 0.5);
 		assertEquals(0.7071067811865, s.evaluate().toDouble(0));

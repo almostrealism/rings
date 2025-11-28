@@ -31,8 +31,8 @@ public class AutoEncoderFeatureProvider implements WaveDataFeatureProvider, Code
 	public AutoEncoder getAutoEncoder() { return autoencoder; }
 
 	@Override
-	public PackedCollection<?> computeFeatures(WaveData waveData) {
-		PackedCollection<?> features = autoencoder.encode(cp(waveData.getData())).evaluate();
+	public PackedCollection computeFeatures(WaveData waveData) {
+		PackedCollection features = autoencoder.encode(cp(waveData.getData())).evaluate();
 		int bins = features.getShape().length(1);
 		int frames = features.getShape().length(2);
 		return cp(features.reshape(bins, frames)).transpose().evaluate();

@@ -158,7 +158,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 	private AudioLibrary library;
 	private PatternSystemManager patterns;
-	private Map<ChannelInfo, PackedCollection<?>> patternDestinations;
+	private Map<ChannelInfo, PackedCollection> patternDestinations;
 	private List<String> channelNames;
 	private double patternActivityBias;
 
@@ -173,7 +173,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	private ProjectedGenome genome;
 	
 	private OperationList setup;
-	private Function<PackedCollection<?>, Factor<PackedCollection<?>>> automationLevel;
+	private Function<PackedCollection, Factor<PackedCollection>> automationLevel;
 
 	private List<Consumer<Frequency>> tempoListeners;
 	private List<DoubleConsumer> durationListeners;
@@ -368,7 +368,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 		}
 
 		if (automationLevel == null) {
-			Evaluable<PackedCollection<?>> level = automation.getAggregatedValueAt(
+			Evaluable<PackedCollection> level = automation.getAggregatedValueAt(
 						x(),
 						c(y(6), 0),
 						c(y(6), 1),
@@ -552,7 +552,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 								audioShape.getTotalSize() + " frames)");
 						return new OperationList("Section Processing (Invalid Size)");
 					} else {
-						Producer<PackedCollection<?>> sectionAudio =
+						Producer<PackedCollection> sectionAudio =
 								func(audioShape, args ->
 										patternDestinations.get(channel).range(shape(len), pos), false);
 						return section.process(sectionAudio, sectionAudio);
@@ -562,7 +562,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 
 		setup.add(patternSetup);
 
-		Producer<PackedCollection<?>> result =
+		Producer<PackedCollection> result =
 				func(audioShape, args -> patternDestinations.get(channel).range(audioShape), false);
 		return efx.apply(channel, result, getTotalDuration(), setup);
 	}

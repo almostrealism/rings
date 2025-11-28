@@ -28,10 +28,10 @@ import org.almostrealism.hardware.OperationComputationAdapter;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SilenceDurationComputation extends OperationComputationAdapter<PackedCollection<?>> {
-	public SilenceDurationComputation(Producer<PackedCollection<?>> silenceDuration,
-									  Producer<PackedCollection<?>> silenceSettings,
-									  Producer<PackedCollection<?>> value) {
+public class SilenceDurationComputation extends OperationComputationAdapter<PackedCollection> {
+	public SilenceDurationComputation(Producer<PackedCollection> silenceDuration,
+									  Producer<PackedCollection> silenceSettings,
+									  Producer<PackedCollection> value) {
 		super(silenceDuration, silenceSettings, value);
 	}
 

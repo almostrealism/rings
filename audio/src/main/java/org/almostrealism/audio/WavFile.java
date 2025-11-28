@@ -172,18 +172,18 @@ public class WavFile implements AutoCloseable {
 		return wavFile;
 	}
 
-	public static PackedCollection<?> channel(double[][] data, int chan) {
+	public static PackedCollection channel(double[][] data, int chan) {
 		return channel(data, chan, 0);
 	}
 
-	public static PackedCollection<?> channel(double[][] data, int chan, int padFrames) {
-		PackedCollection<?> waveform = new PackedCollection(data[chan].length + padFrames);
+	public static PackedCollection channel(double[][] data, int chan, int padFrames) {
+		PackedCollection waveform = new PackedCollection(data[chan].length + padFrames);
 		waveform.setMem(0, data[chan]);
 		return waveform.traverse(1);
 	}
 
-	public static PackedCollection<?> channel(int[][] data, int chan) {
-		PackedCollection<?> waveform = new PackedCollection(data[chan].length);
+	public static PackedCollection channel(int[][] data, int chan) {
+		PackedCollection waveform = new PackedCollection(data[chan].length);
 
 		int index = 0;
 		for (double frame : data[chan]) waveform.setMem(index++, frame);
@@ -191,8 +191,8 @@ public class WavFile implements AutoCloseable {
 	}
 
 	@Deprecated
-	public static PackedCollection<?> channelScalar(int[][] data, int chan) {
-		PackedCollection<?> waveform = new PackedCollection<>(data[chan].length).traverse(1);
+	public static PackedCollection channelScalar(int[][] data, int chan) {
+		PackedCollection waveform = new PackedCollection(data[chan].length).traverse(1);
 
 		int index = 0;
 		for (int frame : data[chan]) waveform.setMem(index++, frame);

@@ -96,14 +96,14 @@ public class DelegatedAudioLine implements AudioLine, Delegated<AudioLine> {
 	}
 
 	@Override
-	public void read(PackedCollection<?> sample) {
+	public void read(PackedCollection sample) {
 		if (inputDelegate != null) {
 			inputDelegate.read(sample);
 		}
 	}
 
 	@Override
-	public void write(PackedCollection<?> sample) {
+	public void write(PackedCollection sample) {
 		if (outputDelegate != null) {
 			outputDelegate.write(sample);
 		}

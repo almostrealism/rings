@@ -44,7 +44,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
                 .forEach(key -> System.out.println("\t" + key + " " + referenceData.get(key).getShape()));
 
         // Extract test configuration
-        PackedCollection<?> testConfig = referenceData.get("test_config");
+        PackedCollection testConfig = referenceData.get("test_config");
         int batchSize = (int) testConfig.valueAt(0);
         int inFeatures = (int) testConfig.valueAt(1);
         int outFeatures = (int) testConfig.valueAt(2);
@@ -53,14 +53,14 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
         log("  batchSize=" + batchSize + ", inFeatures=" + inFeatures + ", outFeatures=" + outFeatures);
 
         // Load test data
-        PackedCollection<?> input = referenceData.get("input");
-        PackedCollection<?> expectedOutput = referenceData.get("expected_output");
-        PackedCollection<?> weight = referenceData.get("weight");
+        PackedCollection input = referenceData.get("input");
+        PackedCollection expectedOutput = referenceData.get("expected_output");
+        PackedCollection weight = referenceData.get("weight");
 
         // Load intermediate values for debugging
-        PackedCollection<?> fIntermediate = referenceData.get("f_intermediate");
-        PackedCollection<?> expectedCosValues = referenceData.get("cos_values");
-        PackedCollection<?> expectedSinValues = referenceData.get("sin_values");
+        PackedCollection fIntermediate = referenceData.get("f_intermediate");
+        PackedCollection expectedCosValues = referenceData.get("cos_values");
+        PackedCollection expectedSinValues = referenceData.get("sin_values");
 
         assertNotNull("Input not found", input);
         assertNotNull("Expected output not found", expectedOutput);
@@ -88,7 +88,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
 
         // Compile and run the model
         CompiledModel compiled = model.compile(false);
-        PackedCollection<?> actualOutput = compiled.forward(input);
+        PackedCollection actualOutput = compiled.forward(input);
 
         log("Expected output total: " + expectedOutput.doubleStream().map(Math::abs).sum());
         log("Actual output total: " + actualOutput.doubleStream().map(Math::abs).sum());
@@ -126,11 +126,11 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
         int outFeatures = 4;  // Simple case
 
         // Create simple test inputs
-        PackedCollection<?> input = new PackedCollection<>(shape(batchSize, inFeatures));
+        PackedCollection input = new PackedCollection(shape(batchSize, inFeatures));
         input.setValueAt(0.5, 0, 0);  // Simple input value
 
         // Create simple weight matrix [outFeatures/2, inFeatures] = [2, 1]
-        PackedCollection<?> weight = new PackedCollection<>(shape(outFeatures / 2, inFeatures));
+        PackedCollection weight = new PackedCollection(shape(outFeatures / 2, inFeatures));
         weight.setValueAt(1.0, 0, 0);  // First frequency
         weight.setValueAt(2.0, 1, 0);  // Second frequency
 
@@ -140,7 +140,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
         main.add(fourierFeatures(batchSize, inFeatures, outFeatures, weight));
 
         CompiledModel compiled = model.compile(false);
-        PackedCollection<?> output = compiled.forward(input);
+        PackedCollection output = compiled.forward(input);
 
         // Manual calculation for verification
         // f = 2 * π * input @ weight.T
@@ -181,7 +181,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
                 .forEach(key -> System.out.println("\t" + key + " " + referenceData.get(key).getShape()));
     
         // Extract test configuration
-        PackedCollection<?> testConfig = referenceData.get("test_config");
+        PackedCollection testConfig = referenceData.get("test_config");
         int batchSize = (int) testConfig.valueAt(0);
         int ioChannels = (int) testConfig.valueAt(1);
         int audioSeqLen = (int) testConfig.valueAt(2);
@@ -190,10 +190,10 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
         log("  batchSize=" + batchSize + ", ioChannels=" + ioChannels + ", audioSeqLen=" + audioSeqLen);
     
         // Load test data
-        PackedCollection<?> input = referenceData.get("input");
-        PackedCollection<?> expectedOutput = referenceData.get("expected_output");
-        PackedCollection<?> convOutput = referenceData.get("conv_output");
-        PackedCollection<?> inputProjWeight = referenceData.get("model.model.preprocess_conv.weight");
+        PackedCollection input = referenceData.get("input");
+        PackedCollection expectedOutput = referenceData.get("expected_output");
+        PackedCollection convOutput = referenceData.get("conv_output");
+        PackedCollection inputProjWeight = referenceData.get("model.model.preprocess_conv.weight");
     
         assertNotNull("Input not found", input);
         assertNotNull("Expected output not found", expectedOutput);
@@ -222,7 +222,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
     
         // Compile and run the model
         CompiledModel compiled = model.compile(false);
-        PackedCollection<?> actualOutput = compiled.forward(input);
+        PackedCollection actualOutput = compiled.forward(input);
     
         log("Input total: " + input.doubleStream().map(Math::abs).sum());
         log("Expected conv output total: " + convOutput.doubleStream().map(Math::abs).sum());
@@ -264,7 +264,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
                 .forEach(key -> System.out.println("\t" + key + " " + referenceData.get(key).getShape()));
 
         // Extract test configuration
-        PackedCollection<?> testConfig = referenceData.get("test_config");
+        PackedCollection testConfig = referenceData.get("test_config");
         int batchSize = (int) testConfig.valueAt(0);
         int condSeqLen = (int) testConfig.valueAt(1);
         int condTokenDim = (int) testConfig.valueAt(2);
@@ -275,10 +275,10 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
             ", condTokenDim=" + condTokenDim + ", embedDim=" + embedDim);
 
         // Load test data
-        PackedCollection<?> input = referenceData.get("input");
-        PackedCollection<?> expectedOutput = referenceData.get("expected_output");
-        PackedCollection<?> condProjWeight1 = referenceData.get("model.model.to_cond_embed.0.weight");
-        PackedCollection<?> condProjWeight2 = referenceData.get("model.model.to_cond_embed.2.weight");
+        PackedCollection input = referenceData.get("input");
+        PackedCollection expectedOutput = referenceData.get("expected_output");
+        PackedCollection condProjWeight1 = referenceData.get("model.model.to_cond_embed.0.weight");
+        PackedCollection condProjWeight2 = referenceData.get("model.model.to_cond_embed.2.weight");
 
         assertNotNull("Input not found", input);
         assertNotNull("Expected output not found", expectedOutput);
@@ -316,7 +316,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
 
         // Compile and run the model
         CompiledModel compiled = model.compile(false);
-        PackedCollection<?> actualOutput = compiled.forward(input);
+        PackedCollection actualOutput = compiled.forward(input);
 
         log("Input total: " + input.doubleStream().map(Math::abs).sum());
         log("Expected output total: " + expectedOutput.doubleStream().map(Math::abs).sum());
@@ -351,7 +351,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
                 .forEach(key -> System.out.println("\t" + key + " " + referenceData.get(key).getShape()));
 
         // Extract test configuration
-        PackedCollection<?> testConfig = referenceData.get("test_config");
+        PackedCollection testConfig = referenceData.get("test_config");
         int batchSize = (int) testConfig.valueAt(0);
         int globalCondDim = (int) testConfig.valueAt(1);
         int embedDim = (int) testConfig.valueAt(2);
@@ -360,10 +360,10 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
         log("  batchSize=" + batchSize + ", globalCondDim=" + globalCondDim + ", embedDim=" + embedDim);
 
         // Load test data
-        PackedCollection<?> input = referenceData.get("input");
-        PackedCollection<?> expectedOutput = referenceData.get("expected_output");
-        PackedCollection<?> globalProjInWeight = referenceData.get("model.model.to_global_embed.0.weight");
-        PackedCollection<?> globalProjOutWeight = referenceData.get("model.model.to_global_embed.2.weight");
+        PackedCollection input = referenceData.get("input");
+        PackedCollection expectedOutput = referenceData.get("expected_output");
+        PackedCollection globalProjInWeight = referenceData.get("model.model.to_global_embed.0.weight");
+        PackedCollection globalProjOutWeight = referenceData.get("model.model.to_global_embed.2.weight");
 
         assertNotNull("Input not found", input);
         assertNotNull("Expected output not found", expectedOutput);
@@ -401,7 +401,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
 
         // Compile and run the model
         CompiledModel compiled = model.compile(false);
-        PackedCollection<?> actualOutput = compiled.forward(input);
+        PackedCollection actualOutput = compiled.forward(input);
 
         log("Input total: " + input.doubleStream().map(Math::abs).sum());
         log("Expected output total: " + expectedOutput.doubleStream().map(Math::abs).sum());
@@ -436,7 +436,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
                 .forEach(key -> System.out.println("\t" + key + " " + referenceData.get(key).getShape()));
 
         // Extract test configuration
-        PackedCollection<?> testConfig = referenceData.get("test_config");
+        PackedCollection testConfig = referenceData.get("test_config");
         int batchSize = (int) testConfig.valueAt(0);
         int ioChannels = (int) testConfig.valueAt(1);
         int audioSeqLen = (int) testConfig.valueAt(2);
@@ -451,11 +451,11 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
         log("  globalCondDim=" + globalCondDim + ", embedDim=" + embedDim);
 
         // Load test data
-        PackedCollection<?> input = referenceData.get("input");
-        PackedCollection<?> timestep = referenceData.get("timestep");
-        PackedCollection<?> crossAttnCond = referenceData.get("cross_attn_cond");
-        PackedCollection<?> globalCond = referenceData.get("global_cond");
-        PackedCollection<?> expectedCapturedState = referenceData.get("captured_state");
+        PackedCollection input = referenceData.get("input");
+        PackedCollection timestep = referenceData.get("timestep");
+        PackedCollection crossAttnCond = referenceData.get("cross_attn_cond");
+        PackedCollection globalCond = referenceData.get("global_cond");
+        PackedCollection expectedCapturedState = referenceData.get("captured_state");
 
         assertNotNull("Input not found", input);
         assertNotNull("Timestep not found", timestep);
@@ -480,10 +480,10 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
                 new StateDictionary(weightsDir));
 
         // Run forward pass to populate the captured state
-        PackedCollection<?> output = transformer.forward(input, timestep, crossAttnCond, globalCond);
+        PackedCollection output = transformer.forward(input, timestep, crossAttnCond, globalCond);
 
         // Get the captured intermediate state
-        PackedCollection<?> actualCapturedState = transformer.getPreTransformerState();
+        PackedCollection actualCapturedState = transformer.getPreTransformerState();
 
         assertNotNull("Captured state should not be null after forward pass", actualCapturedState);
 
@@ -538,7 +538,7 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
                 .forEach(key -> System.out.println("\t" + key + " " + referenceData.get(key).getShape()));
 
         // Extract test configuration
-        PackedCollection<?> testConfig = referenceData.get("test_config");
+        PackedCollection testConfig = referenceData.get("test_config");
         int batchSize = (int) testConfig.valueAt(0);
         int ioChannels = (int) testConfig.valueAt(1);
         int audioSeqLen = (int) testConfig.valueAt(2);
@@ -553,11 +553,11 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
         log("  globalCondDim=" + globalCondDim + ", embedDim=" + embedDim);
 
         // Load test data
-        PackedCollection<?> input = referenceData.get("input");
-        PackedCollection<?> timestep = referenceData.get("timestep");
-        PackedCollection<?> crossAttnCond = referenceData.get("cross_attn_cond");
-        PackedCollection<?> globalCond = referenceData.get("global_cond");
-        PackedCollection<?> expectedPostTransformerOutput = referenceData.get("post_transformer_output");
+        PackedCollection input = referenceData.get("input");
+        PackedCollection timestep = referenceData.get("timestep");
+        PackedCollection crossAttnCond = referenceData.get("cross_attn_cond");
+        PackedCollection globalCond = referenceData.get("global_cond");
+        PackedCollection expectedPostTransformerOutput = referenceData.get("post_transformer_output");
 
         assertNotNull("Input not found", input);
         assertNotNull("Timestep not found", timestep);
@@ -581,10 +581,10 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
                 new StateDictionary(weightsDir));
 
         // Run forward pass to populate the captured states
-        PackedCollection<?> output = transformer.forward(input, timestep, crossAttnCond, globalCond);
+        PackedCollection output = transformer.forward(input, timestep, crossAttnCond, globalCond);
 
         // Get the captured post-transformer state
-        PackedCollection<?> actualPostTransformerOutput = transformer.getPostTransformerState();
+        PackedCollection actualPostTransformerOutput = transformer.getPostTransformerState();
 
         assertNotNull("Post-transformer state should not be null after forward pass", actualPostTransformerOutput);
 

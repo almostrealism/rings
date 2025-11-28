@@ -38,7 +38,7 @@ public class WaveDataPublisher implements ConsoleFeatures {
 			throw new IllegalArgumentException();
 		}
 
-		PackedCollection<?> cd = data.getChannelData(0);
+		PackedCollection cd = data.getChannelData(0);
 		double samples[] = cd.toArray(0, cd.getMemLength());
 
 		log("Publishing " + samples.length + " samples");

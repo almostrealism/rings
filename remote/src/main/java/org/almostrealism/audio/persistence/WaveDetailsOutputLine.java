@@ -38,8 +38,8 @@ public class WaveDetailsOutputLine implements OutputLine, CodeFeatures, ConsoleF
 
 	private int cursor;
 	private int batchCount, framesPerBatch;
-	private PackedCollection<?> bufferA;
-	private PackedCollection<?> bufferB;
+	private PackedCollection bufferA;
+	private PackedCollection bufferB;
 
 	private boolean silence[];
 	private BooleanSupplier silenceDetector;
@@ -65,8 +65,8 @@ public class WaveDetailsOutputLine implements OutputLine, CodeFeatures, ConsoleF
 		this.sampleRate = sampleRate;
 		this.batchCount = batchCount;
 		this.framesPerBatch = framesPerBatch;
-		this.bufferA = new PackedCollection<>(batchCount * framesPerBatch);
-		this.bufferB = new PackedCollection<>(batchCount * framesPerBatch);
+		this.bufferA = new PackedCollection(batchCount * framesPerBatch);
+		this.bufferB = new PackedCollection(batchCount * framesPerBatch);
 		this.silence = new boolean[batchCount];
 
 		this.executor = Executors.newSingleThreadExecutor();
@@ -88,8 +88,8 @@ public class WaveDetailsOutputLine implements OutputLine, CodeFeatures, ConsoleF
 	}
 
 	@Override
-	public void write(PackedCollection<?> sample) {
-		PackedCollection<?> output = getRecordingBuffer();
+	public void write(PackedCollection sample) {
+		PackedCollection output = getRecordingBuffer();
 
 		if (sample.getMemLength() > output.getMemLength() - cursor || sample.getMemLength() != framesPerBatch) {
 			throw new IllegalArgumentException();
@@ -105,11 +105,11 @@ public class WaveDetailsOutputLine implements OutputLine, CodeFeatures, ConsoleF
 		}
 	}
 
-	protected PackedCollection<?> getRecordingBuffer() {
+	protected PackedCollection getRecordingBuffer() {
 		return altBuffer ? bufferB : bufferA;
 	}
 
-	protected PackedCollection<?> getPublishingBuffer() {
+	protected PackedCollection getPublishingBuffer() {
 		return altBuffer ? bufferA : bufferB;
 	}
 

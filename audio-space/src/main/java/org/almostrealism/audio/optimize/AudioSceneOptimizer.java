@@ -93,8 +93,8 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	private Consumer<WaveDetails> detailsProcessor;
 
 	public AudioSceneOptimizer(AudioScene<?> scene,
-							   Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
-							   Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
+							   Supplier<GenomeBreeder<PackedCollection>> breeder,
+							   Supplier<Supplier<Genome<PackedCollection>>> generator,
 							   int totalCycles) {
 		super(scene.getChannelCount() + 1, null, breeder, generator, POPULATION_FILE, totalCycles);
 		setChildrenFunction(
@@ -108,7 +108,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 					int expectedCount = children.isEmpty() ?
 							PopulationOptimizer.popSize : children.size();
-					List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+					List<Genome<PackedCollection>> genomes = new ArrayList<>();
 					IntStream.range(0, expectedCount)
 							.mapToObj(i -> i < children.size() ? children.get(i) : null)
 							.map(g -> population.validateGenome(g) ? g : null)
@@ -150,25 +150,25 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 		return build(() -> scene.getGenome()::random, scene, cycles);
 	}
 
-	public static AudioSceneOptimizer build(Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
+	public static AudioSceneOptimizer build(Supplier<Supplier<Genome<PackedCollection>>> generator,
 											AudioScene<?> scene, int cycles) {
 		return new AudioSceneOptimizer(scene, () -> defaultBreeder(breederPerturbation), generator, cycles);
 	}
 
-	public static GenomeBreeder<PackedCollection<?>> defaultBreeder(double magnitude) {
+	public static GenomeBreeder<PackedCollection> defaultBreeder(double magnitude) {
 		return (g1, g2) -> {
-			PackedCollection<?> a = ((ProjectedGenome) g1).getParameters();
-			PackedCollection<?> b = ((ProjectedGenome) g2).getParameters();
+			PackedCollection a = ((ProjectedGenome) g1).getParameters();
+			PackedCollection b = ((ProjectedGenome) g2).getParameters();
 
 			int len = a.getShape().getTotalSize();
-			PackedCollection<?> combined = new PackedCollection<>(len);
+			PackedCollection combined = new PackedCollection(len);
 
 			double scale = (1 + Math.random()) * magnitude / 2;
 			for (int i = 0; i < len; i++) {
 				combined.setMem(i, Breeders.perturbation(a.toDouble(i), b.toDouble(i), scale));
 			}
 
-			return new ProjectedGenome(new PackedCollection<>(combined));
+			return new ProjectedGenome(new PackedCollection(combined));
 		};
 	}
 

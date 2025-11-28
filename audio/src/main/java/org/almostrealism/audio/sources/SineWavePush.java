@@ -24,7 +24,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 
 public class SineWavePush extends SineWaveComputation implements ExpressionFeatures {
-	public SineWavePush(SineWaveCellData data, Producer<PackedCollection<?>> envelope, PackedCollection<?> output) {
+	public SineWavePush(SineWaveCellData data, Producer<PackedCollection> envelope, PackedCollection output) {
 		super(data, envelope, output);
 	}
 

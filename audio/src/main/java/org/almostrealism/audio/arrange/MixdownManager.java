@@ -76,25 +76,25 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	private TimeCell clock;
 	private int sampleRate;
 
-	private PackedCollection<?> volumeAdjustmentScale;
-	private PackedCollection<?> mainFilterUpAdjustmentScale;
-	private PackedCollection<?> mainFilterDownAdjustmentScale;
-	private PackedCollection<?> reverbAdjustmentScale;
+	private PackedCollection volumeAdjustmentScale;
+	private PackedCollection mainFilterUpAdjustmentScale;
+	private PackedCollection mainFilterDownAdjustmentScale;
+	private PackedCollection reverbAdjustmentScale;
 
-	private Chromosome<PackedCollection<?>> volumeSimple;
-	private Chromosome<PackedCollection<?>> mainFilterUpSimple;
-	private Chromosome<PackedCollection<?>> wetInSimple;
+	private Chromosome<PackedCollection> volumeSimple;
+	private Chromosome<PackedCollection> mainFilterUpSimple;
+	private Chromosome<PackedCollection> wetInSimple;
 
-	private Chromosome<PackedCollection<?>> transmission;
-	private Chromosome<PackedCollection<?>> wetOut;
-	private Chromosome<PackedCollection<?>> delay;
+	private Chromosome<PackedCollection> transmission;
+	private Chromosome<PackedCollection> wetOut;
+	private Chromosome<PackedCollection> delay;
 
-	private Chromosome<PackedCollection<?>> delayDynamicsSimple;
+	private Chromosome<PackedCollection> delayDynamicsSimple;
 
-	private Chromosome<PackedCollection<?>> reverb;
-	private Chromosome<PackedCollection<?>> reverbAutomation;
+	private Chromosome<PackedCollection> reverb;
+	private Chromosome<PackedCollection> reverbAutomation;
 	private FixedFilterChromosome wetFilter;
-	private Chromosome<PackedCollection<?>> mainFilterDownSimple;
+	private Chromosome<PackedCollection> mainFilterDownSimple;
 
 	private List<Integer> reverbChannels;
 
@@ -108,10 +108,10 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		this.clock = clock;
 		this.sampleRate = sampleRate;
 
-		this.volumeAdjustmentScale = new PackedCollection<>(1).fill(1.0);
-		this.mainFilterUpAdjustmentScale = new PackedCollection<>(1).fill(1.0);
-		this.mainFilterDownAdjustmentScale = new PackedCollection<>(1).fill(1.0);
-		this.reverbAdjustmentScale = new PackedCollection<>(1).fill(1.0);
+		this.volumeAdjustmentScale = new PackedCollection(1).fill(1.0);
+		this.mainFilterUpAdjustmentScale = new PackedCollection(1).fill(1.0);
+		this.mainFilterDownAdjustmentScale = new PackedCollection(1).fill(1.0);
+		this.reverbAdjustmentScale = new PackedCollection(1).fill(1.0);
 
 		this.volumeSimple = chromosome(initializeAdjustment(channels, chromosome));
 		this.mainFilterUpSimple = chromosome(IntStream.range(0, channels)
@@ -142,7 +142,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 				.mapToObj(i -> chromosome.addGene(AutomationManager.GENE_LENGTH))
 				.collect(Collectors.toList()));
 
-		Chromosome<PackedCollection<?>> wf = chromosome(IntStream.range(0, channels)
+		Chromosome<PackedCollection> wf = chromosome(IntStream.range(0, channels)
 				.mapToObj(i -> chromosome.addGene(FixedFilterChromosome.SIZE))
 				.collect(Collectors.toList()));
 		this.wetFilter = new FixedFilterChromosome(wf, sampleRate);
@@ -319,7 +319,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 			// Apply dynamic high pass filters
 			if (enableAutomationManager) {
 				cells = cells.map(fc(i -> {
-					Producer<PackedCollection<?>> v =
+					Producer<PackedCollection> v =
 							automation.getAggregatedValue(
 									mainFilterUpSimple.valueAt(channelIndex.applyAsInt(i)),
 									p(mainFilterUpAdjustmentScale), -40.0);
@@ -327,7 +327,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 				}));
 			} else {
 				cells = cells.map(fc(i -> {
-					Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate,
+					Factor<PackedCollection> f = toAdjustmentGene(clock, sampleRate,
 							p(mainFilterUpAdjustmentScale), mainFilterUpSimple,
 							channelIndex.applyAsInt(i)).valueAt(0);
 					return hp((Producer) scalar(20000).multiply(f.getResultant(c(1.0))), (Producer) scalar(FixedFilterChromosome.defaultResonance));
@@ -335,12 +335,12 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 			}
 		}
 
-		IntFunction<Factor<PackedCollection<?>>> v = i -> factor(toAdjustmentGene(clock, sampleRate,
+		IntFunction<Factor<PackedCollection>> v = i -> factor(toAdjustmentGene(clock, sampleRate,
 														p(volumeAdjustmentScale), volumeSimple,
 														channelIndex.applyAsInt(i)).valueAt(0));
 
 		if (enableSourcesOnly) {
-			List<Receptor<PackedCollection<?>>> r = new ArrayList<>();
+			List<Receptor<PackedCollection>> r = new ArrayList<>();
 			r.add(output.getMaster(audioChannel));
 			r.addAll(output.getMeasures(audioChannel));
 
@@ -357,7 +357,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 					.map(i -> channelIndex.applyAsInt(i))
 					.anyMatch(getReverbChannels()::contains);
 
-		IntFunction<Factor<PackedCollection<?>>> reverbFactor;
+		IntFunction<Factor<PackedCollection>> reverbFactor;
 
 		if (!reverbActive) {
 			reverbFactor = i -> sf(0.0);
@@ -438,7 +438,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		if (enableTransmission) {
 			int delayLayers = delay.length();
 
-			IntFunction<Factor<PackedCollection<?>>> df =
+			IntFunction<Factor<PackedCollection>> df =
 					i -> toPolycyclicGene(clock, sampleRate, delayDynamicsSimple, i).valueAt(0);
 
 			CellList delays = IntStream.range(0, delayLayers)
@@ -447,7 +447,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 							df.apply(i).getResultant(c(1.0))))
 					.collect(CellList.collector());
 
-			IntFunction<Gene<PackedCollection<?>>> tg =
+			IntFunction<Gene<PackedCollection>> tg =
 					i -> delayGene(delayLayers, toAdjustmentGene(clock, sampleRate, null, wetInSimple, channelIndex.applyAsInt(i)));
 
 			// Route each line to each delay layer
@@ -473,7 +473,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		}
 
 		if (disableClean) {
-			List<Receptor<PackedCollection<?>>> measures = output.getMeasures(audioChannel);
+			List<Receptor<PackedCollection>> measures = output.getMeasures(audioChannel);
 
 			Receptor r[] = new Receptor[measures.size() + 1];
 			r[0] = output.getMaster(audioChannel);
@@ -483,7 +483,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 			return efx;
 		}
 
-		List<Receptor<PackedCollection<?>>> efxReceptors = new ArrayList<>();
+		List<Receptor<PackedCollection>> efxReceptors = new ArrayList<>();
 		efxReceptors.add(main.get(0));
 		if (output.isMeasuresActive()) {
 			efxReceptors.add(output.getMeasure(ChannelInfo.Voicing.WET, audioChannel));
@@ -497,7 +497,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		if (enableMasterFilterDown) {
 			// Apply dynamic low pass filter
 			main = main.map(fc(i -> {
-				Factor<PackedCollection<?>> f = toAdjustmentGene(clock, sampleRate,
+				Factor<PackedCollection> f = toAdjustmentGene(clock, sampleRate,
 						p(mainFilterDownAdjustmentScale), mainFilterDownSimple,
 						channelIndex.applyAsInt(i)).valueAt(0);
 				return lp((Producer) scalar(20000).multiply(f.getResultant(c(1.0))), (Producer) scalar(FixedFilterChromosome.defaultResonance));
@@ -536,7 +536,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	 * it is clear who bears the responsibility for invoking {@link org.almostrealism.time.Temporal#tick()}
 	 * and it doesn't get invoked multiple times.
 	 */
-	private TemporalFactor<PackedCollection<?>> factor(Factor<PackedCollection<?>> f) {
+	private TemporalFactor<PackedCollection> factor(Factor<PackedCollection> f) {
 		return v -> f.getResultant(v);
 	}
 
@@ -546,8 +546,8 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	 * the first delay based on the wet level, and
 	 * delivers nothing to the others.
 	 */
-	private Gene<PackedCollection<?>> delayGene(int delays, Gene<PackedCollection<?>> wet) {
-		Factor<PackedCollection<?>> gene[] = new Factor[delays];
+	private Gene<PackedCollection> delayGene(int delays, Gene<PackedCollection> wet) {
+		Factor<PackedCollection> gene[] = new Factor[delays];
 
 		if (enableWetInAdjustment) {
 			gene[0] = factor(wet.valueAt(0));

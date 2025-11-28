@@ -125,8 +125,8 @@ public class AudioLibraryTests implements TestFeatures {
 				library.getWaveDetailsFactory().getFeatureProvider();
 
 		WaveDetails details = library.getDetailsAwait("Library/Dip Flop DD 159.wav", false);
-		PackedCollection<?> features = details.getFeatureData(true);
-		PackedCollection<?> data = provider.getAutoEncoder().decode(cp(features)).evaluate();
+		PackedCollection features = details.getFeatureData(true);
+		PackedCollection data = provider.getAutoEncoder().decode(cp(features)).evaluate();
 
 		new WaveData(data, 44100)
 				.save(new File("results/library-decode.wav"));

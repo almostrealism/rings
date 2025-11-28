@@ -32,5 +32,5 @@ public interface AudioSynthesisModel {
 	 * @param time  the time values the levels are to be produced for
 	 * @return a {@link Producer} that produces a time series of levels
 	 */
-	Producer<PackedCollection<?>> getLevels(double frequencyRatio, Producer<PackedCollection<?>> time);
+	Producer<PackedCollection> getLevels(double frequencyRatio, Producer<PackedCollection> time);
 }

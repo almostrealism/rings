@@ -25,7 +25,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class BufferedAudioPlayerTest implements TestFeatures {
-	private PackedCollection<?> data;
+	private PackedCollection data;
 	private double total = 0.0;
 	private int count = 0;
 
@@ -39,7 +39,7 @@ public class BufferedAudioPlayerTest implements TestFeatures {
 
 		BufferedOutputScheduler scheduler = player.deliver(new OutputLine() {
 			@Override
-			public void write(PackedCollection<?> sample) {
+			public void write(PackedCollection sample) {
 				data = sample;
 				total = sample.doubleStream().map(Math::abs).sum();
 				log("total = " + total);

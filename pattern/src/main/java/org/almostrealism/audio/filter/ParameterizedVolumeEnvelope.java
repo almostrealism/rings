@@ -92,18 +92,18 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 		}
 
 		@Override
-		public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> audio,
-												   Producer<PackedCollection<?>> duration,
-												   Producer<PackedCollection<?>> automationLevel) {
-			PackedCollection<?> a = new PackedCollection<>(1);
-			PackedCollection<?> d = new PackedCollection<>(1);
-			PackedCollection<?> s = new PackedCollection<>(1);
-			PackedCollection<?> r = new PackedCollection<>(1);
+		public Producer<PackedCollection> apply(Producer<PackedCollection> audio,
+												   Producer<PackedCollection> duration,
+												   Producer<PackedCollection> automationLevel) {
+			PackedCollection a = new PackedCollection(1);
+			PackedCollection d = new PackedCollection(1);
+			PackedCollection s = new PackedCollection(1);
+			PackedCollection r = new PackedCollection(1);
 
 			return () -> args -> {
-				PackedCollection<?> audioData = audio.get().evaluate();
-				PackedCollection<?> dr = duration.get().evaluate();
-				PackedCollection<?> al = automationLevel.get().evaluate();
+				PackedCollection audioData = audio.get().evaluate();
+				PackedCollection dr = duration.get().evaluate();
+				PackedCollection al = automationLevel.get().evaluate();
 
 				double dv = dr.toDouble(0);
 				double adj = adjustmentBase + adjustmentAutomation * al.toDouble(0);
@@ -141,7 +141,7 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 				s.set(0, sustain);
 				r.set(0, release);
 
-				PackedCollection<?> out = AudioProcessingUtils.getVolumeEnv()
+				PackedCollection out = AudioProcessingUtils.getVolumeEnv()
 						.evaluate(audioData.traverse(1), dr, a, d, s, r);
 
 				if (out.getShape().getTotalSize() == 1) {

@@ -22,21 +22,21 @@ import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.relation.Factor;
 
 public interface EnvelopeFeatures extends SamplingFeatures {
-	default Factor<PackedCollection<?>> volume(Producer<PackedCollection<?>> volume) {
+	default Factor<PackedCollection> volume(Producer<PackedCollection> volume) {
 		return in -> multiply(in, volume);
 	}
 
-	default EnvelopeSection envelope(Factor<PackedCollection<?>> envelope) {
+	default EnvelopeSection envelope(Factor<PackedCollection> envelope) {
 		return new EnvelopeSection(() -> time(), envelope);
 	}
 
-	default EnvelopeSection envelope(Producer<PackedCollection<?>> duration,
-									 Producer<PackedCollection<?>> attack,
-									 Producer<PackedCollection<?>> decay,
-									 Producer<PackedCollection<?>> sustain,
-									 Producer<PackedCollection<?>> release) {
-		Producer<PackedCollection<?>> drAttack = c(0.75);
-		Producer<PackedCollection<?>> drDecay = c(0.25);
+	default EnvelopeSection envelope(Producer<PackedCollection> duration,
+									 Producer<PackedCollection> attack,
+									 Producer<PackedCollection> decay,
+									 Producer<PackedCollection> sustain,
+									 Producer<PackedCollection> release) {
+		Producer<PackedCollection> drAttack = c(0.75);
+		Producer<PackedCollection> drDecay = c(0.25);
 
 		attack = min(attack, multiply(drAttack, duration));
 		decay = min(decay, multiply(drDecay, duration));
@@ -47,38 +47,38 @@ public interface EnvelopeFeatures extends SamplingFeatures {
 				.andThenRelease(duration, sustain, release, c(0.0));
 	}
 
-	default Factor<PackedCollection<?>> sustain(Producer<PackedCollection<?>> volume) {
+	default Factor<PackedCollection> sustain(Producer<PackedCollection> volume) {
 		return in -> multiply(in, volume);
 	}
 
-	default Factor<PackedCollection<?>> linear(Producer<PackedCollection<?>> offset,
-											    Producer<PackedCollection<?>> duration,
-												Producer<PackedCollection<?>> startVolume,
-												Producer<PackedCollection<?>> endVolume) {
+	default Factor<PackedCollection> linear(Producer<PackedCollection> offset,
+											    Producer<PackedCollection> duration,
+												Producer<PackedCollection> startVolume,
+												Producer<PackedCollection> endVolume) {
 		return in -> {
-			Producer<PackedCollection<?>> t = subtract(time(), offset);
-			Producer<PackedCollection<?>> pos = divide(t, duration);
-			Producer<PackedCollection<?>> start = subtract(c(1.0), pos).multiply(startVolume);
-			Producer<PackedCollection<?>> end = multiply(endVolume, pos);
-			Producer<PackedCollection<?>> level = max(c(0.0), add(start, end));
+			Producer<PackedCollection> t = subtract(time(), offset);
+			Producer<PackedCollection> pos = divide(t, duration);
+			Producer<PackedCollection> start = subtract(c(1.0), pos).multiply(startVolume);
+			Producer<PackedCollection> end = multiply(endVolume, pos);
+			Producer<PackedCollection> level = max(c(0.0), add(start, end));
 			return multiply(in, level);
 		};
 	}
 
-	default Factor<PackedCollection<?>> attack(Producer<PackedCollection<?>> attack) {
+	default Factor<PackedCollection> attack(Producer<PackedCollection> attack) {
 		return in -> multiply(in, min(c(1.0), divide(time(), attack)));
 	}
 
-	default Factor<PackedCollection<?>> decay(Producer<PackedCollection<?>> offset,
-											  Producer<PackedCollection<?>> decay,
-											  Producer<PackedCollection<?>> endVolume) {
+	default Factor<PackedCollection> decay(Producer<PackedCollection> offset,
+											  Producer<PackedCollection> decay,
+											  Producer<PackedCollection> endVolume) {
 		return linear(offset, decay, c(1.0), endVolume);
 	}
 
-	default Factor<PackedCollection<?>> release(Producer<PackedCollection<?>> offset,
-											  Producer<PackedCollection<?>> startVolume,
-											  Producer<PackedCollection<?>> release,
-											  Producer<PackedCollection<?>> endVolume) {
+	default Factor<PackedCollection> release(Producer<PackedCollection> offset,
+											  Producer<PackedCollection> startVolume,
+											  Producer<PackedCollection> release,
+											  Producer<PackedCollection> endVolume) {
 		return linear(offset, release, startVolume, endVolume);
 	}
 	

@@ -212,8 +212,8 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 				distractor.executeMultiple(distractionsPerOp);
 			}
 
-			PackedCollection<?> input = new PackedCollection<>(inputSize).randnFill();
-			PackedCollection<?> output = new PackedCollection<>(inputSize).randnFill();
+			PackedCollection input = new PackedCollection(inputSize).randnFill();
+			PackedCollection output = new PackedCollection(inputSize).randnFill();
 			processor.process(input, output);
 
 			totalFramesProcessed += inputSize;
@@ -305,8 +305,8 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 
 		for (int i = 0; i < iterations; i++) {
 			int size = 50000 + random.nextInt(100000);
-			PackedCollection<?> input = new PackedCollection<>(size);
-			PackedCollection<?> output = new PackedCollection<>(size);
+			PackedCollection input = new PackedCollection(size);
+			PackedCollection output = new PackedCollection(size);
 
 			processor.process(input, output);
 
@@ -343,8 +343,8 @@ public class MultiOrderFilterEnvelopeProcessorPerformanceTest implements TestFea
 		long startTime = System.nanoTime();
 
 		for (int i = 0; i < iterations; i++) {
-			PackedCollection<?> input = new PackedCollection<>(testSize);
-			PackedCollection<?> output = new PackedCollection<>(testSize);
+			PackedCollection input = new PackedCollection(testSize);
+			PackedCollection output = new PackedCollection(testSize);
 
 			processor.process(input, output);
 

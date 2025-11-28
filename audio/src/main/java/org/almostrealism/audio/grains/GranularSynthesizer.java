@@ -89,21 +89,21 @@ public class GranularSynthesizer implements StatelessSource, CellFeatures {
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> generate(BufferDetails buffer,
-												  Producer<PackedCollection<?>> params,
-												  Factor<PackedCollection<?>> frequency) {
+	public Producer<PackedCollection> generate(BufferDetails buffer,
+												  Producer<PackedCollection> params,
+												  Factor<PackedCollection> frequency) {
 		return null;
 	}
 
 	@Deprecated
-	public WaveDataProviderList create(Producer<PackedCollection<?>> x, Producer<PackedCollection<?>> y, Producer<PackedCollection<?>> z, List<Frequency> playbackRates) {
-		Evaluable<PackedCollection<?>> evX = x.get();
-		Evaluable<PackedCollection<?>> evY = y.get();
-		Evaluable<PackedCollection<?>> evZ = z.get();
+	public WaveDataProviderList create(Producer<PackedCollection> x, Producer<PackedCollection> y, Producer<PackedCollection> z, List<Frequency> playbackRates) {
+		Evaluable<PackedCollection> evX = x.get();
+		Evaluable<PackedCollection> evY = y.get();
+		Evaluable<PackedCollection> evZ = z.get();
 
 		List<WaveDataProvider> providers = new ArrayList<>();
 		playbackRates.forEach(rate -> {
-			PackedCollection<?> output = new PackedCollection<>(processor.getFrames()).traverse(1);
+			PackedCollection output = new PackedCollection(processor.getFrames()).traverse(1);
 			WaveData destination = new WaveData(output, OutputLine.sampleRate);
 			providers.add(new DynamicWaveDataProvider("synth://" + UUID.randomUUID(), destination));
 		});
@@ -111,18 +111,18 @@ public class GranularSynthesizer implements StatelessSource, CellFeatures {
 		return new WaveDataProviderList(providers, () -> () -> {
 			ParameterSet params = new ParameterSet(evX.evaluate().toDouble(0), evY.evaluate().toDouble(0), evZ.evaluate().toDouble(0));
 
-			PackedCollection<?> playbackRate = new PackedCollection<>(1);
+			PackedCollection playbackRate = new PackedCollection(1);
 
-			PackedCollection<?> w = new PackedCollection<>(1);
-			PackedCollection<?> p = new PackedCollection<>(1);
-			PackedCollection<?> a = new PackedCollection<>(1);
+			PackedCollection w = new PackedCollection(1);
+			PackedCollection p = new PackedCollection(1);
+			PackedCollection a = new PackedCollection(1);
 
 			for (int i = 0; i < playbackRates.size(); i++) {
 				playbackRate.setMem(0, playbackRates.get(i).asHertz());
 				if (WaveOutput.enableVerbose)
 					System.out.println("GranularSynthesizer: Rendering grains for playback rate " + playbackRates.get(i) + "...");
 
-				List<PackedCollection<?>> results = new ArrayList<>();
+				List<PackedCollection> results = new ArrayList<>();
 				int count = grains.stream().map(GrainSet::getGrains).mapToInt(List::size).sum();
 
 				for (GrainSet grainSet : grains) {

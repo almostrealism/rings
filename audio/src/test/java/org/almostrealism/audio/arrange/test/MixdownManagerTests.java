@@ -95,7 +95,7 @@ public class MixdownManagerTests implements CellFeatures {
 		mixdown.setReverbChannels(List.of(0, 1));
 
 
-		genome.assignTo(new PackedCollection<>(params).randFill());
+		genome.assignTo(new PackedCollection(params).randFill());
 
 		CellList cells = w(0, c(0.0), c(1.0),
 				WaveData.load(new File("Library/Snare Gold 1.wav")),

@@ -60,8 +60,8 @@ public class ParameterSet {
 		return new ParameterSet(Math.random(), Math.random(), Math.random());
 	}
 
-	public static ParameterSet fromGene(Gene<PackedCollection<?>> gene) {
-		CollectionProducer<PackedCollection<?>> one =
+	public static ParameterSet fromGene(Gene<PackedCollection> gene) {
+		CollectionProducer<PackedCollection> one =
 				CollectionFeatures.getInstance().c(1.0);
 
 		ParameterSet params = new ParameterSet();

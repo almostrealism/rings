@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+
 package com.almostrealism.physics;
+import org.almostrealism.collect.PackedCollection;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
@@ -65,7 +67,7 @@ public class VolumeAbsorber implements Absorber, Nameable, CodeFeatures {
 	 */
 	@Override
 	public boolean absorb(Vector x, Vector p, double energy) {
-		if (this.volume.inside(v(x)))
+		if (this.volume.inside((Producer) v(x)))
 			return this.absorber.absorb(x, p, energy);
 		else
 			return false;
@@ -87,7 +89,7 @@ public class VolumeAbsorber implements Absorber, Nameable, CodeFeatures {
 	 * Calls the emit method on the Absorber instance wrapped by this VolumeAbsorber.
 	 */
 	@Override
-	public Producer<Vector> emit() { return this.absorber.emit(); }
+	public Producer<PackedCollection> emit() { return this.absorber.emit(); }
 	
 	/**
 	 * Calls the getEmitEnergy method on the Absorber instance wrapped by this VolumeAbsorber.
@@ -105,7 +107,7 @@ public class VolumeAbsorber implements Absorber, Nameable, CodeFeatures {
 	 * Calls the getEmitPosition method on the Absorber instance wrapped by this VolumeAbsorber.
 	 */
 	@Override
-	public Producer<Vector> getEmitPosition() { return this.absorber.getEmitPosition(); }
+	public Producer<PackedCollection> getEmitPosition() { return this.absorber.getEmitPosition(); }
 	
 	/**
 	 * Calls the setClock method on the Absorber instance wrapped by this VolumeAbsorber.

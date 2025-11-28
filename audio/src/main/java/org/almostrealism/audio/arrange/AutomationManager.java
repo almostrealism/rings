@@ -36,7 +36,7 @@ public class AutomationManager implements Setup, CellFeatures {
 	private DoubleSupplier measureDuration;
 	private int sampleRate;
 
-	private PackedCollection<?> scale;
+	private PackedCollection scale;
 	private double r = 1.0;
 	private double p = 0.5;
 
@@ -49,17 +49,17 @@ public class AutomationManager implements Setup, CellFeatures {
 		this.scale = PackedCollection.factory().apply(1);
 	}
 
-	protected Producer<PackedCollection<?>> time(Producer<PackedCollection<?>> position, Producer<PackedCollection<?>> phase) {
+	protected Producer<PackedCollection> time(Producer<PackedCollection> position, Producer<PackedCollection> phase) {
 		phase = c(2.0).multiply(phase).subtract(c(1.0)).multiply(c(p));
 		return add(position, phase);
 	}
 
-	protected Producer<PackedCollection<?>> time(Producer<PackedCollection<?>> phase) {
+	protected Producer<PackedCollection> time(Producer<PackedCollection> phase) {
 		return time(divide(clock.time(sampleRate), cp(scale)), phase);
 	}
 
-	public Producer<PackedCollection<?>> getAggregatedValue(Gene<PackedCollection<?>> gene,
-															Producer<PackedCollection<?>> scale,
+	public Producer<PackedCollection> getAggregatedValue(Gene<PackedCollection> gene,
+															Producer<PackedCollection> scale,
 															double offset) {
 		return getAggregatedValue(
 				gene.valueAt(0).getResultant(c(1.0)),
@@ -71,8 +71,8 @@ public class AutomationManager implements Setup, CellFeatures {
 				c(offset));
 	}
 
-	public Producer<PackedCollection<?>> getAggregatedValueAt(Producer<PackedCollection<?>> position,
-															  Gene<PackedCollection<?>> gene, double offset) {
+	public Producer<PackedCollection> getAggregatedValueAt(Producer<PackedCollection> position,
+															  Gene<PackedCollection> gene, double offset) {
 		return getAggregatedValueAt(
 				position,
 				gene.valueAt(0).getResultant(c(1.0)),
@@ -84,83 +84,83 @@ public class AutomationManager implements Setup, CellFeatures {
 				c(offset));
 	}
 
-	public Producer<PackedCollection<?>> getAggregatedValue(
-			Producer<PackedCollection<?>> shortPeriodPhase,
-			Producer<PackedCollection<?>> longPeriodPhase,
-			Producer<PackedCollection<?>> mainPhase,
-			Producer<PackedCollection<?>> shortPeriodMagnitude,
-			Producer<PackedCollection<?>> longPeriodMagnitude,
-			Producer<PackedCollection<?>> mainMagnitude,
-			Producer<PackedCollection<?>> offset) {
-		Producer<PackedCollection<?>> shortPeriod = applyMagnitude(shortPeriodMagnitude, getShortPeriodValue(shortPeriodPhase));
-		Producer<PackedCollection<?>> longPeriod = applyMagnitude(longPeriodMagnitude, getLongPeriodValue(longPeriodPhase));
-		Producer<PackedCollection<?>> main = multiply(mainMagnitude, getMainValue(mainPhase, offset));
+	public Producer<PackedCollection> getAggregatedValue(
+			Producer<PackedCollection> shortPeriodPhase,
+			Producer<PackedCollection> longPeriodPhase,
+			Producer<PackedCollection> mainPhase,
+			Producer<PackedCollection> shortPeriodMagnitude,
+			Producer<PackedCollection> longPeriodMagnitude,
+			Producer<PackedCollection> mainMagnitude,
+			Producer<PackedCollection> offset) {
+		Producer<PackedCollection> shortPeriod = applyMagnitude(shortPeriodMagnitude, getShortPeriodValue(shortPeriodPhase));
+		Producer<PackedCollection> longPeriod = applyMagnitude(longPeriodMagnitude, getLongPeriodValue(longPeriodPhase));
+		Producer<PackedCollection> main = multiply(mainMagnitude, getMainValue(mainPhase, offset));
 
 		return multiply(main, multiply(shortPeriod, longPeriod));
 	}
 
-	public Producer<PackedCollection<?>> getAggregatedValueAt(
-			Producer<PackedCollection<?>> position,
-			Producer<PackedCollection<?>> shortPeriodPhase,
-			Producer<PackedCollection<?>> longPeriodPhase,
-			Producer<PackedCollection<?>> mainPhase,
-			Producer<PackedCollection<?>> shortPeriodMagnitude,
-			Producer<PackedCollection<?>> longPeriodMagnitude,
-			Producer<PackedCollection<?>> mainMagnitude,
-			Producer<PackedCollection<?>> offset) {
-		Producer<PackedCollection<?>> shortPeriod = applyMagnitude(shortPeriodMagnitude, getShortPeriodValueAt(position, shortPeriodPhase));
-		Producer<PackedCollection<?>> longPeriod = applyMagnitude(longPeriodMagnitude, getLongPeriodValueAt(position, longPeriodPhase));
-		Producer<PackedCollection<?>> main = multiply(mainMagnitude, getMainValueAt(position, mainPhase, offset));
+	public Producer<PackedCollection> getAggregatedValueAt(
+			Producer<PackedCollection> position,
+			Producer<PackedCollection> shortPeriodPhase,
+			Producer<PackedCollection> longPeriodPhase,
+			Producer<PackedCollection> mainPhase,
+			Producer<PackedCollection> shortPeriodMagnitude,
+			Producer<PackedCollection> longPeriodMagnitude,
+			Producer<PackedCollection> mainMagnitude,
+			Producer<PackedCollection> offset) {
+		Producer<PackedCollection> shortPeriod = applyMagnitude(shortPeriodMagnitude, getShortPeriodValueAt(position, shortPeriodPhase));
+		Producer<PackedCollection> longPeriod = applyMagnitude(longPeriodMagnitude, getLongPeriodValueAt(position, longPeriodPhase));
+		Producer<PackedCollection> main = multiply(mainMagnitude, getMainValueAt(position, mainPhase, offset));
 
 		return multiply(main, multiply(shortPeriod, longPeriod));
 	}
 
-	protected Producer<PackedCollection<?>> applyMagnitude(Producer<PackedCollection<?>> magnitude,
-														   Producer<PackedCollection<?>> value) {
+	protected Producer<PackedCollection> applyMagnitude(Producer<PackedCollection> magnitude,
+														   Producer<PackedCollection> value) {
 		return multiply(value, magnitude).add(c(1.0).subtract(magnitude));
 	}
 
-	protected Producer<PackedCollection<?>> applyScale(Producer<PackedCollection<?>> value, Producer<PackedCollection<?>> scale) {
+	protected Producer<PackedCollection> applyScale(Producer<PackedCollection> value, Producer<PackedCollection> scale) {
 		return scale == null ? value : multiply(value, scale);
 	}
 
-	public Producer<PackedCollection<?>> getMainValue(Producer<PackedCollection<?>> phase, Producer<PackedCollection<?>> offset) {
+	public Producer<PackedCollection> getMainValue(Producer<PackedCollection> phase, Producer<PackedCollection> offset) {
 		return getMainValueAt(time(phase), offset);
 	}
 
-	public Producer<PackedCollection<?>> getMainValueAt(Producer<PackedCollection<?>> position,
-														Producer<PackedCollection<?>> phase,
-														Producer<PackedCollection<?>> offset) {
+	public Producer<PackedCollection> getMainValueAt(Producer<PackedCollection> position,
+														Producer<PackedCollection> phase,
+														Producer<PackedCollection> offset) {
 		return getMainValueAt(time(position, phase), offset);
 	}
 
-	public Producer<PackedCollection<?>> getMainValueAt(Producer<PackedCollection<?>> time, Producer<PackedCollection<?>> offset) {
-		Producer<PackedCollection<?>> v = c(0.1 * r).multiply(time).pow(c(3.0));
+	public Producer<PackedCollection> getMainValueAt(Producer<PackedCollection> time, Producer<PackedCollection> offset) {
+		Producer<PackedCollection> v = c(0.1 * r).multiply(time).pow(c(3.0));
 		v = rectify(add(v, offset));
 		return multiply(v, c(0.01));
 	}
 
-	public Producer<PackedCollection<?>> getLongPeriodValue(Producer<PackedCollection<?>> phase) {
+	public Producer<PackedCollection> getLongPeriodValue(Producer<PackedCollection> phase) {
 		return getLongPeriodValueAt(time(phase));
 	}
 
-	public Producer<PackedCollection<?>> getLongPeriodValueAt(Producer<PackedCollection<?>> position, Producer<PackedCollection<?>> phase) {
+	public Producer<PackedCollection> getLongPeriodValueAt(Producer<PackedCollection> position, Producer<PackedCollection> phase) {
 		return getLongPeriodValueAt(time(position, phase));
 	}
 
-	public Producer<PackedCollection<?>> getLongPeriodValueAt(Producer<PackedCollection<?>> time) {
+	public Producer<PackedCollection> getLongPeriodValueAt(Producer<PackedCollection> time) {
 		return c(0.95).add(sin(multiply(time, c(2.0 * r)))).multiply(c(0.05));
 	}
 
-	public Producer<PackedCollection<?>> getShortPeriodValue(Producer<PackedCollection<?>> phase) {
+	public Producer<PackedCollection> getShortPeriodValue(Producer<PackedCollection> phase) {
 		return getShortPeriodValueAt(time(phase));
 	}
 
-	public Producer<PackedCollection<?>> getShortPeriodValueAt(Producer<PackedCollection<?>> position, Producer<PackedCollection<?>> phase) {
+	public Producer<PackedCollection> getShortPeriodValueAt(Producer<PackedCollection> position, Producer<PackedCollection> phase) {
 		return getShortPeriodValueAt(time(position, phase));
 	}
 
-	public Producer<PackedCollection<?>> getShortPeriodValueAt(Producer<PackedCollection<?>> time) {
+	public Producer<PackedCollection> getShortPeriodValueAt(Producer<PackedCollection> time) {
 		return c(1.0).add(sin(multiply(time, c(16.0 * r))).multiply(c(-0.04)));
 	}
 

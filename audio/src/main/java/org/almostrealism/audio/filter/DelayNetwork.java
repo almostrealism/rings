@@ -26,7 +26,7 @@ import org.almostrealism.heredity.TemporalFactor;
 
 import java.util.function.Supplier;
 
-public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecycle, CodeFeatures {
+public class DelayNetwork implements TemporalFactor<PackedCollection>, Lifecycle, CodeFeatures {
 	public static boolean enableIsolation = false;
 
 	private double gain;
@@ -36,13 +36,13 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 
 	private double[][] matrix;
 
-	private Producer<PackedCollection<?>> input;
-	private PackedCollection<?> delayIn, delayOut;
-	private PackedCollection<?> delayBuffer;
-	private PackedCollection<?> bufferLengths;
-	private PackedCollection<?> bufferIndices;
-	private PackedCollection<?> feedback;
-	private PackedCollection<?> output;
+	private Producer<PackedCollection> input;
+	private PackedCollection delayIn, delayOut;
+	private PackedCollection delayBuffer;
+	private PackedCollection bufferLengths;
+	private PackedCollection bufferIndices;
+	private PackedCollection feedback;
+	private PackedCollection output;
 
 
 	public DelayNetwork(int sampleRate, boolean parallel) {
@@ -62,13 +62,13 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 		this.matrix = randomHouseholderMatrix(size, 1.0);
 		// this.matrix = householderMatrix(_normalize(c(1).repeat(size)), 1.3 / size);
 
-		this.delayIn = new PackedCollection<>(size);
-		this.delayOut = new PackedCollection<>(size);
-		this.delayBuffer = new PackedCollection<>(shape(size, maxDelayFrames));
-		this.bufferLengths = new PackedCollection<>(size);
-		this.bufferIndices = new PackedCollection<>(size);
-		this.feedback = new PackedCollection<>(shape(size, size));
-		this.output = new PackedCollection<>(1);
+		this.delayIn = new PackedCollection(size);
+		this.delayOut = new PackedCollection(size);
+		this.delayBuffer = new PackedCollection(shape(size, maxDelayFrames));
+		this.bufferLengths = new PackedCollection(size);
+		this.bufferIndices = new PackedCollection(size);
+		this.feedback = new PackedCollection(shape(size, size));
+		this.output = new PackedCollection(1);
 
 		this.feedback.fill(pos -> matrix[pos[0]][pos[1]]);
 		this.bufferLengths.fill(pos -> Math.max(1, Math.floor(0.1 * maxDelayFrames + 0.9 * Math.random() * maxDelayFrames)));
@@ -76,7 +76,7 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getResultant(Producer<PackedCollection<?>> value) {
+	public Producer<PackedCollection> getResultant(Producer<PackedCollection> value) {
 		this.input = value;
 		return p(output);
 	}
@@ -163,7 +163,7 @@ public class DelayNetwork implements TemporalFactor<PackedCollection<?>>, Lifecy
 		return householderMatrix(rand(size), scale / size);
 	}
 
-	public double[][] householderMatrix(Producer<PackedCollection<?>> v, double scale) {
+	public double[][] householderMatrix(Producer<PackedCollection> v, double scale) {
 		return householderMatrix((normalize(v).evaluate()).toArray(), scale);
 	}
 

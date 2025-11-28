@@ -67,16 +67,16 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 		this.audioDuration = Math.min(composer.getMaximumAudioDuration(), seconds);
 	}
 
-	public void addAudio(PackedCollection<?> audio) {
+	public void addAudio(PackedCollection audio) {
 		composer.addAudio(cp(audio));
 	}
 
-	public void addFeatures(PackedCollection<?> features) {
+	public void addFeatures(PackedCollection features) {
 		composer.addSource(cp(features));
 	}
 
-	public PackedCollection<?> project(PackedCollection<?> position) {
-		try (PackedCollection<?> result = composer.getResultant(cp(position)).evaluate()) {
+	public PackedCollection project(PackedCollection position) {
+		try (PackedCollection result = composer.getResultant(cp(position)).evaluate()) {
 			double data[] = result.toArray();
 			int totalSamples = data.length;
 			int channelSamples = totalSamples / 2; // Stereo audio, 2 channels
@@ -92,12 +92,12 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 		}
 	}
 
-	public void generateAudio(PackedCollection<?> position, String destination) {
+	public void generateAudio(PackedCollection position, String destination) {
 		generateAudio(position, new File(destination));
 	}
 
-	public void generateAudio(PackedCollection<?> position, File destination) {
-		PackedCollection<?> result = project(position);
+	public void generateAudio(PackedCollection position, File destination) {
+		PackedCollection result = project(position);
 		WaveData out = new WaveData(result, (int) composer.getSampleRate());
 		out.save(destination);
 	}
@@ -135,19 +135,19 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 
 			if (noise) {
 				modulator.addFeatures(
-						new PackedCollection<>(new TraversalPolicy(64, 256))
+						new PackedCollection(new TraversalPolicy(64, 256))
 								.randnFill());
 			}
 
 			if (empty) {
-				modulator.addFeatures(new PackedCollection<>(new TraversalPolicy(64, 256)));
+				modulator.addFeatures(new PackedCollection(new TraversalPolicy(64, 256)));
 			}
 
 			int count = 8;
 
 			for (int i = 0; i < count; i++) {
-				PackedCollection<?> position =
-						new PackedCollection<>(new TraversalPolicy(DIM))
+				PackedCollection position =
+						new PackedCollection(new TraversalPolicy(DIM))
 								.fill(rand::nextGaussian);
 
 				Path op = Path.of(outputPath).resolve("modulated_" + i + ".wav");

@@ -29,13 +29,13 @@ import java.util.stream.Stream;
 
 public class SummingSourceAggregator implements SourceAggregator, CellFeatures {
 	@Override
-	public Producer<PackedCollection<?>> aggregate(BufferDetails buffer,
-												   Producer<PackedCollection<?>> params,
-												   Producer<PackedCollection<?>> frequency,
-												   Producer<PackedCollection<?>>... sources) {
+	public Producer<PackedCollection> aggregate(BufferDetails buffer,
+												   Producer<PackedCollection> params,
+												   Producer<PackedCollection> frequency,
+												   Producer<PackedCollection>... sources) {
 		return new DynamicCollectionProducer<>(shape(buffer.getFrames()), null) {
-			public Evaluable<PackedCollection<?>> get() {
-				List<Evaluable<PackedCollection<?>>> layerAudio =
+			public Evaluable<PackedCollection> get() {
+				List<Evaluable<PackedCollection>> layerAudio =
 						Stream.of(sources).map(Producer::get).toList();
 				int frames[] = Stream.of(sources)
 						.map(this::shape)
@@ -46,10 +46,10 @@ public class SummingSourceAggregator implements SourceAggregator, CellFeatures {
 				return args -> {
 					int totalFrames = buffer.getFrames();
 
-					PackedCollection<?> dest = PackedCollection.factory().apply(totalFrames);
+					PackedCollection dest = PackedCollection.factory().apply(totalFrames);
 
 					for (int i = 0; i < layerAudio.size(); i++) {
-						PackedCollection<?> audio = layerAudio.get(i).evaluate(args);
+						PackedCollection audio = layerAudio.get(i).evaluate(args);
 						int f = frames[i] > 1 ? frames[i] : audio.getShape().getTotalSize();
 						f = Math.min(f, totalFrames);
 

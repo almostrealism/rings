@@ -46,11 +46,11 @@ import java.util.stream.IntStream;
 public class SineWaveCellTest implements CellFeatures, TestFeatures {
 	protected static final int DURATION_FRAMES = 10 * OutputLine.sampleRate;
 
-	protected Receptor<PackedCollection<?>> loggingReceptor() {
+	protected Receptor<PackedCollection> loggingReceptor() {
 		return protein -> () -> () -> System.out.println(protein.get().evaluate().toDouble(0));
 	}
 
-	protected Cell<PackedCollection<?>> loggingCell() { return new ReceptorCell<>(loggingReceptor()); }
+	protected Cell<PackedCollection> loggingCell() { return new ReceptorCell<>(loggingReceptor()); }
 
 	protected SineWaveCell cell() {
 		SineWaveCell cell = new SineWaveCell();
@@ -89,20 +89,20 @@ public class SineWaveCellTest implements CellFeatures, TestFeatures {
 		cells.reset();
 	}
 
-	protected Gene<PackedCollection<?>> identityGene() {
+	protected Gene<PackedCollection> identityGene() {
 		return new Gene<>() {
-			@Override public Factor<PackedCollection<?>> valueAt(int index) { return new IdentityFactor<>(); }
+			@Override public Factor<PackedCollection> valueAt(int index) { return new IdentityFactor<>(); }
 			@Override public int length() { return 1; }
 		};
 	}
 
-	protected void loggingCellPair(Cell<PackedCollection<?>> input) {
-		List<Cell<PackedCollection<?>>> cells = new ArrayList<>();
+	protected void loggingCellPair(Cell<PackedCollection> input) {
+		List<Cell<PackedCollection>> cells = new ArrayList<>();
 		cells.add(loggingCell());
 
-		MultiCell<PackedCollection<?>> m = new MultiCell<>(cells, identityGene());
+		MultiCell<PackedCollection> m = new MultiCell<>(cells, identityGene());
 		m.setName("LoggingMultiCell");
-		new CellPair<>(input, m, null, new IdentityFactor<>()).init();
+		new CellPair(input, m, null, new IdentityFactor<>()).init();
 	}
 
 	@Test

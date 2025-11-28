@@ -80,7 +80,7 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 	public double getMaximumDuration() { return MAX_DURATION; }
 
 	@Override
-	public Producer<PackedCollection<?>> decode(Producer<PackedCollection<?>> latent) {
+	public Producer<PackedCollection> decode(Producer<PackedCollection> latent) {
 		if (!shape(latent).equalsIgnoreAxis(shape(LATENT_DIMENSIONS, 256))) {
 			throw new IllegalArgumentException(shape(latent).toStringDetail());
 		}
@@ -90,12 +90,12 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> encode(Producer<PackedCollection<?>> input) {
+	public Producer<PackedCollection> encode(Producer<PackedCollection> input) {
 		return func(shape(LATENT_DIMENSIONS, 256),
 				in -> args -> encode(in[0]), input);
 	}
 
-	public PackedCollection<?> encode(PackedCollection<?> audio) {
+	public PackedCollection encode(PackedCollection audio) {
 		Map<String, OnnxTensor> inputs = new HashMap<>();
 
 		float leftData[];
@@ -142,7 +142,7 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 		}
 	}
 
-	public PackedCollection<?> decode(PackedCollection<?> latent) {
+	public PackedCollection decode(PackedCollection latent) {
 		TraversalPolicy shape = padDimensions(latent.getShape(), 1, 3);
 
 		Map<String, OnnxTensor> inputs = new HashMap<>();

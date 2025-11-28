@@ -19,11 +19,11 @@ package org.almostrealism.audio.data;
 import org.almostrealism.collect.PackedCollection;
 
 public interface WaveDataFeatureProvider {
-	default PackedCollection<?> computeFeatures(WaveDataProvider provider) {
+	default PackedCollection computeFeatures(WaveDataProvider provider) {
 		return computeFeatures(provider.get(getAudioSampleRate()));
 	}
 
-	PackedCollection<?> computeFeatures(WaveData waveData);
+	PackedCollection computeFeatures(WaveData waveData);
 
 	int getAudioSampleRate();
 

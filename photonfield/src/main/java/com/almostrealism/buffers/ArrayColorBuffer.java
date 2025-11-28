@@ -24,6 +24,7 @@ import org.almostrealism.physics.Absorber;
 import org.almostrealism.space.Scene;
 import org.almostrealism.color.ShadableSurface;
 import io.almostrealism.relation.Factory;
+import org.almostrealism.collect.PackedCollection;
 
 /**
  * @author  Michael Murray
@@ -175,10 +176,14 @@ public class ArrayColorBuffer implements ColorBuffer {
 			this.first = false;
 		}
 		
-		if (direct && this.k != 1.0)
-			return c.get().evaluate().multiply(this.k);
-		else
-			return c.get().evaluate();
+		if (direct && this.k != 1.0) {
+			PackedCollection pc = c.get().evaluate();
+			RGB result = pc instanceof RGB ? (RGB) pc : new RGB(pc.toDouble(0), pc.toDouble(1), pc.toDouble(2));
+			return result.multiply(this.k);
+		} else {
+			PackedCollection pc = c.get().evaluate();
+			return pc instanceof RGB ? (RGB) pc : new RGB(pc.toDouble(0), pc.toDouble(1), pc.toDouble(2));
+		}
 	}
 	
 	public void addColor(double u, double v, boolean front, RGB c) {

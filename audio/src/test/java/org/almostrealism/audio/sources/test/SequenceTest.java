@@ -51,7 +51,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 	@Test
 	public void valueSequencePush() {
 		PolymorphicAudioData data = new PolymorphicAudioData();
-		PackedCollection<?> out = new PackedCollection<>(1);
+		PackedCollection out = new PackedCollection(1);
 		ValueSequencePush push = new ValueSequencePush(data, c(4), out, c(1.0), c(2.0));
 		data.setWavePosition(3);
 
@@ -97,7 +97,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 
 	@Test
 	public void valueSequenceAssign() {
-		PackedCollection<?> out = new PackedCollection<>(1);
+		PackedCollection out = new PackedCollection(1);
 
 		CellList cells = seq(i -> c(i + 1), c(0.1), 2);
 		cells.get(0).setReceptor(a(p(out)));
@@ -122,7 +122,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 		SineWaveCell cell1 = cell(196);
 		SineWaveCell cell2 = cell(261);
 
-		PackedCollection<?> out = new PackedCollection<>(1);
+		PackedCollection out = new PackedCollection(1);
 
 		ValueSequenceCell seq = (ValueSequenceCell) seq(i -> c(0.25 + i * 0.5), c(2), 2).get(0);
 		seq.setReceptor(a(p(out)));
@@ -169,7 +169,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 	public void stems() {
 		int count = 212;
 
-		Producer<PackedCollection<?>> one = c(1.0);
+		Producer<PackedCollection> one = c(1.0);
 
 		CellList cells = cells(
 //				silence().and(w(one, "Library/BD 909 Color 06.wav"))
@@ -241,7 +241,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 
 		cells.sec(10).get().run();
 
-		PackedCollection<?> export = new PackedCollection<>(WaveOutput.defaultTimelineFrames).traverse(1);
+		PackedCollection export = new PackedCollection(WaveOutput.defaultTimelineFrames).traverse(1);
 		output.export(0, export).get().run();
 
 		WavFile f = WavFile.newWavFile(new File("results/mix-export-test.wav"), 1,
@@ -254,7 +254,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 		f.close();
 	}
 
-	protected Receptor<PackedCollection<?>> loggingReceptor() {
+	protected Receptor<PackedCollection> loggingReceptor() {
 		return protein -> () -> () -> System.out.println(protein.get().evaluate());
 	}
 

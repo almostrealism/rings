@@ -65,21 +65,21 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		}).collect(Collectors.toList());
 	}
 
-	default Gene<PackedCollection<?>> toAdjustmentGene(TimeCell clock, int sampleRate,
-													   Chromosome<PackedCollection<?>> chromosome, int i) {
+	default Gene<PackedCollection> toAdjustmentGene(TimeCell clock, int sampleRate,
+													   Chromosome<PackedCollection> chromosome, int i) {
 		return toAdjustmentGene(clock, sampleRate, null, chromosome, i);
 	}
 
-	default Gene<PackedCollection<?>> toAdjustmentGene(TimeCell clock, int sampleRate, Producer<PackedCollection<?>> scale,
-													   Chromosome<PackedCollection<?>> chromosome, int i) {
+	default Gene<PackedCollection> toAdjustmentGene(TimeCell clock, int sampleRate, Producer<PackedCollection> scale,
+													   Chromosome<PackedCollection> chromosome, int i) {
 		return new Gene<>() {
 			@Override
 			public int length() { return 1; }
 
 			@Override
-			public Factor<PackedCollection<?>> valueAt(int pos) {
+			public Factor<PackedCollection> valueAt(int pos) {
 				return in -> {
-					Producer<PackedCollection<?>> s = chromosome.valueAt(i, 4).getResultant(c(1.0));
+					Producer<PackedCollection> s = chromosome.valueAt(i, 4).getResultant(c(1.0));
 					if (scale != null) s = multiply(s, scale);
 
 					return multiply(adjustment(
@@ -95,13 +95,13 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		};
 	}
 
-	default Gene<PackedCollection<?>> toPolycyclicGene(TimeCell clock, int sampleRate, Chromosome<PackedCollection<?>> chromosome, int i) {
+	default Gene<PackedCollection> toPolycyclicGene(TimeCell clock, int sampleRate, Chromosome<PackedCollection> chromosome, int i) {
 		return new Gene<>() {
 			@Override
 			public int length() { return 1; }
 
 			@Override
-			public Factor<PackedCollection<?>> valueAt(int pos) {
+			public Factor<PackedCollection> valueAt(int pos) {
 				return in ->
 						multiply(polycyclic(
 								chromosome.valueAt(i, 0).getResultant(c(1.0)),
@@ -115,7 +115,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		};
 	}
 
-	default double valueForFactor(Factor<PackedCollection<?>> value) {
+	default double valueForFactor(Factor<PackedCollection> value) {
 		if (value instanceof ScaleFactor) {
 			return ((ScaleFactor) value).getScaleValue();
 		} else {
@@ -123,7 +123,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		}
 	}
 
-	default double valueForFactor(Factor<PackedCollection<?>> value, double exp, double multiplier) {
+	default double valueForFactor(Factor<PackedCollection> value, double exp, double multiplier) {
 		if (value instanceof ScaleFactor) {
 			return oneToInfinity(((ScaleFactor) value).getScaleValue(), exp) * multiplier;
 		} else {
@@ -132,7 +132,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		}
 	}
 
-	default double[] repeatForFactor(Factor<PackedCollection<?>> f) {
+	default double[] repeatForFactor(Factor<PackedCollection> f) {
 		double v = 16 * (valueForFactor(f) - 0.5);
 
 		if (v == 0) {
@@ -154,7 +154,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return invertOneToInfinity(seconds, 60, 3);
 	}
 
-	default double repeatSpeedUpDurationForFactor(Factor<PackedCollection<?>> f) {
+	default double repeatSpeedUpDurationForFactor(Factor<PackedCollection> f) {
 		return valueForFactor(f, 3, 60);
 	}
 
@@ -162,7 +162,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return invertOneToInfinity(seconds, 60, 3);
 	}
 
-	default double delayForFactor(Factor<PackedCollection<?>> f) {
+	default double delayForFactor(Factor<PackedCollection> f) {
 		return valueForFactor(f, 3, 60);
 	}
 
@@ -195,7 +195,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return invertOneToInfinity(seconds, 60, 3);
 	}
 
-	default double speedUpDurationForFactor(Factor<PackedCollection<?>> f) {
+	default double speedUpDurationForFactor(Factor<PackedCollection> f) {
 		return valueForFactor(f, 3, 60);
 	}
 
@@ -203,7 +203,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return invertOneToInfinity(decimal, 10, 0.5);
 	}
 
-	default double speedUpPercentageForFactor(Factor<PackedCollection<?>> f) {
+	default double speedUpPercentageForFactor(Factor<PackedCollection> f) {
 		return valueForFactor(f, 0.5, 10);
 	}
 
@@ -211,7 +211,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return invertOneToInfinity(seconds, 60, 3);
 	}
 
-	default double slowDownDurationForFactor(Factor<PackedCollection<?>> f) {
+	default double slowDownDurationForFactor(Factor<PackedCollection> f) {
 		return valueForFactor(f, 3, 60);
 	}
 
@@ -219,7 +219,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return decimal;
 	}
 
-	default double slowDownPercentageForFactor(Factor<PackedCollection<?>> f) {
+	default double slowDownPercentageForFactor(Factor<PackedCollection> f) {
 		return valueForFactor(f);
 	}
 
@@ -227,7 +227,7 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return invertOneToInfinity(seconds, 60, 3);
 	}
 
-	default double polySpeedUpDurationForFactor(Factor<PackedCollection<?>> f) {
+	default double polySpeedUpDurationForFactor(Factor<PackedCollection> f) {
 		return valueForFactor(f, 3, 60);
 	}
 
@@ -235,17 +235,17 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return invertOneToInfinity(exp, 10, 1);
 	}
 
-	default double polySpeedUpExponentForFactor(Factor<PackedCollection<?>> f) {
+	default double polySpeedUpExponentForFactor(Factor<PackedCollection> f) {
 		return valueForFactor(f, 1, 10);
 	}
 
-	default ProducerComputation<PackedCollection<?>> adjustment(Producer<PackedCollection<?>> periodicWavelength,
-																Producer<PackedCollection<?>> polyWaveLength,
-																Producer<PackedCollection<?>> polyExp,
-																Producer<PackedCollection<?>> initial,
-																Producer<PackedCollection<?>> scale,
-																Producer<PackedCollection<?>> offset,
-																Producer<PackedCollection<?>> time,
+	default ProducerComputation<PackedCollection> adjustment(Producer<PackedCollection> periodicWavelength,
+																Producer<PackedCollection> polyWaveLength,
+																Producer<PackedCollection> polyExp,
+																Producer<PackedCollection> initial,
+																Producer<PackedCollection> scale,
+																Producer<PackedCollection> offset,
+																Producer<PackedCollection> time,
 																double min,
 																double max,
 																boolean relative) {
@@ -260,27 +260,27 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 				min, max);
 	}
 
-	default CollectionProducer<PackedCollection<?>> polycyclic(Producer<PackedCollection<?>> speedUpWavelength,
-																Producer<PackedCollection<?>> speedUpAmp,
-																Producer<PackedCollection<?>> slowDownWavelength,
-																Producer<PackedCollection<?>> slowDownAmp,
-																Producer<PackedCollection<?>> polySpeedUpWaveLength,
-																Producer<PackedCollection<?>> polySpeedUpExp,
-																Producer<PackedCollection<?>> time) {
+	default CollectionProducer<PackedCollection> polycyclic(Producer<PackedCollection> speedUpWavelength,
+																Producer<PackedCollection> speedUpAmp,
+																Producer<PackedCollection> slowDownWavelength,
+																Producer<PackedCollection> slowDownAmp,
+																Producer<PackedCollection> polySpeedUpWaveLength,
+																Producer<PackedCollection> polySpeedUpExp,
+																Producer<PackedCollection> time) {
 		return c(1.0).add(sinw(time, speedUpWavelength, speedUpAmp).pow(c(2.0)))
 				.multiply(c(1.0).subtract(sinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
 				.multiply(c(1.0).add(pow(polySpeedUpWaveLength, c(-1.0))
 						.multiply(time).pow(polySpeedUpExp)));
 	}
 
-	default CollectionProducer<PackedCollection<?>> riseFall(double minValue, double maxValue, double minScale,
-															  Producer<PackedCollection<?>> d,
-															  Producer<PackedCollection<?>> m,
-															  Producer<PackedCollection<?>> p,
-															  Producer<PackedCollection<?>> e,
-															  Producer<PackedCollection<?>> time,
-															  Producer<PackedCollection<?>> duration) {
-		PackedCollection<?> directionChoices = new PackedCollection<>(shape(2, 1).traverse(1));
+	default CollectionProducer<PackedCollection> riseFall(double minValue, double maxValue, double minScale,
+															  Producer<PackedCollection> d,
+															  Producer<PackedCollection> m,
+															  Producer<PackedCollection> p,
+															  Producer<PackedCollection> e,
+															  Producer<PackedCollection> time,
+															  Producer<PackedCollection> duration) {
+		PackedCollection directionChoices = new PackedCollection(shape(2, 1).traverse(1));
 		directionChoices.setMem(0, -1);
 		directionChoices.setMem(1, 1);
 
@@ -307,13 +307,13 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return add(start, multiply(end.subtract(start), pos));
 	}
 
-	default CollectionProducer<PackedCollection<?>> durationAdjustment(Producer<PackedCollection<?>> rp,
-																		Producer<PackedCollection<?>> speedUpDuration,
-																		Producer<PackedCollection<?>> speedUpOffset,
-																		Producer<PackedCollection<?>> time) {
+	default CollectionProducer<PackedCollection> durationAdjustment(Producer<PackedCollection> rp,
+																		Producer<PackedCollection> speedUpDuration,
+																		Producer<PackedCollection> speedUpOffset,
+																		Producer<PackedCollection> time) {
 		CollectionProducer initial = pow(c(2.0), c(16).multiply(c(-0.5).add(rp)));
 
-		Producer<PackedCollection<?>> speedUp = max(c(0.0), subtract(time, speedUpOffset));
+		Producer<PackedCollection> speedUp = max(c(0.0), subtract(time, speedUpOffset));
 		speedUp = floor(divide(speedUp, speedUpDuration));
 		return initial.divide(pow(c(2.0), speedUp));
 	}

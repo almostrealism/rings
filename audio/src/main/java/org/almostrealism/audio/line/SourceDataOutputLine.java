@@ -86,7 +86,7 @@ public class SourceDataOutputLine implements OutputLine {
 	 * @param sample The audio sample as a PackedCollection (interleaved channels)
 	 */
 	@Override
-	public void write(PackedCollection<?> sample) {
+	public void write(PackedCollection sample) {
 		byte[] bytes = LineUtilities.toFrame(sample, line.getFormat());
 		line.write(bytes, 0, bytes.length);
 	}

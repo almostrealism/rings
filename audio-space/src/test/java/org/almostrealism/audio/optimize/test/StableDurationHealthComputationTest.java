@@ -149,7 +149,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 
 		AtomicInteger index = new AtomicInteger();
 
-		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+		List<Genome<PackedCollection>> genomes = new ArrayList<>();
 		genomes.add(scene.getGenome().random());
 		genomes.add(scene.getGenome().random());
 

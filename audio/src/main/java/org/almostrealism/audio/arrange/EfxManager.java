@@ -48,9 +48,9 @@ public class EfxManager implements CellFeatures {
 	private AutomationManager automation;
 
 	private ProjectedChromosome chromosome;
-	private Chromosome<PackedCollection<?>> delayTimes;
-	private Chromosome<PackedCollection<?>> delayLevels;
-	private Chromosome<PackedCollection<?>> delayAutomation;
+	private Chromosome<PackedCollection> delayTimes;
+	private Chromosome<PackedCollection> delayLevels;
+	private Chromosome<PackedCollection> delayAutomation;
 	private int channels;
 	private List<Integer> wetChannels;
 
@@ -81,7 +81,7 @@ public class EfxManager implements CellFeatures {
 				.mapToDouble(d -> d)
 				.toArray();
 
-		PackedCollection<?> c = new PackedCollection<>(choices.length);
+		PackedCollection c = new PackedCollection(choices.length);
 		c.setMem(choices);
 
 		delayTimes = chromosome(IntStream.range(0, channels)
@@ -104,7 +104,7 @@ public class EfxManager implements CellFeatures {
 	public List<Integer> getWetChannels() { return wetChannels; }
 	public void setWetChannels(List<Integer> wetChannels) { this.wetChannels = wetChannels; }
 
-	public CellList apply(ChannelInfo channel, Producer<PackedCollection<?>> audio, double totalDuration, OperationList setup) {
+	public CellList apply(ChannelInfo channel, Producer<PackedCollection> audio, double totalDuration, OperationList setup) {
 		if (!enableEfx || !wetChannels.contains(channel)) {
 			return createCells(audio, totalDuration);
 		}
@@ -113,7 +113,7 @@ public class EfxManager implements CellFeatures {
 						.map(fc(i -> delayLevels.valueAt(channel.getPatternChannel(), 0)));
 		CellList dry = createCells(audio, totalDuration);
 
-		Producer<PackedCollection<?>> delay = delayTimes.valueAt(channel.getPatternChannel(), 0).getResultant(c(1.0));
+		Producer<PackedCollection> delay = delayTimes.valueAt(channel.getPatternChannel(), 0).getResultant(c(1.0));
 
 		CellList delays = IntStream.range(0, 1)
 				.mapToObj(i -> new AdjustableDelayCell(sampleRate,
@@ -121,10 +121,10 @@ public class EfxManager implements CellFeatures {
 						c(1.0)))
 				.collect(CellList.collector());
 
-		IntFunction<Cell<PackedCollection<?>>> auto =
+		IntFunction<Cell<PackedCollection>> auto =
 				enableAutomation ?
 						fc(i -> in -> {
-							Producer<PackedCollection<?>> value = automation
+							Producer<PackedCollection> value = automation
 									.getAggregatedValue(delayAutomation.valueAt(channel.getPatternChannel()), null, 0.0);
 							value = c(0.5).multiply(c(1.0).add(value));
 							return multiply(in, value);
@@ -139,28 +139,28 @@ public class EfxManager implements CellFeatures {
 		return cells;
 	}
 
-	protected CellList createCells(Producer<PackedCollection<?>> audio, double totalDuration) {
+	protected CellList createCells(Producer<PackedCollection> audio, double totalDuration) {
 		return w(PolymorphicAudioData.supply(PackedCollection.factory()),
 				sampleRate, shape(audio).getTotalSize(),
 				null, c(totalDuration), traverse(0, audio));
 	}
 
-	protected Producer<PackedCollection<?>> applyFilter(ChannelInfo channel, Producer<PackedCollection<?>> audio, OperationList setup) {
-		PackedCollection<?> destination = PackedCollection.factory().apply(shape(audio).getTotalSize());
+	protected Producer<PackedCollection> applyFilter(ChannelInfo channel, Producer<PackedCollection> audio, OperationList setup) {
+		PackedCollection destination = PackedCollection.factory().apply(shape(audio).getTotalSize());
 
-		Producer<PackedCollection<?>> decision =
+		Producer<PackedCollection> decision =
 				delayLevels.valueAt(channel.getPatternChannel(), 2).getResultant(c(1.0));
-		Producer<PackedCollection<?>> cutoff = c(20000)
+		Producer<PackedCollection> cutoff = c(20000)
 				.multiply(delayLevels.valueAt(channel.getPatternChannel(), 3).getResultant(c(1.0)));
 
-		CollectionProducer<PackedCollection<?>> lpCoefficients =
+		CollectionProducer<PackedCollection> lpCoefficients =
 				lowPassCoefficients(cutoff, sampleRate, filterOrder)
 						.reshape(1, filterOrder + 1);
-		CollectionProducer<PackedCollection<?>> hpCoefficients =
+		CollectionProducer<PackedCollection> hpCoefficients =
 				highPassCoefficients(cutoff, sampleRate, filterOrder)
 						.reshape(1, filterOrder + 1);
 
-		Producer<PackedCollection<?>> coefficients = choice(2,
+		Producer<PackedCollection> coefficients = choice(2,
 				shape(filterOrder + 1), decision,
 				concat(shape(2, filterOrder + 1), hpCoefficients, lpCoefficients));
 

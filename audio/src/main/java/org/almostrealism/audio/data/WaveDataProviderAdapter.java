@@ -36,7 +36,7 @@ import java.util.Map;
 public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 								Comparable<WaveDataProvider>, CodeFeatures {
 	private static Map<String, ContextSpecific<WaveData>> loaded;
-	private static ContextSpecific<Evaluable<PackedCollection<?>>> interpolate;
+	private static ContextSpecific<Evaluable<PackedCollection>> interpolate;
 
 	static {
 		loaded = new HashMap<>();
@@ -68,19 +68,19 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 	}
 
 	@Override
-	public PackedCollection<?> getChannelData(int channel, double playbackRate) {
+	public PackedCollection getChannelData(int channel, double playbackRate) {
 		WaveData original = get();
 		if (playbackRate == 1.0) return original.getChannelData(channel);
 
-		PackedCollection<?> rate = PackedCollection.factory().apply(1);
+		PackedCollection rate = PackedCollection.factory().apply(1);
 		rate.setMem(0, playbackRate);
 
-		PackedCollection<?> audio = original.getChannelData(channel);
+		PackedCollection audio = original.getChannelData(channel);
 		int len = (int) (audio.getMemLength() / playbackRate);
-		PackedCollection<?> dest = new PackedCollection<>(len);
+		PackedCollection dest = new PackedCollection(len);
 
 		// TODO  This can use CollectionFeatures::integers instead of taking a timeline argument
-		PackedCollection<?> timeline = WaveOutput.timeline.getValue();
+		PackedCollection timeline = WaveOutput.timeline.getValue();
 
 		interpolate.getValue().into(dest.traverse(1))
 				.evaluate(audio.traverse(0),

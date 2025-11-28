@@ -27,9 +27,9 @@ public class SharedMemoryAudioLine implements AudioLine, ConsoleFeatures {
 	public static final int PASSTHROUGH_LEVEL = 2;
 
 	private int cursor;
-	private PackedCollection<?> controls;
-	private PackedCollection<?> input;
-	private PackedCollection<?> output;
+	private PackedCollection controls;
+	private PackedCollection input;
+	private PackedCollection output;
 
 	public SharedMemoryAudioLine(String location) {
 		this(createControls(location),
@@ -37,9 +37,9 @@ public class SharedMemoryAudioLine implements AudioLine, ConsoleFeatures {
 				createDestination(location, true));
 	}
 
-	public SharedMemoryAudioLine(PackedCollection<?> controls,
-								 PackedCollection<?> input,
-								 PackedCollection<?> output) {
+	public SharedMemoryAudioLine(PackedCollection controls,
+								 PackedCollection input,
+								 PackedCollection output) {
 		this.controls = controls;
 		this.input = input;
 		this.output = output;
@@ -67,7 +67,7 @@ public class SharedMemoryAudioLine implements AudioLine, ConsoleFeatures {
 	public int getBufferSize() { return output.getMemLength(); }
 
 	@Override
-	public void read(PackedCollection<?> sample) {
+	public void read(PackedCollection sample) {
 		if (sample.getMemLength() > input.getMemLength() - cursor) {
 			throw new IllegalArgumentException("Sample is too large for source");
 		}
@@ -76,7 +76,7 @@ public class SharedMemoryAudioLine implements AudioLine, ConsoleFeatures {
 	}
 
 	@Override
-	public void write(PackedCollection<?> sample) {
+	public void write(PackedCollection sample) {
 		if (sample.getMemLength() > output.getMemLength() - cursor) {
 			throw new IllegalArgumentException("Sample is too large for destination");
 		}
@@ -96,19 +96,19 @@ public class SharedMemoryAudioLine implements AudioLine, ConsoleFeatures {
 		output = null;
 	}
 
-	private static PackedCollection<?> createControls(String location) {
+	private static PackedCollection createControls(String location) {
 		String shared = location + "_ctl";
 		return createCollection(shared, controlSize);
 	}
 
-	private static PackedCollection<?> createDestination(String location, boolean output) {
+	private static PackedCollection createDestination(String location, boolean output) {
 		String shared = location + (output ? "_out" : "_in");
 		return createCollection(shared, BufferDefaults.defaultBufferSize);
 	}
 
-	private static PackedCollection<?> createCollection(String file, int size) {
+	private static PackedCollection createCollection(String file, int size) {
 		ComputeContext<?> ctx = Hardware.getLocalHardware().getComputeContext();
 		return ctx.getDataContext().sharedMemory(len -> file,
-				() -> new PackedCollection<>(size));
+				() -> new PackedCollection(size));
 	}
 }

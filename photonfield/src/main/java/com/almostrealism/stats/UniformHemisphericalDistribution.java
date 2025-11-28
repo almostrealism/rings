@@ -18,6 +18,7 @@ package com.almostrealism.stats;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.geometry.UniformSphericalRandom;
 import org.almostrealism.space.Length;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
@@ -28,11 +29,11 @@ public class UniformHemisphericalDistribution implements SphericalProbabilityDis
 	private double m = 1.0;
 
 	@Override
-	public Producer<Vector> getSample(double in[], double orient[]) {
+	public Producer<PackedCollection> getSample(double in[], double orient[]) {
 		Vector r = UniformSphericalRandom.getInstance().evaluate(new Object[0]);
 		if (new Vector(orient).dotProduct(r) < 0) r.multiplyBy(-1.0);
 		if (m != 1.0) r.multiplyBy(m);
-		return v(r);
+		return (Producer) v(r);
 	}
 
 	@Override

@@ -25,16 +25,16 @@ import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.ProjectedGene;
 
-public class FixedFilterChromosome implements Chromosome<PackedCollection<?>>, CellFeatures {
+public class FixedFilterChromosome implements Chromosome<PackedCollection>, CellFeatures {
 	public static final int SIZE = 2;
 
 	public static double defaultResonance = 0.2;
 	private static double maxFrequency = 20000;
 
-	private final Chromosome<PackedCollection<?>> source;
+	private final Chromosome<PackedCollection> source;
 	private final int sampleRate;
 
-	public FixedFilterChromosome(Chromosome<PackedCollection<?>> source, int sampleRate) {
+	public FixedFilterChromosome(Chromosome<PackedCollection> source, int sampleRate) {
 		this.source = source;
 		this.sampleRate = sampleRate;
 	}
@@ -45,11 +45,11 @@ public class FixedFilterChromosome implements Chromosome<PackedCollection<?>>, C
 	}
 
 	@Override
-	public Gene<PackedCollection<?>> valueAt(int pos) {
+	public Gene<PackedCollection> valueAt(int pos) {
 		return new FixedFilterGene(pos);
 	}
 
-	class FixedFilterGene implements Gene<PackedCollection<?>> {
+	class FixedFilterGene implements Gene<PackedCollection> {
 		private final int index;
 
 		public FixedFilterGene(int index) {
@@ -60,10 +60,10 @@ public class FixedFilterChromosome implements Chromosome<PackedCollection<?>>, C
 		public int length() { return 1; }
 
 		@Override
-		public Factor<PackedCollection<?>> valueAt(int pos) {
-			Producer<PackedCollection<?>> lowFrequency = multiply(c(maxFrequency), source.valueAt(index, 0).getResultant(c(1.0)));
-			Producer<PackedCollection<?>> highFrequency = multiply(c(maxFrequency), source.valueAt(index, 1).getResultant(c(1.0)));
-			Producer<PackedCollection<?>> resonance = (Producer) scalar(defaultResonance);
+		public Factor<PackedCollection> valueAt(int pos) {
+			Producer<PackedCollection> lowFrequency = multiply(c(maxFrequency), source.valueAt(index, 0).getResultant(c(1.0)));
+			Producer<PackedCollection> highFrequency = multiply(c(maxFrequency), source.valueAt(index, 1).getResultant(c(1.0)));
+			Producer<PackedCollection> resonance = (Producer) scalar(defaultResonance);
 			return new AudioPassFilter(sampleRate, lowFrequency, resonance, true)
 					.andThen(new AudioPassFilter(sampleRate, highFrequency, resonance, false));
 		}

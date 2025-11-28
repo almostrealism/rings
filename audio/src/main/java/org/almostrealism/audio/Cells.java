@@ -22,7 +22,7 @@ import org.almostrealism.heredity.TemporalCellular;
 
 import java.util.function.Supplier;
 
-public interface Cells extends TemporalCellular, CellFeatures, Iterable<Cell<PackedCollection<?>>> {
+public interface Cells extends TemporalCellular, CellFeatures, Iterable<Cell<PackedCollection>> {
 	default Supplier<Runnable> min(double minutes) { return min(this, minutes); }
 
 	default Supplier<Runnable> sec(double seconds) { return sec(this, seconds); }

@@ -36,6 +36,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import io.almostrealism.uml.Nameable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.physics.Absorber;
@@ -380,10 +381,11 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 	public void updateExitanceBuffer(double u, double v, Volume<?> source, AveragedVectorMap2D target, boolean front) {
 		ImageCanvas c = (ImageCanvas) this.exitBufPanels.get(source);
 		if (c == null) return;
-		
-		double d = source.getNormalAt(vector(source.getSpatialCoords(new double[] {u, v})))
-							.get().evaluate().dotProduct(new Vector(target.getVector(u, v, front)));
-		
+
+		Vector normal = (Vector) source.getNormalAt((Producer) vector(source.getSpatialCoords(new double[] {u, v})))
+							.get().evaluate();
+		double d = normal.dotProduct(new Vector(target.getVector(u, v, front)));
+
 		c.setImageData((int) (u * AbsorberSetNode.bufferDisplayDim),
 						(int) (v * AbsorberSetNode.bufferDisplayDim),
 						new RGB(d, d, d));
@@ -394,10 +396,11 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 	public void updateIncidenceBuffer(double u, double v, Volume<?> source, AveragedVectorMap2D target, boolean front) {
 		ImageCanvas c = (ImageCanvas) this.incBufPanels.get(source);
 		if (c == null) return;
-		
-		double d = source.getNormalAt(vector(source.getSpatialCoords(new double[] {u, v})))
-							.get().evaluate().dotProduct(new Vector(target.getVector(u, v, front)));
-		
+
+		Vector normal = (Vector) source.getNormalAt((Producer) vector(source.getSpatialCoords(new double[] {u, v})))
+							.get().evaluate();
+		double d = normal.dotProduct(new Vector(target.getVector(u, v, front)));
+
 		c.setImageData((int) (u * AbsorberSetNode.bufferDisplayDim),
 						(int) (v * AbsorberSetNode.bufferDisplayDim),
 						new RGB(d, d, d));

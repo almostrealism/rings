@@ -64,11 +64,11 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 
 	@Test
 	public void aggregateKernelCompare() throws IOException {
-		AcceleratedComputationEvaluable<RGB> p = (AcceleratedComputationEvaluable<RGB>) getScene().getProducer();
+		AcceleratedComputationEvaluable<PackedCollection> p = (AcceleratedComputationEvaluable<PackedCollection>) getScene().getProducer();
 
-		PackedCollection<Pair<?>> input = getInput();
-		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
-		PackedCollection<RGB> output = RGB.bank(input.getCount());
+		PackedCollection input = getInput();
+		PackedCollection dim = bank(width * height, pair(width, height).get());
+		PackedCollection output = RGB.bank(input.getCount());
 
 		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
 		p.into(output).evaluate(input, dim);
@@ -88,44 +88,46 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 
 		System.out.println("LightingEngineAggregatorTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {
-			RGB value = p.evaluate(new Object[] { input.get(i), dim.get(i) });
-			Assert.assertEquals(value.getRed(), output.get(i).getRed(), Math.pow(10, -10));
-			Assert.assertEquals(value.getGreen(), output.get(i).getGreen(), Math.pow(10, -10));
-			Assert.assertEquals(value.getBlue(), output.get(i).getBlue(), Math.pow(10, -10));
+			RGB value = new RGB(p.evaluate(new Object[] { input.get(i), dim.get(i) }), 0);
+			RGB outputRGB = new RGB(output.get(i), 0);
+			Assert.assertEquals(value.getRed(), outputRGB.getRed(), Math.pow(10, -10));
+			Assert.assertEquals(value.getGreen(), outputRGB.getGreen(), Math.pow(10, -10));
+			Assert.assertEquals(value.getBlue(), outputRGB.getBlue(), Math.pow(10, -10));
 		}
 	}
 
 	@Test
 	public void aggregateAcceleratedCompare() throws IOException {
 		RayIntersectionEngine.enableAcceleratedAggregator = false;
-		Producer<RGB> agg = getScene().getProducer();
+		Producer<PackedCollection> agg = getScene().getProducer();
 
 		RayIntersectionEngine.enableAcceleratedAggregator = true;
-		AcceleratedComputationEvaluable<RGB> p = (AcceleratedComputationEvaluable<RGB>) getScene().getProducer();
+		AcceleratedComputationEvaluable<PackedCollection> p = (AcceleratedComputationEvaluable<PackedCollection>) getScene().getProducer();
 
-		PackedCollection<Pair<?>> input = getInput();
-		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
-		PackedCollection<RGB> output = RGB.bank(input.getCount());
+		PackedCollection input = getInput();
+		PackedCollection dim = bank(width * height, pair(width, height).get());
+		PackedCollection output = RGB.bank(input.getCount());
 
 		System.out.println("LightingEngineAggregatorTest: Invoking kernel...");
 		p.into(output).evaluate(input, dim);
 
 		System.out.println("LightingEngineAggregatorTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {
-			RGB value = agg.get().evaluate(new Object[] { input.get(i), dim.get(i) });
-			if (value == null) value = black().get().evaluate();
-			Assert.assertEquals(value.getRed(), output.get(i).getRed(), Math.pow(10, -10));
-			Assert.assertEquals(value.getGreen(), output.get(i).getGreen(), Math.pow(10, -10));
-			Assert.assertEquals(value.getBlue(), output.get(i).getBlue(), Math.pow(10, -10));
+			PackedCollection result = agg.get().evaluate(new Object[] { input.get(i), dim.get(i) });
+			RGB value = result == null ? new RGB(black().get().evaluate(), 0) : new RGB(result, 0);
+			RGB outputRGB = new RGB(output.get(i), 0);
+			Assert.assertEquals(value.getRed(), outputRGB.getRed(), Math.pow(10, -10));
+			Assert.assertEquals(value.getGreen(), outputRGB.getGreen(), Math.pow(10, -10));
+			Assert.assertEquals(value.getBlue(), outputRGB.getBlue(), Math.pow(10, -10));
 		}
 	}
 
 	@Test
 	public void compareDependents() throws IOException {
-		PackedCollection<Pair<?>> input = getInput();
-		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
+		PackedCollection input = getInput();
+		PackedCollection dim = bank(width * height, pair(width, height).get());
 
-		AcceleratedComputationOperation<RGB> a = (AcceleratedComputationOperation<RGB>) getScene().getProducer();
+		AcceleratedComputationOperation<PackedCollection> a = (AcceleratedComputationOperation<PackedCollection>) getScene().getProducer();
 
 		i: for (int i = 1; i < a.getArguments().size(); i++) {
 			if (a.getArguments().get(i) == null) continue i;

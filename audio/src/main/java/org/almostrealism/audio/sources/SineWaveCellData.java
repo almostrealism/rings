@@ -21,12 +21,12 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.BaseAudioData;
 
 public interface SineWaveCellData extends BaseAudioData {
-	default PackedCollection<?> notePosition() { return get(3); }
-	default PackedCollection<?> noteLength() { return get(4); }
-	default PackedCollection<?> phase() { return get(5); }
-	default PackedCollection<?> depth() { return get(6); }
+	default PackedCollection notePosition() { return get(3); }
+	default PackedCollection noteLength() { return get(4); }
+	default PackedCollection phase() { return get(5); }
+	default PackedCollection depth() { return get(6); }
 
-	default Producer<PackedCollection<?>> getNotePosition() {
+	default Producer<PackedCollection> getNotePosition() {
 		return cp(notePosition().range(shape(1)));
 	}
 
@@ -34,7 +34,7 @@ public interface SineWaveCellData extends BaseAudioData {
 		notePosition().setMem(0, notePosition);
 	}
 
-	default Producer<PackedCollection<?>> getNoteLength() {
+	default Producer<PackedCollection> getNoteLength() {
 		return cp(noteLength().range(shape(1)));
 	}
 
@@ -42,7 +42,7 @@ public interface SineWaveCellData extends BaseAudioData {
 		noteLength().setMem(0, noteLength);
 	}
 
-	default Producer<PackedCollection<?>> getPhase() {
+	default Producer<PackedCollection> getPhase() {
 		return cp(phase().range(shape(1)));
 	}
 
@@ -50,7 +50,7 @@ public interface SineWaveCellData extends BaseAudioData {
 		phase().setMem(0, phase);
 	}
 
-	default Producer<PackedCollection<?>> getDepth() {
+	default Producer<PackedCollection> getDepth() {
 		return p(depth().range(shape(1)));
 	}
 

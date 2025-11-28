@@ -47,7 +47,7 @@ public class LineUtilities {
 		return getLine(lastFormat);
 	}
 
-	public static int frameCount(PackedCollection<?> sample) {
+	public static int frameCount(PackedCollection sample) {
 		if (sample.getShape().getDimensions() == 1) {
 			return sample.getShape().length(0);
 		} else {
@@ -170,7 +170,7 @@ public class LineUtilities {
 	 * @param format The target audio format
 	 * @return Byte array containing the encoded audio frames
 	 */
-	public static byte[] toFrame(PackedCollection<?> samples, AudioFormat format) {
+	public static byte[] toFrame(PackedCollection samples, AudioFormat format) {
 		// Determine the shape of the input
 		int inputChannels;
 		int frameCount;

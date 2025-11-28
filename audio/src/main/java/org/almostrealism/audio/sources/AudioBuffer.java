@@ -20,12 +20,12 @@ import org.almostrealism.collect.PackedCollection;
 
 public class AudioBuffer {
 	private BufferDetails details;
-	private PackedCollection<?> input;
-	private PackedCollection<?> output;
+	private PackedCollection input;
+	private PackedCollection output;
 
 	public AudioBuffer(BufferDetails details,
-					   PackedCollection<?> input,
-					   PackedCollection<?> output) {
+					   PackedCollection input,
+					   PackedCollection output) {
 		this.details = details;
 		this.input = input;
 		this.output = output;
@@ -37,13 +37,13 @@ public class AudioBuffer {
 	}
 
 	public BufferDetails getDetails() { return details; }
-	public PackedCollection<?> getInputBuffer() { return input; }
-	public PackedCollection<?> getOutputBuffer() { return output; }
+	public PackedCollection getInputBuffer() { return input; }
+	public PackedCollection getOutputBuffer() { return output; }
 
 	public static AudioBuffer create(int sampleRate, int frames) {
 		return new AudioBuffer(
 				new BufferDetails(sampleRate, frames),
-				new PackedCollection<>(frames),
-				new PackedCollection<>(frames));
+				new PackedCollection(frames),
+				new PackedCollection(frames));
 	}
 }

@@ -25,14 +25,14 @@ import java.util.List;
 import java.util.function.Function;
 
 public class DynamicAudioCell extends AudioCellChoiceAdapter {
-	public DynamicAudioCell(CollectionProducer<PackedCollection<?>> decision,
+	public DynamicAudioCell(CollectionProducer<PackedCollection> decision,
 							List<Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>> choices) {
 		this(PolymorphicAudioData.bank(choices.size()), decision, choices);
 	}
 
-	public DynamicAudioCell(PackedCollection<PolymorphicAudioData> data, CollectionProducer<PackedCollection<?>> decision,
+	public DynamicAudioCell(PackedCollection data, CollectionProducer<PackedCollection> decision,
 							List<Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>> choices) {
-		super(decision, data::get, choices, true);
+		super(decision, i -> new PolymorphicAudioData(data, i * PolymorphicAudioData.SIZE * 2), choices, true);
 	}
 }
 

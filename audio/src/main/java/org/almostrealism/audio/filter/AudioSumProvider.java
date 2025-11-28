@@ -33,8 +33,8 @@ public class AudioSumProvider implements CellFeatures {
 	public static TimingMetric timing = CellFeatures.console.timing("audioSumProvider");
 
 	private final boolean parallel;
-	private final Evaluable<PackedCollection<?>> sum;
-	private final Evaluable<PackedCollection<?>> scaleVolume;
+	private final Evaluable<PackedCollection> sum;
+	private final Evaluable<PackedCollection> scaleVolume;
 
 	public AudioSumProvider() {
 		this(KernelPreferences.isPreferKernels());
@@ -61,7 +61,7 @@ public class AudioSumProvider implements CellFeatures {
 		}
 	}
 
-	public PackedCollection<?> sum(PackedCollection<?> dest, PackedCollection<?> in) {
+	public PackedCollection sum(PackedCollection dest, PackedCollection in) {
 		long start = System.nanoTime();
 
 		try {
@@ -77,7 +77,7 @@ public class AudioSumProvider implements CellFeatures {
 		}
 	}
 
-	public PackedCollection<?> adjustVolume(PackedCollection<?> dest, PackedCollection<?> volume) {
+	public PackedCollection adjustVolume(PackedCollection dest, PackedCollection volume) {
 		long start = System.nanoTime();
 
 		try {

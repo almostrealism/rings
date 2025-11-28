@@ -20,8 +20,8 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 
 public interface SourceAggregator {
-	Producer<PackedCollection<?>> aggregate(BufferDetails buffer,
-											Producer<PackedCollection<?>> params,
-											Producer<PackedCollection<?>> frequency,
-											Producer<PackedCollection<?>>... sources);
+	Producer<PackedCollection> aggregate(BufferDetails buffer,
+											Producer<PackedCollection> params,
+											Producer<PackedCollection> frequency,
+											Producer<PackedCollection>... sources);
 }

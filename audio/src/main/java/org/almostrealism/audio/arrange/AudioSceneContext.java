@@ -38,9 +38,9 @@ public class AudioSceneContext {
 	private DoubleFunction<Scale<?>> scaleForPosition;
 	private double activityBias;
 
-	private Function<PackedCollection<?>, Factor<PackedCollection<?>>> automationLevel;
+	private Function<PackedCollection, Factor<PackedCollection>> automationLevel;
 
-	private PackedCollection<?> destination;
+	private PackedCollection destination;
 
 	private List<ChannelSection> sections;
 
@@ -111,19 +111,19 @@ public class AudioSceneContext {
 	public double getActivityBias() { return activityBias; }
 	public void setActivityBias(double activityBias) { this.activityBias = activityBias; }
 
-	public Function<PackedCollection<?>, Factor<PackedCollection<?>>> getAutomationLevel() {
+	public Function<PackedCollection, Factor<PackedCollection>> getAutomationLevel() {
 		return automationLevel;
 	}
 
-	public void setAutomationLevel(Function<PackedCollection<?>, Factor<PackedCollection<?>>> automationLevel) {
+	public void setAutomationLevel(Function<PackedCollection, Factor<PackedCollection>> automationLevel) {
 		this.automationLevel = automationLevel;
 	}
 
-	public PackedCollection<?> getDestination() {
+	public PackedCollection getDestination() {
 		return destination;
 	}
 
-	public void setDestination(PackedCollection<?> destination) {
+	public void setDestination(PackedCollection destination) {
 		this.destination = destination;
 	}
 

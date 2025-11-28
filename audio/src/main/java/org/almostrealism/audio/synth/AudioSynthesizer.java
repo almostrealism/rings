@@ -77,7 +77,7 @@ public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeat
 		}
 	}
 
-	public Cell<PackedCollection<?>> getOutput() {
+	public Cell<PackedCollection> getOutput() {
 		return output;
 	}
 
@@ -107,9 +107,9 @@ public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeat
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> generate(BufferDetails buffer,
-												  Producer<PackedCollection<?>> params,
-												  Factor<PackedCollection<?>> frequency) {
+	public Producer<PackedCollection> generate(BufferDetails buffer,
+												  Producer<PackedCollection> params,
+												  Factor<PackedCollection> frequency) {
 		double amp = 0.75;
 		return sampling(buffer.getSampleRate(), () -> {
 			double scale = amp / tones.count();
@@ -117,14 +117,14 @@ public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeat
 			List<Producer<?>> series = new ArrayList<>();
 
 			for (Frequency f : tones) {
-				CollectionProducer<PackedCollection<?>> t =
+				CollectionProducer<PackedCollection> t =
 						integers(0, buffer.getFrames()).divide(buffer.getSampleRate());
-				Producer<PackedCollection<?>> ft = frequency.getResultant(t);
-				CollectionProducer<PackedCollection<?>> signal =
+				Producer<PackedCollection> ft = frequency.getResultant(t);
+				CollectionProducer<PackedCollection> signal =
 						sin(t.multiply(2 * Math.PI).multiply(f.asHertz()).multiply(ft));
 
 				if (model != null) {
-					Producer<PackedCollection<?>> levels = model.getLevels(f.asHertz(), t);
+					Producer<PackedCollection> levels = model.getLevels(f.asHertz(), t);
 					signal = signal.multiply(levels);
 				}
 

@@ -26,6 +26,7 @@ import org.almostrealism.color.SilhouetteShader;
 import com.almostrealism.raytracer.Thing;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.color.Shader;
@@ -119,7 +120,7 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 
 		if (enableRandomThing) {
 			Texture randomTex = new Texture() {
-				Producer<RGB> p = GeneratedColorProducer.fromProducer(this, () -> args -> {
+				Producer<PackedCollection> p = GeneratedColorProducer.fromProducer(this, () -> args -> {
 					Vector t = args.length > 0 ? (Vector) args[0] : new Vector(1.0, 1.0, 1.0);
 					Vector point = new Vector(t.getX(), t.getY(), 0.0);
 					double d = (point.length() * 4.0) % 3;
@@ -133,10 +134,10 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 					}
 				});
 
-				public Evaluable<RGB> getColorAt(Object args[]) { return p.get(); }
+				public Evaluable<PackedCollection> getColorAt(Object args[]) { return p.get(); }
 
 				@Override
-				public RGB operate(Vector in) { return p.get().evaluate(in); }
+				public RGB operate(Vector in) { return (RGB) p.get().evaluate(in); }
 			};
 
 			s.addTexture(randomTex);

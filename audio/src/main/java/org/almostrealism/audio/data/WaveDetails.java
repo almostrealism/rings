@@ -29,14 +29,14 @@ import java.util.Map;
 public class WaveDetails implements CodeFeatures {
 	public static boolean enableNormalizeSimilarity = false;
 
-	private static Map<Integer, Evaluable<PackedCollection<?>>> differenceCalc = new HashMap<>();
+	private static Map<Integer, Evaluable<PackedCollection>> differenceCalc = new HashMap<>();
 
 	private String identifier;
 
 	private int sampleRate;
 	private int channelCount;
 	private int frameCount;
-	private PackedCollection<?> data;
+	private PackedCollection data;
 	private boolean silent;
 	private boolean persistent;
 
@@ -44,13 +44,13 @@ public class WaveDetails implements CodeFeatures {
 	private int freqChannelCount;
 	private int freqBinCount;
 	private int freqFrameCount;
-	private PackedCollection<?> freqData;
+	private PackedCollection freqData;
 
 	private double featureSampleRate;
 	private int featureChannelCount;
 	private int featureBinCount;
 	private int featureFrameCount;
-	private PackedCollection<?> featureData;
+	private PackedCollection featureData;
 
 	private Map<String, Double> similarities;
 
@@ -96,11 +96,11 @@ public class WaveDetails implements CodeFeatures {
 		this.frameCount = frameCount;
 	}
 
-	public PackedCollection<?> getData() {
+	public PackedCollection getData() {
 		return data;
 	}
 
-	public void setData(PackedCollection<?> data) {
+	public void setData(PackedCollection data) {
 		this.data = data;
 	}
 
@@ -144,15 +144,15 @@ public class WaveDetails implements CodeFeatures {
 		this.freqFrameCount = freqFrameCount;
 	}
 
-	public PackedCollection<?> getFreqData() {
+	public PackedCollection getFreqData() {
 		return freqData;
 	}
 
-	public PackedCollection<?> getFreqData(int channel) {
+	public PackedCollection getFreqData(int channel) {
 		return getFreqData().get(channel, shape(getFreqFrameCount(), getFreqBinCount(), 1));
 	}
 
-	public void setFreqData(PackedCollection<?> freqData) {
+	public void setFreqData(PackedCollection freqData) {
 		this.freqData = freqData;
 	}
 
@@ -188,15 +188,15 @@ public class WaveDetails implements CodeFeatures {
 		this.featureFrameCount = featureFrameCount;
 	}
 
-	public PackedCollection<?> getFeatureData() {
+	public PackedCollection getFeatureData() {
 		return featureData;
 	}
 
-	public void setFeatureData(PackedCollection<?> featureData) {
+	public void setFeatureData(PackedCollection featureData) {
 		this.featureData = featureData;
 	}
 
-	public PackedCollection<?> getFeatureData(boolean transpose) {
+	public PackedCollection getFeatureData(boolean transpose) {
 		if (transpose) {
 			return featureData.transpose();
 		} else {
@@ -218,15 +218,15 @@ public class WaveDetails implements CodeFeatures {
 		this.similarities = similarities;
 	}
 
-	private static int frameCount(PackedCollection<?> data) {
+	private static int frameCount(PackedCollection data) {
 		return data.getShape().length(0);
 	}
 
-	private static int binCount(PackedCollection<?> data) {
+	private static int binCount(PackedCollection data) {
 		return data.getShape().length(1);
 	}
 
-	private static Evaluable<PackedCollection<?>> differenceMagnitude(int bins) {
+	private static Evaluable<PackedCollection> differenceMagnitude(int bins) {
 		return differenceCalc.computeIfAbsent(bins, key -> Ops.op(o ->
 						o.cv(new TraversalPolicy(bins, 1), 0)
 				.subtract(o.cv(new TraversalPolicy(bins, 1), 1))
@@ -234,7 +234,7 @@ public class WaveDetails implements CodeFeatures {
 				.magnitude()).get());
 	}
 
-	public static double differenceSimilarity(PackedCollection<?> a, PackedCollection<?> b) {
+	public static double differenceSimilarity(PackedCollection a, PackedCollection b) {
 		if (a.getShape().getDimensions() != 2 && a.getShape().getDimensions() != 3) {
 			throw new IllegalArgumentException();
 		} else if (a.getShape().getDimensions() != b.getShape().getDimensions()) {
@@ -257,8 +257,8 @@ public class WaveDetails implements CodeFeatures {
 		double d = 0.0;
 
 		if (n > 0) {
-			PackedCollection<?> featuresA = a.range(overlap).traverse(1);
-			PackedCollection<?> featuresB = b.range(overlap).traverse(1);
+			PackedCollection featuresA = a.range(overlap).traverse(1);
+			PackedCollection featuresB = b.range(overlap).traverse(1);
 			PackedCollection diff = differenceMagnitude(bins)
 					.evaluate(featuresA, featuresB);
 			d += diff.doubleStream().sum();

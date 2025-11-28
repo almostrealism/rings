@@ -32,8 +32,8 @@ public class AudioLineInputRecord implements AudioLineOperation, CellFeatures {
 	}
 
 	@Override
-	public TemporalRunner process(Producer<PackedCollection<?>> input,
-								  Producer<PackedCollection<?>> output,
+	public TemporalRunner process(Producer<PackedCollection> input,
+								  Producer<PackedCollection> output,
 								  int frames) {
 		TemporalRunner runner = operation.process(input, output, frames);
 

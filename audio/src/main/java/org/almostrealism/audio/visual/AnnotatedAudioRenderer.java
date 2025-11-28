@@ -34,7 +34,7 @@ import java.util.stream.IntStream;
 @Deprecated
 public class AnnotatedAudioRenderer implements CellFeatures {
 	private double sampleRate;
-	private PackedCollection<?> wav;
+	private PackedCollection wav;
 	private AcceleratedTimeSeries annotation;
 	private IntFunction<RGB[]> typeColors;
 	private double annotationFrequency;
@@ -49,7 +49,7 @@ public class AnnotatedAudioRenderer implements CellFeatures {
 		loadWav(wav);
 	}
 
-	public AnnotatedAudioRenderer(double sampleRate, PackedCollection<?> wav, AcceleratedTimeSeries annotation, IntFunction<RGB[]> typeColors, double annotationFrequency, double ampGain) {
+	public AnnotatedAudioRenderer(double sampleRate, PackedCollection wav, AcceleratedTimeSeries annotation, IntFunction<RGB[]> typeColors, double annotationFrequency, double ampGain) {
 		this.sampleRate = sampleRate;
 		this.wav = wav;
 		this.annotation = annotation;
@@ -80,7 +80,7 @@ public class AnnotatedAudioRenderer implements CellFeatures {
 			double data[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
 			in.readFrames(data, (int) in.getFramesRemaining());
 
-			wav = new PackedCollection<>(data[0].length).traverse(1);
+			wav = new PackedCollection(data[0].length).traverse(1);
 			IntStream.range(0, wav.getCount()).forEach(i -> wav.setMem(i, data[0][i]));
 		}
 	}

@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 
 // TODO  Reimplement as a function of org.almostrealism.graph.TimeCell
 public class SineWaveCell extends CollectionTemporalCellAdapter implements SamplingFeatures {
-	private Factor<PackedCollection<?>> env;
+	private Factor<PackedCollection> env;
 	private final SineWaveCellData data;
 
 	private double noteLength;
@@ -46,13 +46,13 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 		this.data = data;
 	}
 
-	public void setEnvelope(Factor<PackedCollection<?>> e) { this.env = e; }
+	public void setEnvelope(Factor<PackedCollection> e) { this.env = e; }
 
 	public void strike() { data.setNotePosition(0); }
 	
 	public void setFreq(double hertz) { this.waveLength = hertz / (double) OutputLine.sampleRate; }
 
-	public Supplier<Runnable> setFreq(Producer<PackedCollection<?>> hertz) {
+	public Supplier<Runnable> setFreq(Producer<PackedCollection> hertz) {
 		return a(data.getWaveLength(), divide(hertz, c(OutputLine.sampleRate)));
 	}
 
@@ -60,7 +60,7 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 	public void setNoteLength(int msec) { this.noteLength = toFramesMilli(msec); }
 
 	// TODO  Rename to milli, default should be seconds
-	public Supplier<Runnable> setNoteLength(Producer<PackedCollection<?>> noteLength) {
+	public Supplier<Runnable> setNoteLength(Producer<PackedCollection> noteLength) {
 		return a(data.getNoteLength(), toFramesMilli(noteLength));
 	}
 	
@@ -68,7 +68,7 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 	
 	public void setAmplitude(double amp) { amplitude = amp; }
 
-	public Supplier<Runnable> setAmplitude(Producer<PackedCollection<?>> amp) {
+	public Supplier<Runnable> setAmplitude(Producer<PackedCollection> amp) {
 		return a(data.getAmplitude(), amp);
 	}
 
@@ -92,10 +92,10 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 	}
 
 	@Override
-	public Supplier<Runnable> push(Producer<PackedCollection<?>> protein) {
-		PackedCollection<?> value = new PackedCollection<>(1);
+	public Supplier<Runnable> push(Producer<PackedCollection> protein) {
+		PackedCollection value = new PackedCollection(1);
 		OperationList push = new OperationList("SineWaveCell Push");
-		Producer<PackedCollection<?>> envelope = env == null ? (Producer) scalar(1.0) :
+		Producer<PackedCollection> envelope = env == null ? (Producer) scalar(1.0) :
 					env.getResultant(cp(data.notePosition()));
 		push.add(new SineWavePush(data, envelope, value));
 		push.add(super.push(p(value)));
@@ -105,7 +105,7 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 	@Override
 	public Supplier<Runnable> tick() {
 		OperationList tick = new OperationList("SineWaveCell Tick");
-		Producer<PackedCollection<?>> envelope = env == null ? (Producer) scalar(1.0) :
+		Producer<PackedCollection> envelope = env == null ? (Producer) scalar(1.0) :
 				env.getResultant(cp(data.notePosition()));
 		tick.add(new SineWaveTick(data, envelope));
 		tick.add(super.tick());

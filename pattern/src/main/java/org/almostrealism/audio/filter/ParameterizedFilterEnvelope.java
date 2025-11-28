@@ -82,17 +82,17 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 		}
 
 		@Override
-		public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> audio,
-												   Producer<PackedCollection<?>> duration,
-												   Producer<PackedCollection<?>> automationLevel) {
+		public Producer<PackedCollection> apply(Producer<PackedCollection> audio,
+												   Producer<PackedCollection> duration,
+												   Producer<PackedCollection> automationLevel) {
 			return () -> args -> {
-				PackedCollection<?> audioData = audio.get().evaluate();
+				PackedCollection audioData = audio.get().evaluate();
 
 				TraversalPolicy shape = audioData.getShape();
-				PackedCollection<?> result = PackedCollection.factory()
+				PackedCollection result = PackedCollection.factory()
 						.apply(shape.getTotalSize()).reshape(shape);
-				PackedCollection<?> dr = duration.get().evaluate();
-				PackedCollection<?> al = automationLevel.get().evaluate();
+				PackedCollection dr = duration.get().evaluate();
+				PackedCollection al = automationLevel.get().evaluate();
 
 				double adj = adjustmentBase + adjustmentAutomation * al.toDouble(0);
 //				log("Processing filter envelope with duration (" + dr.toDouble(0) +

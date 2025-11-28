@@ -47,23 +47,23 @@ public class AudioPassFilterTest implements CellFeatures, TestFeatures {
 		runFilter("low-pass", f, filter);
 	}
 
-	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection<?>> filter) throws IOException {
+	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection> filter) throws IOException {
 		runFilter(name, f, filter, false);
 	}
 
-	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection<?>> filter, boolean optimize) throws IOException {
+	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection> filter, boolean optimize) throws IOException {
 		runFilter(name, f, filter, optimize, 0);
 	}
 
-	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection<?>> filter, boolean optimize, int padFrames) throws IOException {
+	public void runFilter(String name, WavFile f, TemporalFactor<PackedCollection> filter, boolean optimize, int padFrames) throws IOException {
 		double data[][] = new double[f.getNumChannels()][(int) f.getFramesRemaining()];
 		f.readFrames(data, (int) f.getFramesRemaining());
 
-		PackedCollection<?> values = WavFile.channel(data, 0, padFrames);
-		PackedCollection<?> out = new PackedCollection<>(values.getMemLength());
-		PackedCollection<?> current = new PackedCollection<>(1);
+		PackedCollection values = WavFile.channel(data, 0, padFrames);
+		PackedCollection out = new PackedCollection(values.getMemLength());
+		PackedCollection current = new PackedCollection(1);
 
-		Evaluable<PackedCollection<?>> ev = filter.getResultant(p(current)).get();
+		Evaluable<PackedCollection> ev = filter.getResultant(p(current)).get();
 		Runnable tick = optimize ? Process.optimized(filter.tick()).get() : filter.tick().get();
 
 		Runnable r = () -> {

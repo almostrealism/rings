@@ -43,7 +43,7 @@ public class TFScopeTest implements CodeFeatures {
 		DefaultScopeInputManager manager = new DefaultScopeInputManager(lang,
 				(p, input) -> new TensorFlowArgument<>(p.getArgumentName(counter++), (Supplier) input));
 
-		PackedCollection<?> s = new PackedCollection<>(1);
+		PackedCollection s = new PackedCollection(1);
 		TensorFlowArgument destination = (TensorFlowArgument) manager.argumentForInput(nameProvider).apply(p(s));
 		TensorFlowConstant v = new TensorFlowConstant(1.0);
 

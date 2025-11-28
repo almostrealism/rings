@@ -26,6 +26,7 @@ import java.util.Set;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.PhotonField;
 import org.almostrealism.physics.PhysicalConstants;
@@ -194,14 +195,14 @@ public class DefaultPhotonField implements PhotonField {
 		}
 		
 		double next;
-		
+
 		w: while ((next = this.absorber.getNextEmit()) < s) {
 			if (r < this.verbose)
 				System.out.println("Next Emit: " + next);
-			
+
 			double d = this.absorber.getEmitEnergy();
-			Evaluable<Vector> x = this.absorber.getEmitPosition().get();
-			Vector y = this.absorber.emit().get().evaluate();
+			Evaluable<PackedCollection> x = this.absorber.getEmitPosition().get();
+			Vector y = new Vector(this.absorber.emit().get().evaluate(), 0);
 			
 			if (x == null) {
 				System.out.println("DefaultPhotonField: " + this.absorber +

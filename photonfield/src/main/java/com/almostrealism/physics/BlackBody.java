@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+
 package com.almostrealism.physics;
+import org.almostrealism.collect.PackedCollection;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -122,11 +124,11 @@ public class BlackBody implements Absorber, PhysicalConstants {
 		// Add black body and light bulb to absorber set
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(100000000);
-		a.addAbsorber(v, o().vector(500000.0, 0.0, 0.0)); a.setColorBufferDimensions(1, 1, 1.0);
-		a.addAbsorber(l, o().vector(0.0, 500000.0, 0.0)); a.setColorBufferDimensions(1, 1, 1.0);
+		a.addAbsorber(v, (Producer) o().vector(500000.0, 0.0, 0.0)); a.setColorBufferDimensions(1, 1, 1.0);
+		a.addAbsorber(l, (Producer) o().vector(0.0, 500000.0, 0.0)); a.setColorBufferDimensions(1, 1, 1.0);
 
 		// Add the absorption plane
-		a.addAbsorber(camera, o().vector(0.0, 0.0, 1000000));
+		a.addAbsorber(camera, (Producer) o().vector(0.0, 0.0, 1000000));
 //		a.setColorBufferDimensions((int) (camera.getWidth() / camera.getPixelSize()),
 //				(int) (camera.getHeight() / camera.getPixelSize()),
 //				1.0);
@@ -141,7 +143,7 @@ public class BlackBody implements Absorber, PhysicalConstants {
 		// Add a SpectralLineDiagram
 		SpectralLineDiagram d = new SpectralLineDiagram(1200, 40);
 		v = new VolumeAbsorber(new Sphere(1000.0), d);
-		a.addAbsorber(v, o().vector(0.0, 0.0, -1000000.0));
+		a.addAbsorber(v, (Producer) o().vector(0.0, 0.0, -1000000.0));
 
 		// Create photon field and set absorber to the absorber set
 		// containing the black body and the light bulb
@@ -186,13 +188,13 @@ public class BlackBody implements Absorber, PhysicalConstants {
 	}
 
 	@Override
-	public Producer<Vector> emit() { return null; }
+	public Producer<PackedCollection> emit() { return null; }
 
 	@Override
 	public double getEmitEnergy() { return 0; }
 
 	@Override
-	public Producer<Vector> getEmitPosition() { return null; }
+	public Producer<PackedCollection> getEmitPosition() { return null; }
 
 	@Override
 	public double getNextEmit() { return Integer.MAX_VALUE; }

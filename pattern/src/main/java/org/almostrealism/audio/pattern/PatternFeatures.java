@@ -19,7 +19,7 @@ public interface PatternFeatures extends CodeFeatures {
 
 	default void render(AudioSceneContext sceneContext, NoteAudioContext audioContext,
 						List<PatternElement> elements, boolean melodic, double offset) {
-		PackedCollection<?> destination = sceneContext.getDestination();
+		PackedCollection destination = sceneContext.getDestination();
 		if (destination == null) {
 			throw new IllegalArgumentException();
 		}
@@ -30,7 +30,7 @@ public interface PatternFeatures extends CodeFeatures {
 				.forEach(note -> {
 					if (note.getOffset() >= destination.getShape().length(0)) return;
 
-					Function<PackedCollection<?>, PackedCollection<?>> process = audio -> {
+					Function<PackedCollection, PackedCollection> process = audio -> {
 						int frames = Math.min(audio.getShape().getCount(),
 								destination.getShape().length(0) - note.getOffset());
 						sizes.addEntry(frames);

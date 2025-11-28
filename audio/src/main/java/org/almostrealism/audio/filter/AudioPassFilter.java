@@ -25,21 +25,21 @@ import org.almostrealism.heredity.TemporalFactor;
 
 import java.util.function.Supplier;
 
-public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lifecycle {
+public class AudioPassFilter implements TemporalFactor<PackedCollection>, Lifecycle {
 	public static final double MIN_FREQUENCY = 10.0;
 
 	private AudioFilterData data;
-	private Producer<PackedCollection<?>> frequency;
-	private Producer<PackedCollection<?>> resonance;
-	private Producer<PackedCollection<?>> input;
+	private Producer<PackedCollection> frequency;
+	private Producer<PackedCollection> resonance;
+	private Producer<PackedCollection> input;
 
 	private boolean high;
 
-	public AudioPassFilter(int sampleRate, Producer<PackedCollection<?>> frequency, Producer<PackedCollection<?>> resonance, boolean high) {
+	public AudioPassFilter(int sampleRate, Producer<PackedCollection> frequency, Producer<PackedCollection> resonance, boolean high) {
 		this(sampleRate, new PolymorphicAudioData(), frequency, resonance, high);
 	}
 
-	public AudioPassFilter(int sampleRate, AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<PackedCollection<?>> resonance, boolean high) {
+	public AudioPassFilter(int sampleRate, AudioFilterData data, Producer<PackedCollection> frequency, Producer<PackedCollection> resonance, boolean high) {
 		this.data = data;
 		this.frequency = bound(frequency, MIN_FREQUENCY, 20000);
 		this.resonance = resonance;
@@ -47,15 +47,15 @@ public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lif
 		setSampleRate(sampleRate);
 	}
 
-	public Producer<PackedCollection<?>> getFrequency() { return frequency; }
-	public void setFrequency(Producer<PackedCollection<?>> frequency) {
+	public Producer<PackedCollection> getFrequency() { return frequency; }
+	public void setFrequency(Producer<PackedCollection> frequency) {
 		this.frequency = frequency;
 	}
 
-	public Producer<PackedCollection<?>> getResonance() {
+	public Producer<PackedCollection> getResonance() {
 		return resonance;
 	}
-	public void setResonance(Producer<PackedCollection<?>> resonance) {
+	public void setResonance(Producer<PackedCollection> resonance) {
 		this.resonance = resonance;
 	}
 
@@ -71,7 +71,7 @@ public class AudioPassFilter implements TemporalFactor<PackedCollection<?>>, Lif
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getResultant(Producer<PackedCollection<?>> value) {
+	public Producer<PackedCollection> getResultant(Producer<PackedCollection> value) {
 		if (input != null && input != value) {
 			throw new UnsupportedOperationException("AudioPassFilter cannot be reused");
 		}

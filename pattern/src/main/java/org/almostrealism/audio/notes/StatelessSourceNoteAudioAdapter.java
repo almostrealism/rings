@@ -40,7 +40,7 @@ public abstract class StatelessSourceNoteAudioAdapter implements PatternNoteAudi
 	private StatelessSource source;
 
 	private BufferDetails buffer;
-	private Factor<PackedCollection<?>> params;
+	private Factor<PackedCollection> params;
 
 	/**
 	 * Constructs a {@link StatelessSourceNoteAudioAdapter} using the
@@ -80,7 +80,7 @@ public abstract class StatelessSourceNoteAudioAdapter implements PatternNoteAudi
 	 */
 	public StatelessSourceNoteAudioAdapter(StatelessSource source,
 										   BufferDetails buffer,
-										   Factor<PackedCollection<?>> params) {
+										   Factor<PackedCollection> params) {
 		this.source = source;
 		this.buffer = buffer;
 		this.params = params;
@@ -95,8 +95,8 @@ public abstract class StatelessSourceNoteAudioAdapter implements PatternNoteAudi
 	 *                         duration of the note).
 	 * @return A {@link Producer} that generates the frequency in hertz.
 	 */
-	public abstract Factor<PackedCollection<?>> getFrequency(KeyPosition<?> target,
-															 Factor<PackedCollection<?>> automationLevel);
+	public abstract Factor<PackedCollection> getFrequency(KeyPosition<?> target,
+															 Factor<PackedCollection> automationLevel);
 
 	@Override
 	public int getSampleRate(KeyPosition<?> target,
@@ -111,7 +111,7 @@ public abstract class StatelessSourceNoteAudioAdapter implements PatternNoteAudi
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target,
+	public Producer<PackedCollection> getAudio(KeyPosition<?> target,
 												  int channel, DoubleFunction<PatternNoteAudio> audioSelection) {
 		return source.generate(buffer,
 				params.getResultant(c(1.0)),
@@ -119,8 +119,8 @@ public abstract class StatelessSourceNoteAudioAdapter implements PatternNoteAudi
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel, double noteDuration,
-												  Factor<PackedCollection<?>> automationLevel,
+	public Producer<PackedCollection> getAudio(KeyPosition<?> target, int channel, double noteDuration,
+												  Factor<PackedCollection> automationLevel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		return source.generate(buffer,
 				params.getResultant(automationLevel.getResultant(c(0.0))),

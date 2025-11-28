@@ -43,30 +43,30 @@ public class ModularSourceAggregator implements SourceAggregator, CodeFeatures {
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> aggregate(BufferDetails buffer,
-												   Producer<PackedCollection<?>> params,
-												   Producer<PackedCollection<?>> frequency,
-												   Producer<PackedCollection<?>>... sources) {
+	public Producer<PackedCollection> aggregate(BufferDetails buffer,
+												   Producer<PackedCollection> params,
+												   Producer<PackedCollection> frequency,
+												   Producer<PackedCollection>... sources) {
 		Producer[] producers = new Producer[sources.length + 1];
 		producers[0] = frequency;
 		for (int i = 0; i < sources.length; i++) {
 			producers[i + 1] = sources[i];
 		}
 
-		Producer<PackedCollection<?>>[] src = new Producer[sources.length];
+		Producer<PackedCollection>[] src = new Producer[sources.length];
 		for (int i = 0; i < sources.length; i++) {
 			src[i] = producers[i + 1];
 		}
 
-		Producer<PackedCollection<?>>[] eq = extractInputs(InputType.FREQUENCY, src);
-		Producer<PackedCollection<?>>[] volume = extractInputs(InputType.VOLUME_ENVELOPE, src);
+		Producer<PackedCollection>[] eq = extractInputs(InputType.FREQUENCY, src);
+		Producer<PackedCollection>[] volume = extractInputs(InputType.VOLUME_ENVELOPE, src);
 		src = extractInputs(InputType.SOURCE, src);
 
-		Producer<PackedCollection<?>> input = sum.aggregate(buffer, null, producers[0], src);
-		Producer<PackedCollection<?>> eqInput = eq.length > 0 ? sum.aggregate(buffer, null, producers[0], eq) : null;
-		Producer<PackedCollection<?>> volumeInput = volume.length > 0 ? sum.aggregate(buffer, null, producers[0], volume) : null;
+		Producer<PackedCollection> input = sum.aggregate(buffer, null, producers[0], src);
+		Producer<PackedCollection> eqInput = eq.length > 0 ? sum.aggregate(buffer, null, producers[0], eq) : null;
+		Producer<PackedCollection> volumeInput = volume.length > 0 ? sum.aggregate(buffer, null, producers[0], volume) : null;
 
-		Producer<PackedCollection<?>> out = input;
+		Producer<PackedCollection> out = input;
 		out = eqInput == null ? out :
 				eqAdjust.aggregate(buffer, null, producers[0], input, eqInput);
 		out = volumeInput == null ? out :
@@ -74,11 +74,11 @@ public class ModularSourceAggregator implements SourceAggregator, CodeFeatures {
 		return out;
 	}
 
-	protected Producer<PackedCollection<?>>[] extractInputs(InputType type, Producer<PackedCollection<?>>... sources) {
+	protected Producer<PackedCollection>[] extractInputs(InputType type, Producer<PackedCollection>... sources) {
 		int index = 0;
 		int tot = Math.toIntExact(IntStream.range(0, sources.length)
 				.filter(i -> i < inputs.length && inputs[i] == type).count());
-		Producer<PackedCollection<?>>[] result = new Producer[tot];
+		Producer<PackedCollection>[] result = new Producer[tot];
 
 		for (int i = 0; i < sources.length; i++) {
 			if (inputs[i] == type) {

@@ -27,17 +27,17 @@ import java.util.function.Function;
 
 public class PolymorphicAudioCell extends AudioCellChoiceAdapter {
 
-	public PolymorphicAudioCell(PolymorphicAudioData data, CollectionProducer<PackedCollection<?>> decision,
+	public PolymorphicAudioCell(PolymorphicAudioData data, CollectionProducer<PackedCollection> decision,
 								Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>... choices) {
 		this(data, decision, Arrays.asList(choices));
 	}
 
-	public PolymorphicAudioCell(PolymorphicAudioData data, CollectionProducer<PackedCollection<?>> decision,
+	public PolymorphicAudioCell(PolymorphicAudioData data, CollectionProducer<PackedCollection> decision,
 								List<Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>> choices) {
 		super(decision, i -> data, choices, false);
 	}
 
-	public PolymorphicAudioCell(CollectionProducer<PackedCollection<?>> decision,
+	public PolymorphicAudioCell(CollectionProducer<PackedCollection> decision,
 								List<CollectionTemporalCellAdapter> choices) {
 		super(decision, choices, false);
 	}

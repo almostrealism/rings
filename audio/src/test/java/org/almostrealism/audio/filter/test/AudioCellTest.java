@@ -40,7 +40,7 @@ public class AudioCellTest implements CellFeatures {
 
 		r.run();
 
-		PackedCollection<?> result = out.getChannelData(0).evaluate();
+		PackedCollection result = out.getChannelData(0).evaluate();
 		System.out.println(result.toArrayString(0, 5));
 
 		Assert.assertTrue(result.toDouble(2) == 0.0);

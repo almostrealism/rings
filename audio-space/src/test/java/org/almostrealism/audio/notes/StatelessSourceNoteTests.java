@@ -56,14 +56,14 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 
 		// Source for the synth note
 		StatelessSource sine = (buffer, params, frequency) -> sampling(sampleRate, () -> {
-			CollectionProducer<PackedCollection<?>> t =
+			CollectionProducer<PackedCollection> t =
 					integers(0, frames).divide(sampleRate);
 
 			// Frequency is a function of time, but to avoid
 			// the possibility of a note shifting tone while
 			// being played the time parameter is explicitly
 			// provided as 0.0 (the start of the note)
-			Producer<PackedCollection<?>> f =
+			Producer<PackedCollection> f =
 					frequency.getResultant(c(0.0));
 			return sin(t.multiply(2 * Math.PI).multiply(f)).multiply(amp);
 		});
@@ -84,7 +84,7 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 		AudioSceneContext sceneContext = new AudioSceneContext();
 		sceneContext.setFrameForPosition(pos -> (int) (pos * sampleRate));
 		sceneContext.setScaleForPosition(pos -> WesternScales.major(root, 1));
-		sceneContext.setDestination(new PackedCollection<>((int) (duration * sampleRate)));
+		sceneContext.setDestination(new PackedCollection((int) (duration * sampleRate)));
 
 		// Setup context for voicing the notes, including the library
 		// of samples to use (choiceNote will select from those)
@@ -137,7 +137,7 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 		AudioSceneContext sceneContext = new AudioSceneContext();
 		sceneContext.setFrameForPosition(pos -> (int) (pos * sampleRate));
 		sceneContext.setScaleForPosition(pos -> WesternScales.major(WesternChromatic.C3, 1));
-		sceneContext.setDestination(new PackedCollection<>((int) (duration * sampleRate)));
+		sceneContext.setDestination(new PackedCollection((int) (duration * sampleRate)));
 		sceneContext.setAutomationLevel(
 				params -> t -> divide(t, c(2 * duration)));
 

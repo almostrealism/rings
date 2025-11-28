@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+
 package com.almostrealism.physics;
+import org.almostrealism.collect.PackedCollection;
 
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
@@ -30,7 +32,7 @@ public class MonochromeBody extends BlackBody {
 	private double chrome;
 
 	@Override
-	public Producer<Vector> emit() {
+	public Producer<PackedCollection> emit() {
 		return null;
 	}
 
@@ -38,7 +40,7 @@ public class MonochromeBody extends BlackBody {
 	public double getEmitEnergy() { return 0; }
 
 	@Override
-	public Producer<Vector> getEmitPosition() { return ZeroVector.getInstance(); }
+	public Producer<PackedCollection> getEmitPosition() { return ZeroVector.getInstance(); }
 
 	@Override
 	public double getNextEmit() {

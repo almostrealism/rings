@@ -22,8 +22,8 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 
 public class SineWaveTick extends SineWaveComputation {
-	public SineWaveTick(SineWaveCellData data, Producer<PackedCollection<?>> envelope) {
-		super(data, envelope, new PackedCollection<>(1));
+	public SineWaveTick(SineWaveCellData data, Producer<PackedCollection> envelope) {
+		super(data, envelope, new PackedCollection(1));
 	}
 
 	@Override

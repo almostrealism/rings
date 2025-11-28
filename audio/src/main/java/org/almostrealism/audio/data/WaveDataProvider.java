@@ -63,7 +63,7 @@ public interface WaveDataProvider extends AudioDataProvider, Supplier<WaveData>,
 		return result;
 	}
 
-	default PackedCollection<?> getChannelData(int channel, double playbackRate, int sampleRate) {
+	default PackedCollection getChannelData(int channel, double playbackRate, int sampleRate) {
 		if (getSampleRate() == sampleRate) {
 			return getChannelData(channel, playbackRate);
 		}
@@ -71,7 +71,7 @@ public interface WaveDataProvider extends AudioDataProvider, Supplier<WaveData>,
 		return getChannelData(channel, playbackRate * getSampleRate() / (double) sampleRate);
 	}
 
-	PackedCollection<?> getChannelData(int channel, double playbackRate);
+	PackedCollection getChannelData(int channel, double playbackRate);
 
 	@Override
 	default int compareTo(WaveDataProvider o) {

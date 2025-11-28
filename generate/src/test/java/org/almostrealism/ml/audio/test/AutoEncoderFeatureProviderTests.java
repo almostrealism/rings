@@ -49,9 +49,9 @@ public class AutoEncoderFeatureProviderTests implements TestFeatures {
 		AutoEncoderFeatureProvider provider = provider();
 
 		WaveData input = WaveData.load(new File("Library/Dip Flop DD 159.wav"));
-		PackedCollection<?> rawFeatures = provider.getAutoEncoder().encode(cp(input.getData()))
+		PackedCollection rawFeatures = provider.getAutoEncoder().encode(cp(input.getData()))
 				.evaluate().reshape(shape(64, 256)).transpose();
-		PackedCollection<?> providedFeatures = provider.computeFeatures(input);
+		PackedCollection providedFeatures = provider.computeFeatures(input);
 		log("Raw features shape = " + rawFeatures.getShape());
 		log("Provided features shape = " + providedFeatures.getShape());
 
@@ -62,11 +62,11 @@ public class AutoEncoderFeatureProviderTests implements TestFeatures {
 		assertTrue(diff < 0.05);
 	}
 
-	protected double similarity(Producer<PackedCollection<?>> a, Producer<PackedCollection<?>> b) {
+	protected double similarity(Producer<PackedCollection> a, Producer<PackedCollection> b) {
 		return similarity(a, b, 256);
 	}
 
-	protected double similarity(Producer<PackedCollection<?>> a, Producer<PackedCollection<?>> b, int limit) {
+	protected double similarity(Producer<PackedCollection> a, Producer<PackedCollection> b, int limit) {
 		return 1.0 - multiply(a, b).sum(1)
 				.divide(multiply(length(1, a), length(1, b)))
 				.evaluate().doubleStream().limit(limit).average().orElse(-1.0);
@@ -76,11 +76,11 @@ public class AutoEncoderFeatureProviderTests implements TestFeatures {
 	public void similarity() throws IOException {
 		AutoEncoderFeatureProvider provider = provider();
 
-		PackedCollection<?> snare1 =
+		PackedCollection snare1 =
 				provider.computeFeatures(WaveData.load(new File("Library/Snare Perc DD.wav")));
-		PackedCollection<?> snare2 =
+		PackedCollection snare2 =
 				provider.computeFeatures(WaveData.load(new File("Library/Snare Gold 1.wav")));
-		PackedCollection<?> dip =
+		PackedCollection dip =
 				provider.computeFeatures(WaveData.load(new File("Library/Dip Flop DD 159.wav")));
 
 		System.out.println("Comparing snares: " + similarity(cp(snare1), cp(snare2)));

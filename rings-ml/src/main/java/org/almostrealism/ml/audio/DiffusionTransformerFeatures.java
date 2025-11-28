@@ -27,7 +27,7 @@ import java.util.List;
 
 public interface DiffusionTransformerFeatures extends AttentionFeatures, DiffusionFeatures {
 
-	default Block fourierFeatures(int batchSize, int inFeatures, int outFeatures, PackedCollection<?> learnedWeights) {
+	default Block fourierFeatures(int batchSize, int inFeatures, int outFeatures, PackedCollection learnedWeights) {
 		// Output dim should be even for sin/cos pairs
 		if (outFeatures % 2 != 0) {
 			throw new IllegalArgumentException("Output features must be even for Fourier features");
@@ -37,20 +37,20 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 				shape(batchSize, inFeatures),
 				shape(batchSize, outFeatures),
 				in -> {
-					CollectionProducer<PackedCollection<?>> input = c(in);  // Shape: [batchSize, inFeatures]
-					CollectionProducer<PackedCollection<?>> weights = cp(learnedWeights);  // Shape: [outFeatures // 2, inFeatures]
+					CollectionProducer<PackedCollection> input = c(in);  // Shape: [batchSize, inFeatures]
+					CollectionProducer<PackedCollection> weights = cp(learnedWeights);  // Shape: [outFeatures // 2, inFeatures]
 
 					// Compute f = 2 * pi * input @ weights.T as in Python FourierFeatures
 					// input: [batchSize, inFeatures] @ weights.T: [inFeatures, outFeatures // 2]
 					// -> [batchSize, outFeatures // 2]
-					CollectionProducer<PackedCollection<?>> f = multiply(
+					CollectionProducer<PackedCollection> f = multiply(
 							c(2.0 * Math.PI),
 							matmul(input, weights.transpose(1))
 					);
 
 					// Calculate cos and sin components as in Python: torch.cat([f.cos(), f.sin()], dim=-1)
-					CollectionProducer<PackedCollection<?>> cosValues = cos(f);
-					CollectionProducer<PackedCollection<?>> sinValues = sin(f);
+					CollectionProducer<PackedCollection> cosValues = cos(f);
+					CollectionProducer<PackedCollection> sinValues = sin(f);
 
 					// Concatenate cos first, then sin (matching Python order)
 					return concat(shape(batchSize, outFeatures),
@@ -60,9 +60,9 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 	}
 
 	default Block timestepEmbedding(int batchSize, int embedDim,
-									PackedCollection<?> timestepFeaturesWeight,
-									PackedCollection<?> weight0, PackedCollection<?> bias0,
-									PackedCollection<?> weight2, PackedCollection<?> bias2) {
+									PackedCollection timestepFeaturesWeight,
+									PackedCollection weight0, PackedCollection bias0,
+									PackedCollection weight2, PackedCollection bias2) {
 		SequentialBlock embedding = new SequentialBlock(shape(batchSize, 1));
 		embedding.add(fourierFeatures(batchSize, 1, 256, timestepFeaturesWeight));
 		embedding.add(dense(weight0, bias0));

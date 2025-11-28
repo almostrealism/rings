@@ -30,15 +30,15 @@ public class VolumeRescalingSourceAggregator implements SourceAggregator, CellFe
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> aggregate(BufferDetails buffer,
-												   Producer<PackedCollection<?>> params,
-												   Producer<PackedCollection<?>> frequency,
-												   Producer<PackedCollection<?>>... sources) {
-		CollectionProducer<PackedCollection<?>> input = c(sources[0]);
-		CollectionProducer<PackedCollection<?>> filter = c(sources[1]);
+	public Producer<PackedCollection> aggregate(BufferDetails buffer,
+												   Producer<PackedCollection> params,
+												   Producer<PackedCollection> frequency,
+												   Producer<PackedCollection>... sources) {
+		CollectionProducer<PackedCollection> input = c(sources[0]);
+		CollectionProducer<PackedCollection> filter = c(sources[1]);
 
-		Producer<PackedCollection<?>> inputEnv = envExtract.filter(buffer, params, input);
-		Producer<PackedCollection<?>> filterEnv = envExtract.filter(buffer, params, filter);
+		Producer<PackedCollection> inputEnv = envExtract.filter(buffer, params, input);
+		Producer<PackedCollection> filterEnv = envExtract.filter(buffer, params, filter);
 		filterEnv = pad(shape(inputEnv), filterEnv, 0);
 
 		return multiply(input, divide(filterEnv, inputEnv));

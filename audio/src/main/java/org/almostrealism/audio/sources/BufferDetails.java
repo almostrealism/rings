@@ -46,6 +46,6 @@ public class BufferDetails {
 	}
 
 	public WaveData createWaveData() {
-		return new WaveData(new PackedCollection<>(getFrames()).traverseEach(), getSampleRate());
+		return new WaveData(new PackedCollection(getFrames()).traverseEach(), getSampleRate());
 	}
 }

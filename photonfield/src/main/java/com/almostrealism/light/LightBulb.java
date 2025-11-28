@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+
 package com.almostrealism.light;
+import org.almostrealism.collect.PackedCollection;
 
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
@@ -70,9 +72,9 @@ public class LightBulb implements Volume<Object>, Absorber, Transparent, Physica
 	
 	/** Returns a uniform spherical random vector. */
 	@Override
-	public Producer<Vector> emit() {
+	public Producer<PackedCollection> emit() {
 		this.last += this.delta;
-		return UniformSphericalRandom::getInstance;
+		return () -> args -> UniformSphericalRandom.getInstance().evaluate(args);
 	}
 
 	/** Returns a random energy value in the visible spectrum. */
@@ -95,7 +97,7 @@ public class LightBulb implements Volume<Object>, Absorber, Transparent, Physica
 	
 	/** Returns the location of this {@link LightBulb}. */
 	@Override
-	public Producer<Vector> getEmitPosition() { return ZeroVector.getInstance(); }
+	public Producer<PackedCollection> getEmitPosition() { return ZeroVector.getInstance(); }
 	
 	public void setSpectra(ProbabilityDistribution spectra) { this.spectra = spectra; }
 	public ProbabilityDistribution getSpectra() { return this.spectra; }
@@ -114,10 +116,10 @@ public class LightBulb implements Volume<Object>, Absorber, Transparent, Physica
 
 	// TODO  This should use the brdf
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> x) { return () -> UniformSphericalRandom.getInstance(); }
+	public Producer<PackedCollection> getNormalAt(Producer<PackedCollection> x) { return () -> args -> UniformSphericalRandom.getInstance().evaluate(args); }
 
 	@Override
-	public boolean inside(Producer<Vector> x) { return false; }
+	public boolean inside(Producer<PackedCollection> x) { return false; }
 
 	@Override
 	public double intersect(Vector p, Vector d) { return Double.MAX_VALUE - 1.0; }
@@ -126,5 +128,5 @@ public class LightBulb implements Volume<Object>, Absorber, Transparent, Physica
 	public double[] getSpatialCoords(double uv[]) { return new double[3]; }
 
 	@Override
-	public double[] getSurfaceCoords(Producer<Vector> xyz) { return new double[2]; }
+	public double[] getSurfaceCoords(Producer<PackedCollection> xyz) { return new double[2]; }
 }

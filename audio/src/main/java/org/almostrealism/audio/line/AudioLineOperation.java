@@ -37,7 +37,7 @@ public interface AudioLineOperation {
 				buffer.getDetails().getFrames());
 	}
 
-	TemporalRunner process(Producer<PackedCollection<?>> input,
-						   Producer<PackedCollection<?>> output,
+	TemporalRunner process(Producer<PackedCollection> input,
+						   Producer<PackedCollection> output,
 						   int frames);
 }

@@ -32,12 +32,12 @@ import org.almostrealism.CodeFeatures;
 
 import java.util.List;
 
-public class AudioPassFilterComputation extends OperationComputationAdapter<PackedCollection<?>> implements CodeFeatures {
+public class AudioPassFilterComputation extends OperationComputationAdapter<PackedCollection> implements CodeFeatures {
 	public static double MAX_INPUT = 0.99;
 
 	private boolean high;
 
-	public AudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection<?>> frequency, Producer<PackedCollection<?>> resonance, Producer<PackedCollection<?>> input, boolean high) {
+	public AudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection> frequency, Producer<PackedCollection> resonance, Producer<PackedCollection> input, boolean high) {
 		super(data.getOutput(),
 				frequency,
 				(Producer) resonance,

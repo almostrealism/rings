@@ -21,7 +21,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 
 public interface StatelessSource {
-	Producer<PackedCollection<?>> generate(BufferDetails buffer,
-										   Producer<PackedCollection<?>> params,
-										   Factor<PackedCollection<?>> frequency);
+	Producer<PackedCollection> generate(BufferDetails buffer,
+										   Producer<PackedCollection> params,
+										   Factor<PackedCollection> frequency);
 }

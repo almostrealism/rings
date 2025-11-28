@@ -49,7 +49,7 @@ import java.util.stream.IntStream;
 public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAudioProvider>, SamplingFeatures {
 	public static boolean enableVerbose = false;
 
-	private static CacheManager<PackedCollection<?>> audioCache = new CacheManager<>();
+	private static CacheManager<PackedCollection> audioCache = new CacheManager<>();
 
 	static {
 		OperationList accessListener = new OperationList();
@@ -85,7 +85,7 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 	private Double bpm;
 	private int sampleRate;
 
-	private Map<NoteAudioKey, Producer<PackedCollection<?>>> notes;
+	private Map<NoteAudioKey, Producer<PackedCollection>> notes;
 
 	public NoteAudioProvider(WaveDataProvider provider, KeyPosition<?> root) {
 		this(provider, root, null);
@@ -145,7 +145,7 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel) {
+	public Producer<PackedCollection> getAudio(KeyPosition<?> target, int channel) {
 		if (target == null) {
 			target = getRoot();
 		}
@@ -159,7 +159,7 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 		return notes.get(key);
 	}
 
-	protected Producer<PackedCollection<?>> computeAudio(NoteAudioKey key) {
+	protected Producer<PackedCollection> computeAudio(NoteAudioKey key) {
 		return () -> args -> {
 			double r = key.getPosition() == null ? 1.0 :
 					(tuning.getTone(key.getPosition()).asHertz() / tuning.getTone(getRoot()).asHertz());
@@ -226,11 +226,11 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 		return new NoteAudioProvider(new FileWaveDataProvider(source), root, null, OutputLine.sampleRate, tuning);
 	}
 
-	public static NoteAudioProvider create(Supplier<PackedCollection<?>> audioSupplier) {
+	public static NoteAudioProvider create(Supplier<PackedCollection> audioSupplier) {
 		return create(audioSupplier, WesternChromatic.C1);
 	}
 
-	public static NoteAudioProvider create(Supplier<PackedCollection<?>> audioSupplier, KeyPosition root) {
+	public static NoteAudioProvider create(Supplier<PackedCollection> audioSupplier, KeyPosition root) {
 		return new NoteAudioProvider(new SupplierWaveDataProvider(KeyUtils.generateKey(), audioSupplier, OutputLine.sampleRate), root);
 	}
 }

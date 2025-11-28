@@ -59,7 +59,7 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter implements Keyboar
 	}
 
 	@JsonIgnore
-	public PackedCollection<?> getAudio() {
+	public PackedCollection getAudio() {
 		if (delegate != null) {
 			warn("Attempting to get audio from a delegated PatternNote");
 		}
@@ -88,7 +88,7 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter implements Keyboar
 		return new PatternNoteLayer(delegate, filter);
 	}
 
-	public static PatternNoteLayer create(PatternNoteAudio delegate, Factor<PackedCollection<?>> factor) {
+	public static PatternNoteLayer create(PatternNoteAudio delegate, Factor<PackedCollection> factor) {
 		return new PatternNoteLayer(delegate, (audio, duration, automationLevel) -> factor.getResultant(audio));
 	}
 }

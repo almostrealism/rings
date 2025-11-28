@@ -22,10 +22,10 @@ import java.util.function.Supplier;
 
 public class SupplierWaveDataProvider extends WaveDataProviderAdapter {
 	private String key;
-	private Supplier<PackedCollection<?>> source;
+	private Supplier<PackedCollection> source;
 	private int sampleRate;
 
-	public SupplierWaveDataProvider(String key, Supplier<PackedCollection<?>> source, int sampleRate) {
+	public SupplierWaveDataProvider(String key, Supplier<PackedCollection> source, int sampleRate) {
 		this.key = key;
 		this.source = source;
 		this.sampleRate = sampleRate;

@@ -29,30 +29,30 @@ public class FilterEnvelopeProcessor implements EnvelopeProcessor, CellFeatures,
 
 	private TimeCell clock;
 
-	private PackedCollection<?> input;
-	private PackedCollection<PackedCollection<?>> output;
+	private PackedCollection input;
+	private PackedCollection output;
 
-	private PackedCollection<?> duration;
-	private PackedCollection<?> attack;
-	private PackedCollection<?> decay;
-	private PackedCollection<?> sustain;
-	private PackedCollection<?> release;
+	private PackedCollection duration;
+	private PackedCollection attack;
+	private PackedCollection decay;
+	private PackedCollection sustain;
+	private PackedCollection release;
 
 	private Runnable process;
 
 	public FilterEnvelopeProcessor(int sampleRate, double maxSeconds) {
-		input = new PackedCollection<>((int) (sampleRate * maxSeconds));
-		output = new PackedCollection<>((int) (sampleRate * maxSeconds));
-		duration = new PackedCollection<>(1);
-		attack = new PackedCollection<>(1);
-		decay = new PackedCollection<>(1);
-		sustain = new PackedCollection<>(1);
-		release = new PackedCollection<>(1);
+		input = new PackedCollection((int) (sampleRate * maxSeconds));
+		output = new PackedCollection((int) (sampleRate * maxSeconds));
+		duration = new PackedCollection(1);
+		attack = new PackedCollection(1);
+		decay = new PackedCollection(1);
+		sustain = new PackedCollection(1);
+		release = new PackedCollection(1);
 
 		EnvelopeSection env = envelope(cp(duration), cp(attack), cp(decay), cp(sustain), cp(release));
 
 		clock = new TimeCell();
-		Producer<PackedCollection<?>> freq = frames(clock.frame(), () -> env.get().getResultant(c(filterPeak)));
+		Producer<PackedCollection> freq = frames(clock.frame(), () -> env.get().getResultant(c(filterPeak)));
 
 		WaveData audio = new WaveData(input.traverse(1), sampleRate);
 		process = cells(1, i -> audio.toCell(clock.frame(), 0))
@@ -82,7 +82,7 @@ public class FilterEnvelopeProcessor implements EnvelopeProcessor, CellFeatures,
 	}
 
 	@Override
-	public void process(PackedCollection<?> input, PackedCollection<?> output) {
+	public void process(PackedCollection input, PackedCollection output) {
 		// TODO  This can be done without the copy to input
 		// TODO  by just using a Provider that can be made to
 		// TODO  refer to the provided data collection directly.

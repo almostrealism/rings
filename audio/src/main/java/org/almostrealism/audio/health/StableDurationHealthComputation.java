@@ -66,7 +66,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	private Thread timeoutTrigger;
 	private boolean endTimeoutTrigger;
 	private long startTime, iterStart;
-	private PackedCollection<?> abortFlag;
+	private PackedCollection abortFlag;
 
 	public StableDurationHealthComputation(int channels) {
 		this(channels, true);
@@ -87,7 +87,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	public void setTarget(TemporalCellular target) {
 		if (getTarget() == null) {
 			super.setTarget(target);
-			this.abortFlag = new PackedCollection<>(1);
+			this.abortFlag = new PackedCollection(1);
 			this.abortFlag.setMem(0, 0.0);
 			this.runner = new TemporalRunner(target, iter);
 			this.runner.setProfile(profile);
@@ -311,11 +311,11 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	}
 
 
-	private class AverageAmplitude implements Consumer<PackedCollection<?>> {
-		private List<PackedCollection<?>> values = new ArrayList<>();
+	private class AverageAmplitude implements Consumer<PackedCollection> {
+		private List<PackedCollection> values = new ArrayList<>();
 
 		@Override
-		public void accept(PackedCollection<?> s) {
+		public void accept(PackedCollection s) {
 			values.add(s);
 		}
 

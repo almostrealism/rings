@@ -45,11 +45,11 @@ public interface InputLine extends BufferedAudio, Destroyable {
 	 *
 	 * @see  BufferedAudio#getBufferSize()
 	 */
-	void read(PackedCollection<?> sample);
+	void read(PackedCollection sample);
 
-	default Supplier<Runnable> read(Producer<PackedCollection<?>> destination) {
+	default Supplier<Runnable> read(Producer<PackedCollection> destination) {
 		return () -> {
-			Evaluable<PackedCollection<?>> sample = destination.get();
+			Evaluable<PackedCollection> sample = destination.get();
 			return () -> read(sample.evaluate());
 		};
 	}

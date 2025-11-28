@@ -18,7 +18,7 @@ public class SceneTest implements TestFeatures {
 	public void intersection() throws IOException {
 		TestScene scene = new TestScene();
 		ShadableIntersection field = (ShadableIntersection) scene.getSurfaces()[0].intersectAt(ray(0, 0, 10, 0, 0, -1));
-		Producer<PackedCollection<?>> distance = field.getDistance();
+		Producer<PackedCollection> distance = field.getDistance();
 		assertEquals(9.0, distance.get().evaluate());
 	}
 
@@ -30,7 +30,7 @@ public class SceneTest implements TestFeatures {
 			ShaderContext context = new ShaderContext(scene.getSurfaces()[0], scene.getLights().get(0));
 			IntersectionalLightingEngine engine = new IntersectionalLightingEngine(ray(0, 0, 10, 0, 0, -1),
 					scene.getSurfaces()[0], Collections.emptyList(), scene.getLights().get(0), Collections.emptyList(), context);
-			RGB color = engine.getProducer().get().evaluate();
+			RGB color = new RGB(engine.getProducer().get().evaluate(), 0);
 			System.out.println(color);
 			assertEquals(0.3211, color.getRed());
 			assertEquals(0.3211, color.getGreen());

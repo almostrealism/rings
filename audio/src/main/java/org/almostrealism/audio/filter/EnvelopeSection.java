@@ -22,56 +22,56 @@ import io.almostrealism.relation.Factor;
 
 import java.util.function.Supplier;
 
-public class EnvelopeSection implements Supplier<Factor<PackedCollection<?>>>, EnvelopeFeatures {
+public class EnvelopeSection implements Supplier<Factor<PackedCollection>>, EnvelopeFeatures {
 	public static boolean enableRepeat = false;
 
-	private Supplier<Producer<PackedCollection<?>>> time;
-	private Producer<PackedCollection<?>> start;
-	private Supplier<Factor<PackedCollection<?>>> lastEnvelope;
-	private Factor<PackedCollection<?>> envelope;
+	private Supplier<Producer<PackedCollection>> time;
+	private Producer<PackedCollection> start;
+	private Supplier<Factor<PackedCollection>> lastEnvelope;
+	private Factor<PackedCollection> envelope;
 
-	public EnvelopeSection(Supplier<Producer<PackedCollection<?>>> time,
-						   Factor<PackedCollection<?>> envelope) {
+	public EnvelopeSection(Supplier<Producer<PackedCollection>> time,
+						   Factor<PackedCollection> envelope) {
 		this(time, null, null, envelope);
 	}
 
-	public EnvelopeSection(Supplier<Producer<PackedCollection<?>>> time,
-						   Producer<PackedCollection<?>> start,
-						   Supplier<Factor<PackedCollection<?>>> lastEnvelope,
-						   Factor<PackedCollection<?>> envelope) {
+	public EnvelopeSection(Supplier<Producer<PackedCollection>> time,
+						   Producer<PackedCollection> start,
+						   Supplier<Factor<PackedCollection>> lastEnvelope,
+						   Factor<PackedCollection> envelope) {
 		this.time = time;
 		this.start = start;
 		this.lastEnvelope = lastEnvelope;
 		this.envelope = envelope;
 	}
 
-	public Supplier<Producer<PackedCollection<?>>> getTime() {
+	public Supplier<Producer<PackedCollection>> getTime() {
 		return time;
 	}
 
-	public void setTime(Supplier<Producer<PackedCollection<?>>> time) {
+	public void setTime(Supplier<Producer<PackedCollection>> time) {
 		this.time = time;
 	}
 
-	public EnvelopeSection andThen(Producer<PackedCollection<?>> start, Factor<PackedCollection<?>> envelope) {
+	public EnvelopeSection andThen(Producer<PackedCollection> start, Factor<PackedCollection> envelope) {
 		return new EnvelopeSection(time, start, this, envelope);
 	}
 
-	public EnvelopeSection andThenDecay(Producer<PackedCollection<?>> offset,
-										Producer<PackedCollection<?>> decay,
-										Producer<PackedCollection<?>> endVolume) {
+	public EnvelopeSection andThenDecay(Producer<PackedCollection> offset,
+										Producer<PackedCollection> decay,
+										Producer<PackedCollection> endVolume) {
 		return andThen(offset, decay(offset, decay, endVolume));
 	}
 
-	public EnvelopeSection andThenRelease(Producer<PackedCollection<?>> offset,
-										  Producer<PackedCollection<?>> startVolume,
-										  Producer<PackedCollection<?>> release,
-										  Producer<PackedCollection<?>> endVolume) {
+	public EnvelopeSection andThenRelease(Producer<PackedCollection> offset,
+										  Producer<PackedCollection> startVolume,
+										  Producer<PackedCollection> release,
+										  Producer<PackedCollection> endVolume) {
 		return andThen(offset, release(offset, startVolume, release, endVolume));
 	}
 
 	@Override
-	public Factor<PackedCollection<?>> get() {
+	public Factor<PackedCollection> get() {
 		if (lastEnvelope == null) {
 			return envelope;
 		} else if (enableRepeat) {

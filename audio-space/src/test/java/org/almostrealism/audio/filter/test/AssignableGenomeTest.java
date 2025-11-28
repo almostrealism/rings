@@ -61,7 +61,7 @@ public class AssignableGenomeTest implements CellFeatures {
 		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate);
 	}
 
-	protected Cells cells(Receptor<PackedCollection<?>> meter) {
+	protected Cells cells(Receptor<PackedCollection> meter) {
 		List<Frequency> frequencies = new DefaultKeyboardTuning().getTones(WesternScales.major(WesternChromatic.G3, 1));
 
 		CellList cells =

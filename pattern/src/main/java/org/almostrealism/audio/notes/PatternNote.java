@@ -122,15 +122,15 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel,
+	public Producer<PackedCollection> getAudio(KeyPosition<?> target, int channel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() != null) return super.getAudio(target, channel, audioSelection);
 		return combineLayers(target, channel, -1, null, audioSelection);
 	}
 
-	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, int channel,
+	protected Producer<PackedCollection> computeAudio(KeyPosition<?> target, int channel,
 														 double noteDuration,
-														 Factor<PackedCollection<?>> automationLevel,
+														 Factor<PackedCollection> automationLevel,
 														 DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() != null) {
 			return super.computeAudio(
@@ -142,9 +142,9 @@ public class PatternNote extends PatternNoteAudioAdapter {
 		return combineLayers(target, channel, noteDuration, automationLevel, audioSelection);
 	}
 
-	protected Producer<PackedCollection<?>> combineLayers(KeyPosition<?> target, int channel,
+	protected Producer<PackedCollection> combineLayers(KeyPosition<?> target, int channel,
 														  double noteDuration,
-														  Factor<PackedCollection<?>> automationLevel,
+														  Factor<PackedCollection> automationLevel,
 														  DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (noteDuration < 0) {
 			throw new UnsupportedOperationException();
@@ -154,7 +154,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 			warn("Using PatternNote without SourceAggregation");
 
 			return () -> {
-				List<Evaluable<PackedCollection<?>>> layerAudio =
+				List<Evaluable<PackedCollection>> layerAudio =
 						layers.stream()
 								.map(l -> l.getAudio(target, channel, noteDuration, automationLevel, audioSelection).get())
 								.toList();
@@ -166,9 +166,9 @@ public class PatternNote extends PatternNoteAudioAdapter {
 				return args -> {
 					int totalFrames = (int) (getDuration(target, audioSelection) * getSampleRate(target, audioSelection));
 
-					PackedCollection<?> dest = PackedCollection.factory().apply(totalFrames);
+					PackedCollection dest = PackedCollection.factory().apply(totalFrames);
 					for (int i = 0; i < layerAudio.size(); i++) {
-						PackedCollection<?> audio = layerAudio.get(i).evaluate(args);
+						PackedCollection audio = layerAudio.get(i).evaluate(args);
 						int f = Math.min(frames[i], totalFrames);
 
 						AudioProcessingUtils.getSum().sum(dest.range(shape(f)), audio.range(shape(f)));

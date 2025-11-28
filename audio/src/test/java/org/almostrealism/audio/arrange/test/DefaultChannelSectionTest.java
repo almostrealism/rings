@@ -47,12 +47,12 @@ public class DefaultChannelSectionTest implements CellFeatures {
 		ChannelSection section = factory.createSection(0);
 
 		WaveData data = WaveData.load(new File("Library/Snare Perc DD.wav"));
-		PackedCollection<?> input = new PackedCollection<>(samples);
+		PackedCollection input = new PackedCollection(samples);
 		input.setMem(data.getChannelData(0).toArray());
 
-		PackedCollection<?> result = new PackedCollection<>(samples);
-		Producer<PackedCollection<?>> destination = p(result);
-		Producer<PackedCollection<?>> source = p(input);
+		PackedCollection result = new PackedCollection(samples);
+		Producer<PackedCollection> destination = p(result);
+		Producer<PackedCollection> source = p(input);
 
 		OperationList process = new OperationList();
 		process.add(factory.setup());

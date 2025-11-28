@@ -24,7 +24,7 @@ import org.almostrealism.collect.CollectionFeatures;
 import org.almostrealism.collect.PackedCollection;
 
 public interface NoteAudio extends KeyboardTuned {
-	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel);
+	Producer<PackedCollection> getAudio(KeyPosition<?> target, int channel);
 
 	double getDuration(KeyPosition<?> target);
 

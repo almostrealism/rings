@@ -53,7 +53,7 @@ public class AudioSceneOptimizerTest implements CellFeatures, TestFeatures {
 		int cycles = 1;
 
 		int params = 8;
-		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+		List<Genome<PackedCollection>> genomes = new ArrayList<>();
 		genomes.add(new ProjectedGenome(params));
 		genomes.add(new ProjectedGenome(params));
 		genomes.add(new ProjectedGenome(params));
@@ -88,7 +88,7 @@ public class AudioSceneOptimizerTest implements CellFeatures, TestFeatures {
 		AtomicInteger index = new AtomicInteger();
 
 		int params = 8;
-		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+		List<Genome<PackedCollection>> genomes = new ArrayList<>();
 		genomes.add(new ProjectedGenome(params));
 		genomes.add(new ProjectedGenome(params));
 		genomes.add(new ProjectedGenome(params));

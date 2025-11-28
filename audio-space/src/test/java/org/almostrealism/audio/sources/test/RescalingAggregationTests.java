@@ -51,7 +51,7 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 	@Test
 	public void loadAggregated() throws IOException {
 		WaveData data = WaveData.load(new File("Library/organ.wav"));
-		PackedCollection<?> eq = data.aggregatedFft(true);
+		PackedCollection eq = data.aggregatedFft(true);
 		log(eq.getShape());
 
 		int total = 0;
@@ -72,7 +72,7 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 		WaveData input = WaveData.load(new File("Library/organ.wav"));
 		WaveData filter = WaveData.load(new File("Library/Snare Gold 1.wav"));
 
-		Producer<PackedCollection<?>> aggregated = aggregator.aggregate(
+		Producer<PackedCollection> aggregated = aggregator.aggregate(
 				new BufferDetails(sampleRate, input.getDuration()),
 				null, null,
 				cp(input.getChannelData(0)),
@@ -90,7 +90,7 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 		WaveData input = WaveData.load(new File("Library/SN_Forever_Future.wav"));
 		WaveData filter = WaveData.load(new File("Library/organ.wav"));
 
-		Producer<PackedCollection<?>> aggregated = aggregator.aggregate(
+		Producer<PackedCollection> aggregated = aggregator.aggregate(
 				new BufferDetails(sampleRate, 28.0),
 				null, null,
 				cp(input.getChannelData(0)),
@@ -123,7 +123,7 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 		WaveData filter = WaveData.load(new File("Library/SN_Forever_Future.wav"));
 		WaveData env = WaveData.load(new File("Library/Snare Gold 1.wav"));
 
-		Producer<PackedCollection<?>> aggregated = aggregator.aggregate(
+		Producer<PackedCollection> aggregated = aggregator.aggregate(
 				new BufferDetails(sampleRate, input.getDuration()),
 				null, null,
 				cp(input.getChannelData(0)),
@@ -152,7 +152,7 @@ public class RescalingAggregationTests implements PatternFeatures, TestFeatures 
 		AudioSceneContext sceneContext = new AudioSceneContext();
 		sceneContext.setFrameForPosition(pos -> (int) (pos * sampleRate));
 		sceneContext.setScaleForPosition(pos -> WesternScales.major(root, 1));
-		sceneContext.setDestination(new PackedCollection<>((int) (duration * sampleRate)));
+		sceneContext.setDestination(new PackedCollection((int) (duration * sampleRate)));
 
 		// Setup context for voicing the notes, including the library
 		// of samples to use (choiceNote will select from those)

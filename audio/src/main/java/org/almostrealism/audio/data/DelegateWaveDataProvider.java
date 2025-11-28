@@ -67,7 +67,7 @@ public class DelegateWaveDataProvider extends WaveDataProviderAdapter {
 	protected WaveData load() {
 		WaveData source = delegate.get();
 		return new WaveData(
-				new PackedCollection<>(shape(length), 1,
+				new PackedCollection(shape(length), 1,
 						source.getData(), delegateOffset),
 				source.getSampleRate());
 	}

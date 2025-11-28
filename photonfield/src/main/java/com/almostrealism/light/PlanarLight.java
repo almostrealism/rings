@@ -18,6 +18,7 @@ package com.almostrealism.light;
 
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 
@@ -90,33 +91,33 @@ public class PlanarLight extends LightBulb implements SurfaceLight, Locatable, C
 	public boolean getLightPropagation() { return this.lightProp; }
 
 	@Override
-	public Producer<RGB> getColorAt(Producer<Vector> point) {
-		return v(getColor());
+	public Producer<PackedCollection> getColorAt(Producer<PackedCollection> point) {
+		return (Producer) v(getColor());
 	}
 
 	@Override
-	public Producer<Vector> emit() {
+	public Producer<PackedCollection> emit() {
 		super.last += super.delta;
-		
+
 		if (!this.lightProp)
-			return v(this.normal);
-		
+			return (Producer) v(this.normal);
+
 		Vector v = UniformSphericalRandom.getInstance().evaluate(new Object[0]);
 		if (v.dotProduct(this.normal) < 0)
 			v.multiplyBy(-1.0);
-		
-		return normalize(vector(VectorMath.addMultiple(v.toArray(), this.normal.toArray(), this.align)));
+
+		return (Producer) normalize(vector(VectorMath.addMultiple(v.toArray(), this.normal.toArray(), this.align)));
 	}
 
 	@Override
-	public Producer<Vector> getEmitPosition() {
+	public Producer<PackedCollection> getEmitPosition() {
 		if (this.across == null)
 			across = up.crossProduct(normal);
 
 		// TODO  Put random computation into vector producer evaluate method
 		Vector x = across.multiply((Math.random() - 0.5) * this.w);
 		x.addTo(up.multiply((Math.random() - 0.5) * this.h));
-		return v(x);
+		return (Producer) v(x);
 	}
 
 	@Override

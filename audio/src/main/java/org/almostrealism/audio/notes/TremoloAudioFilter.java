@@ -33,9 +33,9 @@ public class TremoloAudioFilter implements NoteAudioFilter {
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> input,
-											   Producer<PackedCollection<?>> noteDuration,
-											   Producer<PackedCollection<?>> automationLevel) {
+	public Producer<PackedCollection> apply(Producer<PackedCollection> input,
+											   Producer<PackedCollection> noteDuration,
+											   Producer<PackedCollection> automationLevel) {
 		if (type == Type.SINE) {
 			// TODO
 			throw new UnsupportedOperationException();

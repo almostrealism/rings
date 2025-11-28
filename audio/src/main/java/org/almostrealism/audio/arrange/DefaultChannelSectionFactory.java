@@ -54,14 +54,14 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 	public static final double repeatChoices[] = new double[] { 8, 16, 32 };
 
 	private TimeCell clock;
-	private PackedCollection<?> duration;
+	private PackedCollection duration;
 
-	private Chromosome<PackedCollection<?>> volume;
-	private Chromosome<PackedCollection<?>> volumeExp;
-	private Chromosome<PackedCollection<?>> lowPassFilter;
-	private Chromosome<PackedCollection<?>> lowPassFilterExp;
-	private Chromosome<PackedCollection<?>> simpleDuration;
-	private Chromosome<PackedCollection<?>> simpleDurationSpeedUp;
+	private Chromosome<PackedCollection> volume;
+	private Chromosome<PackedCollection> volumeExp;
+	private Chromosome<PackedCollection> lowPassFilter;
+	private Chromosome<PackedCollection> lowPassFilterExp;
+	private Chromosome<PackedCollection> simpleDuration;
+	private Chromosome<PackedCollection> simpleDurationSpeedUp;
 
 	private int channel, channels;
 	private IntPredicate wetChannels;
@@ -77,7 +77,7 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 										Supplier<Frequency> tempo, DoubleSupplier measureDuration,
 										int length, int sampleRate) {
 		this.clock = new TimeCell();
-		this.duration = new PackedCollection<>(1);
+		this.duration = new PackedCollection(1);
 
 		this.channels = channels;
 		this.wetChannels = wetChannels;
@@ -117,7 +117,7 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 			return g;
 		}).collect(Collectors.toList()));
 
-		PackedCollection<?> repeat = new PackedCollection<>(repeatChoices.length);
+		PackedCollection repeat = new PackedCollection(repeatChoices.length);
 		repeat.setMem(Arrays.stream(repeatChoices).map(this::factorForRepeat).toArray());
 
 		this.simpleDuration = chromosome(IntStream.range(0, channels)
@@ -184,46 +184,46 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 		public int getLength() { return length; }
 
 		@Override
-		public Supplier<Runnable> process(Producer<PackedCollection<?>> destination, Producer<PackedCollection<?>> source) {
-			PackedCollection<?> input = new PackedCollection<>(samples);
-			PackedCollection<PackedCollection<?>> output = (PackedCollection) new PackedCollection(shape(1, samples)).traverse(1);
+		public Supplier<Runnable> process(Producer<PackedCollection> destination, Producer<PackedCollection> source) {
+			PackedCollection input = new PackedCollection(samples);
+			PackedCollection output = (PackedCollection) new PackedCollection(shape(1, samples)).traverse(1);
 			dependencies.add(input);
 			dependencies.add(output);
 
 			int repeatGene = channel; // 0;
-			Producer<PackedCollection<?>> r = simpleDuration.valueAt(repeatGene, 0)
+			Producer<PackedCollection> r = simpleDuration.valueAt(repeatGene, 0)
 													.getResultant(c(tempo.get().l(1)));
-			Producer<PackedCollection<?>> su = simpleDurationSpeedUp.valueAt(repeatGene, 0)
+			Producer<PackedCollection> su = simpleDurationSpeedUp.valueAt(repeatGene, 0)
 													.getResultant(c(1.0));
-			Producer<PackedCollection<?>> so = simpleDurationSpeedUp.valueAt(repeatGene, 1)
+			Producer<PackedCollection> so = simpleDurationSpeedUp.valueAt(repeatGene, 1)
 													.getResultant(c(1.0));
-			Producer<PackedCollection<?>> repeat = durationAdjustment(r, su, so, clock.time(sampleRate));
+			Producer<PackedCollection> repeat = durationAdjustment(r, su, so, clock.time(sampleRate));
 
 			CellList cells = cells(1, i ->
 					new WaveCell(input.traverseEach(), sampleRate, 1.0, c(0.0), repeatChannels.test(channel) ? c(repeat) : null))
 					.addRequirements(clock);
 
 			if (enableVolumeRiseFall) {
-				Producer<PackedCollection<?>> d = volume.valueAt(channel, 0).getResultant(c(1.0));
-				Producer<PackedCollection<?>> m = volume.valueAt(channel, 1).getResultant(c(1.0));
-				Producer<PackedCollection<?>> p = volume.valueAt(channel, 2).getResultant(c(1.0));
-				Producer<PackedCollection<?>> e = volumeExp.valueAt(channel, 0).getResultant(c(1.0));
+				Producer<PackedCollection> d = volume.valueAt(channel, 0).getResultant(c(1.0));
+				Producer<PackedCollection> m = volume.valueAt(channel, 1).getResultant(c(1.0));
+				Producer<PackedCollection> p = volume.valueAt(channel, 2).getResultant(c(1.0));
+				Producer<PackedCollection> e = volumeExp.valueAt(channel, 0).getResultant(c(1.0));
 
-				Producer<PackedCollection<?>> v = riseFall(0, 1.0, 0.0,
+				Producer<PackedCollection> v = riseFall(0, 1.0, 0.0,
 						d, m, p, e, clock.time(sampleRate), p(duration));
 
 				cells = cells.map(fc(i -> volume(v)));
 			}
 
 			if (enableFilter && wetChannels.test(channel)) {
-				Producer<PackedCollection<?>> d = lowPassFilter.valueAt(channel, 0).getResultant(c(1.0));
-				Producer<PackedCollection<?>> m = lowPassFilter.valueAt(channel, 1).getResultant(c(1.0));
-				Producer<PackedCollection<?>> p = lowPassFilter.valueAt(channel, 2).getResultant(c(1.0));
-				Producer<PackedCollection<?>> e = lowPassFilterExp.valueAt(channel, 0).getResultant(c(1.0));
+				Producer<PackedCollection> d = lowPassFilter.valueAt(channel, 0).getResultant(c(1.0));
+				Producer<PackedCollection> m = lowPassFilter.valueAt(channel, 1).getResultant(c(1.0));
+				Producer<PackedCollection> p = lowPassFilter.valueAt(channel, 2).getResultant(c(1.0));
+				Producer<PackedCollection> e = lowPassFilterExp.valueAt(channel, 0).getResultant(c(1.0));
 
-				Producer<PackedCollection<?>> lpFreq = riseFall(0, MAX_FILTER_RISE, 0.0,
+				Producer<PackedCollection> lpFreq = riseFall(0, MAX_FILTER_RISE, 0.0,
 															d, m, p, e, clock.time(sampleRate), p(duration));
-				Producer<PackedCollection<?>> resonance = (Producer) scalar(FixedFilterChromosome.defaultResonance);
+				Producer<PackedCollection> resonance = (Producer) scalar(FixedFilterChromosome.defaultResonance);
 				cells = cells.map(fc(i -> lp(lpFreq, resonance)));
 			}
 

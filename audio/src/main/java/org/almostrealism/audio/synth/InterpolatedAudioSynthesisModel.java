@@ -28,12 +28,12 @@ import org.almostrealism.collect.PackedCollection;
 public class InterpolatedAudioSynthesisModel implements AudioSynthesisModel, CellFeatures {
 	private double[] frequencyRatios;
 	private double sampleRate;
-	private PackedCollection<?> levelData;
+	private PackedCollection levelData;
 	private int samples;
 
 	public InterpolatedAudioSynthesisModel(double[] frequencyRatios,
 										   double sampleRate,
-										   PackedCollection<?> levelData) {
+										   PackedCollection levelData) {
 		this.frequencyRatios = frequencyRatios;
 		this.sampleRate = sampleRate;
 		this.levelData = levelData;
@@ -50,11 +50,11 @@ public class InterpolatedAudioSynthesisModel implements AudioSynthesisModel, Cel
 
 	public double getSampleRate() { return sampleRate; }
 
-	public PackedCollection<?> getLevelData() { return levelData; }
+	public PackedCollection getLevelData() { return levelData; }
 
 	@Override
-	public Producer<PackedCollection<?>> getLevels(double frequencyRatio,
-												   Producer<PackedCollection<?>> time) {
+	public Producer<PackedCollection> getLevels(double frequencyRatio,
+												   Producer<PackedCollection> time) {
 		int left = 0;
 		int right = 0;
 
@@ -72,7 +72,7 @@ public class InterpolatedAudioSynthesisModel implements AudioSynthesisModel, Cel
 	}
 
 	public static InterpolatedAudioSynthesisModel create(NoteAudio audio, KeyPosition<?> root, KeyboardTuning tuning) {
-		PackedCollection<?> frequencies = new WaveData(audio.getAudio(root, -1).evaluate(), audio.getSampleRate()).fft(-1, true);
+		PackedCollection frequencies = new WaveData(audio.getAudio(root, -1).evaluate(), audio.getSampleRate()).fft(-1, true);
 
 		int samples = frequencies.getShape().length(0);
 		int frequencyCount = frequencies.getShape().length(1);

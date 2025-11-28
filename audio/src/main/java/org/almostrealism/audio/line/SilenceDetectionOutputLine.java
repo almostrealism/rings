@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 public class SilenceDetectionOutputLine implements OutputLine, CellFeatures {
 	private final OutputLine out;
 	private double threshold;
-	private PackedCollection<?> max;
+	private PackedCollection max;
 
 	public SilenceDetectionOutputLine(OutputLine out) {
 		this(out, 0.05);
@@ -35,11 +35,11 @@ public class SilenceDetectionOutputLine implements OutputLine, CellFeatures {
 	public SilenceDetectionOutputLine(OutputLine out, double threshold) {
 		this.out = out;
 		this.threshold = threshold;
-		this.max = new PackedCollection<>(1);
+		this.max = new PackedCollection(1);
 	}
 
 	@Override
-	public void write(PackedCollection<?> sample) {
+	public void write(PackedCollection sample) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -48,7 +48,7 @@ public class SilenceDetectionOutputLine implements OutputLine, CellFeatures {
 	}
 
 	@Override
-	public Supplier<Runnable> write(Producer<PackedCollection<?>> frames) {
+	public Supplier<Runnable> write(Producer<PackedCollection> frames) {
 		OperationList write = new OperationList("SilenceDetectionOutputLine");
 		write.add(a(cp(max), max(traverse(0, frames))));
 		write.add(out.write(frames));

@@ -81,18 +81,18 @@ public class MeshFile implements MeshSource, ShadableSurfaceWrapper, ShadableSur
 
 	@Override public boolean getShadeFront() { return this.getSurface().getShadeFront(); }
 	@Override public boolean getShadeBack() { return this.getSurface().getShadeBack(); }
-	@Override public Producer<RGB> getValueAt(Producer<Vector> point) { return this.getSurface().getValueAt(point); }
+	@Override public Producer<PackedCollection> getValueAt(Producer<PackedCollection> point) { return this.getSurface().getValueAt(point); }
 
 	@Override
 	public BoundingSolid calculateBoundingSolid() { return mesh.calculateBoundingSolid(); }
 
-	@Override public Producer<Vector> getNormalAt(Producer<Vector> point) { return this.getSurface().getNormalAt(point); }
+	@Override public Producer<PackedCollection> getNormalAt(Producer<PackedCollection> point) { return this.getSurface().getNormalAt(point); }
 	@Override public ContinuousField intersectAt(Producer<Ray> ray) { return this.getSurface().intersectAt(ray); }
 
-	@Override public Operator<PackedCollection<?>> get() { return getSurface().get(); }
+	@Override public Operator<PackedCollection> get() { return getSurface().get(); }
 
 	@Override
-	public Operator<PackedCollection<?>> expect() { return getSurface().expect(); }
+	public Operator<PackedCollection> expect() { return getSurface().expect(); }
 
-	@Override public Producer<RGB> shade(ShaderContext p) { return this.getSurface().shade(p); }
+	@Override public Producer<PackedCollection> shade(ShaderContext p) { return this.getSurface().shade(p); }
 }

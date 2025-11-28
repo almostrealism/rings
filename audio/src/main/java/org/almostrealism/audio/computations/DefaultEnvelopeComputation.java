@@ -29,15 +29,15 @@ import org.almostrealism.collect.computations.CollectionProducerComputationBase;
 import java.util.function.Consumer;
 
 @Deprecated
-public class DefaultEnvelopeComputation extends CollectionProducerComputationBase<PackedCollection<?>, PackedCollection<?>> implements ProducerComputation<PackedCollection<?>> {
+public class DefaultEnvelopeComputation extends CollectionProducerComputationBase<PackedCollection, PackedCollection> implements ProducerComputation<PackedCollection> {
 
-	public DefaultEnvelopeComputation(Producer<PackedCollection<?>> notePosition) {
+	public DefaultEnvelopeComputation(Producer<PackedCollection> notePosition) {
 		super(null, new TraversalPolicy(1), (Producer) notePosition);
 	}
 
 	@Override
-	public Scope<PackedCollection<?>> getScope(KernelStructureContext context) {
-		HybridScope<PackedCollection<?>> scope = new HybridScope<>(this);
+	public Scope<PackedCollection> getScope(KernelStructureContext context) {
+		HybridScope<PackedCollection> scope = new HybridScope<>(this);
 
 		String position = getArgument(1).valueAt(0).getSimpleExpression(getLanguage());
 		String result = ((ArrayVariable) getOutputVariable()).valueAt(0).getSimpleExpression(getLanguage());

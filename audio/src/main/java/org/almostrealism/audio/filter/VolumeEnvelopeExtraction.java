@@ -22,21 +22,21 @@ import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.collect.PackedCollection;
 
 public class VolumeEnvelopeExtraction implements StatelessFilter, CodeFeatures {
-	private PackedCollection<?> coefficients;
+	private PackedCollection coefficients;
 
 	public VolumeEnvelopeExtraction() {
 		this(281);
 	}
 
 	public VolumeEnvelopeExtraction(int aggregationWidth) {
-		coefficients = new PackedCollection<>(aggregationWidth);
+		coefficients = new PackedCollection(aggregationWidth);
 		coefficients.fill(1.0 / aggregationWidth);
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> filter(BufferDetails buffer,
-												Producer<PackedCollection<?>> params,
-												Producer<PackedCollection<?>> input) {
+	public Producer<PackedCollection> filter(BufferDetails buffer,
+												Producer<PackedCollection> params,
+												Producer<PackedCollection> input) {
 		return aggregate(abs(input), cp(coefficients));
 	}
 }

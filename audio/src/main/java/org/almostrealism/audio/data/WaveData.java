@@ -49,10 +49,10 @@ public class WaveData implements Destroyable, SamplingFeatures {
 
 	public static boolean enableWarnings = false;
 
-	private static Evaluable<PackedCollection<?>> magnitude;
-	private static Evaluable<PackedCollection<?>> fft;
-	private static Evaluable<PackedCollection<?>> pool2d;
-	private static Evaluable<PackedCollection<?>> scaledAdd;
+	private static Evaluable<PackedCollection> magnitude;
+	private static Evaluable<PackedCollection> fft;
+	private static Evaluable<PackedCollection> pool2d;
+	private static Evaluable<PackedCollection> scaledAdd;
 
 	static {
 		fft = Ops.op(o ->
@@ -80,7 +80,7 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	private int sampleRate;
 
 	public WaveData(int channels, int frames, int sampleRate) {
-		this(new PackedCollection<>(channels, frames), sampleRate);
+		this(new PackedCollection(channels, frames), sampleRate);
 	}
 
 	public WaveData(PackedCollection wave, int sampleRate) {
@@ -92,9 +92,9 @@ public class WaveData implements Destroyable, SamplingFeatures {
 		this.sampleRate = sampleRate;
 	}
 
-	public PackedCollection<?> getData() { return collection; }
+	public PackedCollection getData() { return collection; }
 
-	public PackedCollection<?> getChannelData(int channel) {
+	public PackedCollection getChannelData(int channel) {
 		if (channel < 0) {
 			throw new IndexOutOfBoundsException();
 		} else if (getChannelCount() == 1) {
@@ -143,12 +143,12 @@ public class WaveData implements Destroyable, SamplingFeatures {
 		return new WaveData(getChannelData(channel).range(new TraversalPolicy(length), start), sampleRate);
 	}
 
-	public WaveData sample(int channel, Factor<PackedCollection<?>> processor) {
+	public WaveData sample(int channel, Factor<PackedCollection> processor) {
 		return sample(channel, () -> processor);
 	}
 
-	public WaveData sample(int channel, Supplier<Factor<PackedCollection<?>>> processor) {
-		PackedCollection<?> result = new PackedCollection<>(getChannelData(channel).getShape());
+	public WaveData sample(int channel, Supplier<Factor<PackedCollection>> processor) {
+		PackedCollection result = new PackedCollection(getChannelData(channel).getShape());
 		sampling(getSampleRate(), getDuration(),
 					() -> processor.get().getResultant(c(p(getChannelData(channel)), frame())))
 				.get().into(result).evaluate();
@@ -162,7 +162,7 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	 * @return  The fourier transform of this {@link WaveData} over time in the
 	 *          {@link TraversalPolicy shape} (time slices, bins, 1).
 	 */
-	public PackedCollection<?> fft(int channel) {
+	public PackedCollection fft(int channel) {
 		return fft(channel, false);
 	}
 
@@ -175,7 +175,7 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	 * @return The fourier transform of this {@link WaveData} over time in the
 	 * {@link TraversalPolicy shape} (time slices, bins, 1).
 	 */
-	public PackedCollection<?> fft(int channel, boolean pooling) {
+	public PackedCollection fft(int channel, boolean pooling) {
 		return fft(channel, pooling, false, false);
 	}
 
@@ -188,24 +188,24 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	 * @return  The aggregated fourier transform of this {@link WaveData} in the
 	 *          {@link TraversalPolicy shape} (bins, 1).
 	 */
-	public PackedCollection<?> aggregatedFft(boolean includeAll) {
+	public PackedCollection aggregatedFft(boolean includeAll) {
 		return fft(-1, false, true, includeAll);
 	}
 
-	protected PackedCollection<?> fft(int channel, boolean pooling, boolean sum, boolean includeAll) {
-		PackedCollection<?> inRoot = new PackedCollection<>(FFT_BINS * FFT_BINS);
-		PackedCollection<?> outRoot = new PackedCollection<>(POOL_BATCH_OUT * POOL_BATCH_OUT);
+	protected PackedCollection fft(int channel, boolean pooling, boolean sum, boolean includeAll) {
+		PackedCollection inRoot = new PackedCollection(FFT_BINS * FFT_BINS);
+		PackedCollection outRoot = new PackedCollection(POOL_BATCH_OUT * POOL_BATCH_OUT);
 
 		int count = getFrameCount() > FFT_BINS ? getFrameCount() / FFT_BINS : 1;
 		int finalBins = includeAll ? FFT_BINS : (FFT_BINS / 2);
-		PackedCollection<?> out =
-				new PackedCollection<>(count * finalBins)
+		PackedCollection out =
+				new PackedCollection(count * finalBins)
 				.reshape(count, finalBins, 1);
 
 		try {
 			if (enableGpu && count > 1) {
-				PackedCollection<?> frameIn = getChannelData(channel).range(shape(count, FFT_BINS, 2));
-				PackedCollection<?> frameOut = new PackedCollection<>(shape(count, FFT_BINS, 2));
+				PackedCollection frameIn = getChannelData(channel).range(shape(count, FFT_BINS, 2));
+				PackedCollection frameOut = new PackedCollection(shape(count, FFT_BINS, 2));
 
 				fft.into(frameOut.traverse()).evaluate(frameIn.traverse());
 
@@ -219,8 +219,8 @@ public class WaveData implements Destroyable, SamplingFeatures {
 									frameOut.range(shape(finalBins), offset + finalBins).traverseEach());
 				}
 			} else {
-				PackedCollection<?> frameIn = inRoot.range(shape(FFT_BINS, 2));
-				PackedCollection<?> frameOut = outRoot.range(shape(FFT_BINS, 2));
+				PackedCollection frameIn = inRoot.range(shape(FFT_BINS, 2));
+				PackedCollection frameOut = outRoot.range(shape(FFT_BINS, 2));
 
 				for (int i = 0; i < count; i++) {
 					frameIn.setMem(0, getChannelData(channel), i * FFT_BINS,
@@ -245,7 +245,7 @@ public class WaveData implements Destroyable, SamplingFeatures {
 				int resultSize = count / FFT_POOL;
 				if (count % FFT_POOL != 0) resultSize++;
 
-				PackedCollection<?> pool = PackedCollection.factory().apply(resultSize * FFT_POOL_BINS)
+				PackedCollection pool = PackedCollection.factory().apply(resultSize * FFT_POOL_BINS)
 						.reshape(resultSize, FFT_POOL_BINS, 1);
 
 				int window = POOL_BATCH_IN * POOL_BATCH_IN;
@@ -253,8 +253,8 @@ public class WaveData implements Destroyable, SamplingFeatures {
 				int pcount = resultSize / POOL_BATCH_OUT;
 				if (resultSize % POOL_BATCH_OUT != 0) pcount++;
 
-				PackedCollection<?> poolIn = inRoot.range(shape(POOL_BATCH_IN, POOL_BATCH_IN, 1));
-				PackedCollection<?> poolOut = outRoot.range(shape(POOL_BATCH_OUT, POOL_BATCH_OUT, 1));
+				PackedCollection poolIn = inRoot.range(shape(POOL_BATCH_IN, POOL_BATCH_IN, 1));
+				PackedCollection poolOut = outRoot.range(shape(POOL_BATCH_OUT, POOL_BATCH_OUT, 1));
 
 				if (pcount < 1) {
 					throw new IllegalArgumentException();
@@ -272,7 +272,7 @@ public class WaveData implements Destroyable, SamplingFeatures {
 
 				return pool.range(shape(resultSize, FFT_POOL_BINS, 1));
 			} else if (sum) {
-				PackedCollection<?> sumOut = new PackedCollection<>(finalBins, 1);
+				PackedCollection sumOut = new PackedCollection(finalBins, 1);
 
 				for (int i = 0; i < count; i++) {
 					scaledAdd.into(sumOut.each()).evaluate(
@@ -330,13 +330,13 @@ public class WaveData implements Destroyable, SamplingFeatures {
 		return toCell(clock.frame(), channel);
 	}
 
-	public WaveCell toCell(Producer<PackedCollection<?>> frame, int channel) {
+	public WaveCell toCell(Producer<PackedCollection> frame, int channel) {
 		return new WaveCell(getChannelData(channel), frame);
 	}
 
 	public Function<WaveCellData, WaveCell> toCell(int channel, double amplitude,
-												   Producer<PackedCollection<?>> offset,
-												   Producer<PackedCollection<?>> repeat) {
+												   Producer<PackedCollection> offset,
+												   Producer<PackedCollection> repeat) {
 		return data -> new WaveCell(data, getChannelData(channel),
 									getSampleRate(), amplitude,
 									offset == null ? null : Ops.o().c(offset),
@@ -356,7 +356,7 @@ public class WaveData implements Destroyable, SamplingFeatures {
 	public static WaveData load(File f) throws IOException {
 		try (WavFile w = WavFile.openWavFile(f)) {
 			int channelCount = w.getNumChannels();
-			PackedCollection<?> in = new PackedCollection<>(new TraversalPolicy(channelCount, w.getNumFrames()));
+			PackedCollection in = new PackedCollection(new TraversalPolicy(channelCount, w.getNumFrames()));
 
 			double[][] wave = new double[w.getNumChannels()][(int) w.getFramesRemaining()];
 			w.readFrames(wave, 0, (int) w.getFramesRemaining());

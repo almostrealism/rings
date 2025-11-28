@@ -45,7 +45,7 @@ public class MultiOrderFilterTest implements TestFeatures {
 					cp(data.getChannelData(0)), c(2000),
 					data.getSampleRate(), 40);
 
-		PackedCollection<?> result = (optimized ? Process.optimized(filter) : filter).get().evaluate();
+		PackedCollection result = (optimized ? Process.optimized(filter) : filter).get().evaluate();
 		WaveData output = new WaveData(result, data.getSampleRate());
 		output.save(new File("results/multi-order-low-pass" + (optimized ? "-opt" : "") + ".wav"));
 	}
@@ -67,7 +67,7 @@ public class MultiOrderFilterTest implements TestFeatures {
 					cp(data.getChannelData(0)), c(3000),
 					data.getSampleRate(), 40);
 
-		PackedCollection<?> result = (optimized ? Process.optimized(filter) : filter).get().evaluate();
+		PackedCollection result = (optimized ? Process.optimized(filter) : filter).get().evaluate();
 		WaveData output = new WaveData(result, data.getSampleRate());
 		output.save(new File("results/multi-order-high-pass" + (optimized ? "-opt" : "") + ".wav"));
 	}

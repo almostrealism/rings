@@ -26,7 +26,7 @@ public class GrainProcessor implements SamplingFeatures {
 	private int frames;
 	private int sampleRate;
 
-	private Evaluable<PackedCollection<?>> ev;
+	private Evaluable<PackedCollection> ev;
 
 	public GrainProcessor(double duration, int sampleRate) {
 		this.frames = (int) (duration * sampleRate);
@@ -42,8 +42,8 @@ public class GrainProcessor implements SamplingFeatures {
 
 	public int getFrames() { return frames; }
 
-	public WaveData apply(PackedCollection<?> input, Grain grain, PackedCollection<?> wavelength, PackedCollection<?> phase, PackedCollection<?> amp) {
-		PackedCollection<?> result = ev.into(new PackedCollection<>(shape(frames), 1))
+	public WaveData apply(PackedCollection input, Grain grain, PackedCollection wavelength, PackedCollection phase, PackedCollection amp) {
+		PackedCollection result = ev.into(new PackedCollection(shape(frames), 1))
 				.evaluate(input.traverse(0), grain, wavelength, phase, amp);
 		return new WaveData(result, sampleRate);
 	}

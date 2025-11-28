@@ -52,15 +52,15 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 
 	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 230);
 
-	public static ContextSpecific<PackedCollection<PackedCollection<?>>> timeline;
+	public static ContextSpecific<PackedCollection> timeline;
 
 	static {
-		Supplier<PackedCollection<PackedCollection<?>>> timelineSupply = () -> {
+		Supplier<PackedCollection> timelineSupply = () -> {
 			if (enableVerbose) {
 				CellFeatures.console.features(WaveOutput.class).log("Generating timeline");
 			}
 
-			PackedCollection data = new PackedCollection<>(defaultTimelineFrames).traverseEach();
+			PackedCollection data = new PackedCollection(defaultTimelineFrames).traverseEach();
 			Ops.o().integers(0, defaultTimelineFrames).divide(Ops.o().c(OutputLine.sampleRate)).into(data).evaluate();
 
 			if (enableVerbose) {
@@ -79,7 +79,7 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 	private long sampleRate;
 
 	private WavFile wav;
-	private List<CollectionProducer<PackedCollection<?>>> data;
+	private List<CollectionProducer<PackedCollection>> data;
 	private List<Writer> channels;
 
 	public WaveOutput() { this((File) null); }
@@ -115,11 +115,11 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 				Math.toIntExact(sampleRate)));
 	}
 
-	public WaveOutput(PackedCollection<?> data) {
+	public WaveOutput(PackedCollection data) {
 		this(null, 24, new WaveData(data, OutputLine.sampleRate));
 	}
 
-	public WaveOutput(Producer<PackedCollection<?>> data) {
+	public WaveOutput(Producer<PackedCollection> data) {
 		this(null, 24, OutputLine.sampleRate, List.of(data));
 	}
 
@@ -131,7 +131,7 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 				List.of(CollectionFeatures.getInstance().p(data.getChannelData(0))));
 	}
 
-	public WaveOutput(Supplier<File> f, int bits, long sampleRate, List<Producer<PackedCollection<?>>> data) {
+	public WaveOutput(Supplier<File> f, int bits, long sampleRate, List<Producer<PackedCollection>> data) {
 		this.file = f;
 		this.bits = bits;
 		this.sampleRate = sampleRate;
@@ -148,7 +148,7 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 							.collect(Collectors.toList());
 	}
 
-	public PackedCollection<?> getCursor(int channel) {
+	public PackedCollection getCursor(int channel) {
 		return channels.get(channel).getCursor();
 	}
 
@@ -160,37 +160,37 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 				.min().orElse(0);
 	}
 
-	public Receptor<PackedCollection<?>> getWriter(int channel) {
+	public Receptor<PackedCollection> getWriter(int channel) {
 		return channels.get(channel);
 	}
 
-	public ReceptorCell<PackedCollection<?>> getWriterCell(int channel) {
+	public ReceptorCell<PackedCollection> getWriterCell(int channel) {
 		return new ReceptorCell<>(getWriter(channel));
 	}
 
-	public CollectionProducer<PackedCollection<?>> getChannelData(int channel) {
+	public CollectionProducer<PackedCollection> getChannelData(int channel) {
 		return channel < data.size() ? data.get(channel) : null;
 	}
 
-	public Supplier<Runnable> export(int channel, PackedCollection<?> destination) {
+	public Supplier<Runnable> export(int channel, PackedCollection destination) {
 		TraversalPolicy shape = shape(getChannelData(channel));
 		int len = destination.getMemLength();
 		if (shape.getTotalSize() > 1 && shape.getTotalSize() > len)
 			len = shape.getTotalSize();
 
-		Evaluable<PackedCollection<?>> d = getChannelData(channel).get();
+		Evaluable<PackedCollection> d = getChannelData(channel).get();
 		return new MemoryDataCopy("WaveOutput Export", d::evaluate, () -> destination, len);
 	}
 
 	public Supplier<Runnable> write() {
 		// TODO  Write frames in larger batches than 1
 		return () -> {
-			Evaluable<PackedCollection<?>> left = getChannelData(0).get();
-			Evaluable<PackedCollection<?>> right = getChannelData(1) == null ? null : getChannelData(1).get();
+			Evaluable<PackedCollection> left = getChannelData(0).get();
+			Evaluable<PackedCollection> right = getChannelData(1) == null ? null : getChannelData(1).get();
 
 			return () -> {
-				PackedCollection<?> l = left.evaluate();
-				PackedCollection<?> r = right == null ? null : right.evaluate();
+				PackedCollection l = left.evaluate();
+				PackedCollection r = right == null ? null : right.evaluate();
 				int frames = getFrameCount();
 
 				if (frames > 0) {
@@ -242,10 +242,10 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 
 	public Supplier<Runnable> writeCsv(int channel, File file) {
 		return () -> {
-			Evaluable<PackedCollection<?>> d = getChannelData(channel).get();
+			Evaluable<PackedCollection> d = getChannelData(channel).get();
 
 			return () -> {
-				PackedCollection<?> o = d.evaluate();
+				PackedCollection o = d.evaluate();
 				StringBuffer buf = new StringBuffer();
 
 				int frames = getFrameCount();
@@ -285,23 +285,23 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 	@Override
 	public Console console() { return CellFeatures.console; }
 
-	protected class Writer implements Receptor<PackedCollection<?>>, Lifecycle, Destroyable {
+	protected class Writer implements Receptor<PackedCollection>, Lifecycle, Destroyable {
 		private int channel;
-		private PackedCollection<?> cursor;
+		private PackedCollection cursor;
 
 		public Writer(int channel) {
 			this.channel = channel;
-			this.cursor = new PackedCollection<>(1);
+			this.cursor = new PackedCollection(1);
 		}
 
-		public PackedCollection<?> getCursor() { return cursor; }
+		public PackedCollection getCursor() { return cursor; }
 
 		public int getFrameCount() {
 			return (int) cursor.toDouble(0) - 1;
 		}
 
 		@Override
-		public Supplier<Runnable> push(Producer<PackedCollection<?>> protein) {
+		public Supplier<Runnable> push(Producer<PackedCollection> protein) {
 			String description = "WaveOutput Push";
 			if (file != null) description += " (to file)";
 			OperationList push = new OperationList(description);

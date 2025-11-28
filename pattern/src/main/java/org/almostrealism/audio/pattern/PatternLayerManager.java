@@ -61,8 +61,8 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 
 	private Supplier<List<NoteAudioChoice>> percChoices;
 	private Supplier<List<NoteAudioChoice>> melodicChoices;
-	private Chromosome<PackedCollection<?>> layerChoiceChromosome;
-	private Chromosome<PackedCollection<?>> envelopeAutomationChromosome;
+	private Chromosome<PackedCollection> layerChoiceChromosome;
+	private Chromosome<PackedCollection> envelopeAutomationChromosome;
 
 	private ParameterFunction noteSelection;
 	private ParameterizedPositionFunction activeSelection;
@@ -72,7 +72,7 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 	private List<ParameterSet> layerParams;
 	private int layerCount;
 
-	private Map<ChannelInfo, PackedCollection<?>> destination;
+	private Map<ChannelInfo, PackedCollection> destination;
 
 	public PatternLayerManager(List<NoteAudioChoice> choices,
 							   ProjectedChromosome chromosome,
@@ -114,7 +114,7 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 				.collect(Collectors.toList()));
 	}
 
-	public Map<ChannelInfo, PackedCollection<?>> getDestination() { return destination; }
+	public Map<ChannelInfo, PackedCollection> getDestination() { return destination; }
 
 	public void updateDestination(AudioSceneContext context) {
 		if (context.getChannels() == null) return;
@@ -272,13 +272,13 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 		refresh();
 	}
 
-	public void layer(Gene<PackedCollection<?>> gene) {
+	public void layer(Gene<PackedCollection> gene) {
 		layer(ParameterSet.fromGene(gene));
 	}
 
 	protected void layer(ParameterSet params) {
-		Gene<PackedCollection<?>> automationGene = envelopeAutomationChromosome.valueAt(depth());
-		PackedCollection<?> automationParams =
+		Gene<PackedCollection> automationGene = envelopeAutomationChromosome.valueAt(depth());
+		PackedCollection automationParams =
 				PackedCollection.factory().apply(AutomationManager.GENE_LENGTH).fill(pos ->
 						automationGene.valueAt(pos[0]).getResultant(null).evaluate().toDouble());
 

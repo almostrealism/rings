@@ -29,9 +29,9 @@ public class NoiseGenerator implements StatelessSource, SamplingFeatures {
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> generate(BufferDetails buffer,
-												  Producer<PackedCollection<?>> params,
-												  Factor<PackedCollection<?>> frequency) {
+	public Producer<PackedCollection> generate(BufferDetails buffer,
+												  Producer<PackedCollection> params,
+												  Factor<PackedCollection> frequency) {
 		double amp = 0.1;
 
 		return sampling(buffer.getSampleRate(), () -> {
@@ -39,7 +39,7 @@ public class NoiseGenerator implements StatelessSource, SamplingFeatures {
 			double scale = amp / 3.0;
 
 			// Generate a series of normally distributed random numbers
-			Producer<PackedCollection<?>> series = randn(buffer.getFrames());
+			Producer<PackedCollection> series = randn(buffer.getFrames());
 			return multiply(traverseEach(series), c(scale));
 		});
 	}

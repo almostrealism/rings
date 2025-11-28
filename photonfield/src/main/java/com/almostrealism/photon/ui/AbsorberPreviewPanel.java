@@ -15,6 +15,7 @@
  */
 
 package com.almostrealism.photon.ui;
+import io.almostrealism.relation.Producer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -84,7 +85,7 @@ public class AbsorberPreviewPanel extends JPanel
 		this.initAbsorber();
 		
 		this.light = l;
-		this.set.addAbsorber(l, vector(0.0, 15.0, 0.0));
+		this.set.addAbsorber(l, (Producer) vector(0.0, 15.0, 0.0));
 		
 		this.initCanvas();
 	}
@@ -128,7 +129,7 @@ public class AbsorberPreviewPanel extends JPanel
 		camera.setHeight(h);
 		camera.setPixelSize(0.1);
 		
-		this.set.addAbsorber(camera, vector(0.0, 0.0, 10.0));
+		this.set.addAbsorber(camera, (Producer) vector(0.0, 0.0, 10.0));
 		
 		this.canvas = new ImageCanvas(w, h);
 		this.progPanel = new ProgressDisplay(w * h / 1000, w * h, false);
@@ -162,12 +163,12 @@ public class AbsorberPreviewPanel extends JPanel
 		((PlanarLight) light).setSurfaceNormal(new Vector(0.0, -1.0, 0.0));
 		((PlanarLight) light).setOrientation(new Vector(0.0, 0.0, 1.0));
 		
-		this.set.addAbsorber(light, vector(0.0, 15.0, 0.0));
+		this.set.addAbsorber(light, (Producer) vector(0.0, 15.0, 0.0));
 	}
 	
 	protected void initFloor() {
 		Plane p = new Plane();
-		p.setSurfaceNormal(vector(0.0, 1.0, 0.0));
+		p.setSurfaceNormal((Producer) vector(0.0, 1.0, 0.0));
 		p.setOrientation(new double[] {0.0, 0.0, 1.0});
 		p.setWidth(20.0);
 		p.setHeight(20.0);
@@ -180,7 +181,7 @@ public class AbsorberPreviewPanel extends JPanel
 		a.setSpectra(new ProbabilityDistribution(this));
 		a.setVolume(p);
 		
-		this.set.addAbsorber(a, vector(0.0, -5.0, 0.0));
+		this.set.addAbsorber(a, (Producer) vector(0.0, -5.0, 0.0));
 		this.set.setColorBufferDimensions(this.bufDim, this.bufDim, this.bufScale);
 	}
 

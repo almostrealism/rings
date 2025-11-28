@@ -54,10 +54,10 @@ public class DistractionRunner implements Destroyable, CollectionFeatures {
 	private final Random random;
 
 	private final List<DistractionOperation> operations;
-	private PackedCollection<?> bufferA;
-	private PackedCollection<?> bufferB;
-	private PackedCollection<?> resultBuffer;
-	private PackedCollection<?> scalarResult;
+	private PackedCollection bufferA;
+	private PackedCollection bufferB;
+	private PackedCollection resultBuffer;
+	private PackedCollection scalarResult;
 
 	private long executionCount = 0;
 
@@ -92,10 +92,10 @@ public class DistractionRunner implements Destroyable, CollectionFeatures {
 	public void initialize() {
 		if (bufferA != null) return;  // Already initialized
 
-		bufferA = new PackedCollection<>(bufferSize).randnFill();
-		bufferB = new PackedCollection<>(bufferSize).randnFill();
-		resultBuffer = new PackedCollection<>(bufferSize);
-		scalarResult = new PackedCollection<>(1);
+		bufferA = new PackedCollection(bufferSize).randnFill();
+		bufferB = new PackedCollection(bufferSize).randnFill();
+		resultBuffer = new PackedCollection(bufferSize);
+		scalarResult = new PackedCollection(1);
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class DistractionRunner implements Destroyable, CollectionFeatures {
 	 * @param operation  The compiled operation to execute
 	 * @param result     The result buffer for this operation
 	 */
-	public void addOperation(String name, Evaluable<PackedCollection<?>> operation, PackedCollection<?> result) {
+	public void addOperation(String name, Evaluable<PackedCollection> operation, PackedCollection result) {
 		operations.add(new DistractionOperation(name, operation, result));
 	}
 
@@ -115,9 +115,9 @@ public class DistractionRunner implements Destroyable, CollectionFeatures {
 	 * @param name      Name of the operation
 	 * @param producer  Producer to compile and add
 	 */
-	public void addProducer(String name, Producer<PackedCollection<?>> producer) {
+	public void addProducer(String name, Producer<PackedCollection> producer) {
 		initialize();
-		Evaluable<PackedCollection<?>> op = producer.get();
+		Evaluable<PackedCollection> op = producer.get();
 		addOperation(name, op, resultBuffer);
 	}
 
@@ -158,7 +158,7 @@ public class DistractionRunner implements Destroyable, CollectionFeatures {
 	 */
 	public void addSum() {
 		initialize();
-		Evaluable<PackedCollection<?>> op = (Evaluable) sum(p(bufferA)).get();
+		Evaluable<PackedCollection> op = (Evaluable) sum(p(bufferA)).get();
 		addOperation("sum", op, scalarResult);
 	}
 
@@ -307,10 +307,10 @@ public class DistractionRunner implements Destroyable, CollectionFeatures {
 	 */
 	private static class DistractionOperation {
 		private final String name;
-		private final Evaluable<PackedCollection<?>> operation;
-		private final PackedCollection<?> result;
+		private final Evaluable<PackedCollection> operation;
+		private final PackedCollection result;
 
-		public DistractionOperation(String name, Evaluable<PackedCollection<?>> operation, PackedCollection<?> result) {
+		public DistractionOperation(String name, Evaluable<PackedCollection> operation, PackedCollection result) {
 			this.name = name;
 			this.operation = operation;
 			this.result = result;

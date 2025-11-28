@@ -42,7 +42,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class AudioPopulationOptimizer<O extends Temporal> extends
-		PopulationOptimizer<PackedCollection<?>, PackedCollection<?>, O, AudioHealthScore>
+		PopulationOptimizer<PackedCollection, PackedCollection, O, AudioHealthScore>
 		implements Runnable, Destroyable {
 	public static String outputDir = SystemUtils.getProperty("AR_AUDIO_OUTPUT", SystemUtils.getLocalDestination("health"));
 
@@ -60,17 +60,17 @@ public class AudioPopulationOptimizer<O extends Temporal> extends
 	private Runnable cycleListener;
 	private Runnable completionListener;
 
-	public AudioPopulationOptimizer(int stemCount, Function<List<Genome<PackedCollection<?>>>, Population> children,
-									Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
-									Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
+	public AudioPopulationOptimizer(int stemCount, Function<List<Genome<PackedCollection>>, Population> children,
+									Supplier<GenomeBreeder<PackedCollection>> breeder,
+									Supplier<Supplier<Genome<PackedCollection>>> generator,
 									String file, int iterationsPerRun) {
 		this(() -> healthComputation(stemCount), children, breeder, generator, file, iterationsPerRun);
 	}
 
 	public AudioPopulationOptimizer(Supplier<HealthComputation<O, AudioHealthScore>> health,
-									Function<List<Genome<PackedCollection<?>>>, Population> children,
-									Supplier<GenomeBreeder<PackedCollection<?>>> breeder,
-									Supplier<Supplier<Genome<PackedCollection<?>>>> generator,
+									Function<List<Genome<PackedCollection>>, Population> children,
+									Supplier<GenomeBreeder<PackedCollection>> breeder,
+									Supplier<Supplier<Genome<PackedCollection>>> generator,
 									String file, int iterationsPerRun) {
 		super(health, children, breeder, generator);
 		this.file = file;
@@ -104,7 +104,7 @@ public class AudioPopulationOptimizer<O extends Temporal> extends
 	}
 
 	public void readPopulation() throws FileNotFoundException {
-		List<Genome<PackedCollection<?>>> loaded;
+		List<Genome<PackedCollection>> loaded;
 
 		if (new File(file).exists()) {
 			try {

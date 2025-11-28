@@ -32,17 +32,17 @@ import java.util.stream.IntStream;
 
 public class ValueSequenceCell extends CollectionTemporalCellAdapter implements SamplingFeatures {
 	private BaseAudioData data;
-	private List<Producer<PackedCollection<?>>> values;
-	private Producer<PackedCollection<?>> durationFrames;
+	private List<Producer<PackedCollection>> values;
+	private Producer<PackedCollection> durationFrames;
 
-	public ValueSequenceCell(IntFunction<Producer<PackedCollection<?>>> values,
-							 Producer<PackedCollection<?>> duration, int steps) {
+	public ValueSequenceCell(IntFunction<Producer<PackedCollection>> values,
+							 Producer<PackedCollection> duration, int steps) {
 		this(new PolymorphicAudioData(), values, duration, steps);
 	}
 
 	public ValueSequenceCell(BaseAudioData data,
-							 IntFunction<Producer<PackedCollection<?>>> values,
-							 Producer<PackedCollection<?>> duration, int steps) {
+							 IntFunction<Producer<PackedCollection>> values,
+							 Producer<PackedCollection> duration, int steps) {
 		this.data = data;
 		this.values = IntStream.range(0, steps).mapToObj(values).collect(Collectors.toList());
 		this.durationFrames = toFrames(duration);
@@ -50,8 +50,8 @@ public class ValueSequenceCell extends CollectionTemporalCellAdapter implements 
 	}
 
 	@Override
-	public Supplier<Runnable> push(Producer<PackedCollection<?>> protein) {
-		PackedCollection value = new PackedCollection<>(1);
+	public Supplier<Runnable> push(Producer<PackedCollection> protein) {
+		PackedCollection value = new PackedCollection(1);
 		OperationList push = new OperationList("ValueSequenceCell Push");
 		push.add(new ValueSequencePush(data, durationFrames, value, values.toArray(Producer[]::new)));
 		push.add(super.push(p(value)));

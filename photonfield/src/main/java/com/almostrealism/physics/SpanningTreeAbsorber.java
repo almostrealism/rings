@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+
 package com.almostrealism.physics;
+import org.almostrealism.collect.PackedCollection;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -85,7 +87,7 @@ public class SpanningTreeAbsorber implements AbsorberSet {
 	}
 
 	@Override
-	public Producer<Vector> emit() {
+	public Producer<PackedCollection> emit() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -193,7 +195,7 @@ public class SpanningTreeAbsorber implements AbsorberSet {
 	}
 
 	@Override
-	public Producer<Vector> getEmitPosition() {
+	public Producer<PackedCollection> getEmitPosition() {
 		// TODO Auto-generated method stub
 		return null;
 	}

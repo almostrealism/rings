@@ -32,7 +32,7 @@ public class AudioStreamHandler implements HttpAudioHandler, CodeFeatures {
 	public static boolean enableByteCache = false;
 	public static double bufferDuration = 1.0;
 
-	private PackedCollection<?> buffer;
+	private PackedCollection buffer;
 	private int totalFrames;
 	private int sampleRate;
 
@@ -45,7 +45,7 @@ public class AudioStreamHandler implements HttpAudioHandler, CodeFeatures {
 							  int totalFrames, int sampleRate) {
 		this.totalFrames = totalFrames;
 		this.sampleRate = sampleRate;
-		this.buffer = new PackedCollection<>((int) (sampleRate * bufferDuration));
+		this.buffer = new PackedCollection((int) (sampleRate * bufferDuration));
 		this.processor = audioProcessor;
 	}
 

@@ -42,13 +42,13 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	private int sampleRate;
 	private int bufferFrames;
 
-	private PackedCollection<?> raw;
+	private PackedCollection raw;
 	private List<DoubleConsumer> timeListeners;
 
 	private SampleMixer mixer;
 	private TimeCell clock;
-	private PackedCollection<?>[] level;
-	private PackedCollection<?> loopDuration[];
+	private PackedCollection[] level;
+	private PackedCollection loopDuration[];
 	private AudioLine outputLine;
 
 	private boolean loaded[];
@@ -68,11 +68,11 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		this.bufferFrames = bufferFrames;
 		this.sampleRate = sampleRate;
 
-		this.raw = new PackedCollection<>(playerCount, bufferFrames);
+		this.raw = new PackedCollection(playerCount, bufferFrames);
 		this.timeListeners = new ArrayList<>();
 
 		this.loopDuration = IntStream.range(0, playerCount)
-				.mapToObj(c -> new PackedCollection<>(1))
+				.mapToObj(c -> new PackedCollection(1))
 				.toArray(PackedCollection[]::new);
 		this.loaded = new boolean[playerCount];
 		this.muted = new boolean[playerCount];
@@ -84,7 +84,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	}
 
 	protected void initMixer() {
-		level = new PackedCollection<?>[mixer.getChannelCount()];
+		level = new PackedCollection[mixer.getChannelCount()];
 
 		if (enableUnifiedClock) {
 			this.clock = new TimeCell();
@@ -381,7 +381,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		}
 
 		if (this.loopDuration != null) {
-			for (PackedCollection<?> packedCollection : loopDuration) {
+			for (PackedCollection packedCollection : loopDuration) {
 				packedCollection.destroy();
 			}
 

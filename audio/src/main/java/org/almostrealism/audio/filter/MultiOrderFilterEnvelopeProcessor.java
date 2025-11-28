@@ -87,16 +87,16 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Des
 	/** Width of each histogram bin in frames. */
 	private static final int HISTOGRAM_BIN_WIDTH = (HISTOGRAM_MAX_FRAMES - HISTOGRAM_MIN_FRAMES) / HISTOGRAM_BINS;
 
-	private PackedCollection<?> cutoff;
+	private PackedCollection cutoff;
 
-	private PackedCollection<?> duration;
-	private PackedCollection<?> attack;
-	private PackedCollection<?> decay;
-	private PackedCollection<?> sustain;
-	private PackedCollection<?> release;
+	private PackedCollection duration;
+	private PackedCollection attack;
+	private PackedCollection decay;
+	private PackedCollection sustain;
+	private PackedCollection release;
 
-	private Evaluable<PackedCollection<?>> cutoffEnvelope;
-	private Evaluable<PackedCollection<?>> multiOrderFilter;
+	private Evaluable<PackedCollection> cutoffEnvelope;
+	private Evaluable<PackedCollection> multiOrderFilter;
 
 	private boolean histogramEnabled;
 	private long[] histogram;
@@ -115,15 +115,15 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Des
 	public MultiOrderFilterEnvelopeProcessor(int sampleRate, double maxSeconds) {
 		int maxFrames = (int) (maxSeconds * sampleRate);
 
-		cutoff = new PackedCollection<>(maxFrames);
-		duration = new PackedCollection<>(1);
-		attack = new PackedCollection<>(1);
-		decay = new PackedCollection<>(1);
-		sustain = new PackedCollection<>(1);
-		release = new PackedCollection<>(1);
+		cutoff = new PackedCollection(maxFrames);
+		duration = new PackedCollection(1);
+		attack = new PackedCollection(1);
+		decay = new PackedCollection(1);
+		sustain = new PackedCollection(1);
+		release = new PackedCollection(1);
 
 		EnvelopeSection envelope = envelope(cp(duration), cp(attack), cp(decay), cp(sustain), cp(release));
-		Producer<PackedCollection<?>> env =
+		Producer<PackedCollection> env =
 				sampling(sampleRate, () -> envelope.get().getResultant(c(filterPeak)));
 
 		cutoffEnvelope = env.get();
@@ -276,7 +276,7 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Des
 	 * @throws IllegalArgumentException if input size exceeds maximum configured frames
 	 */
 	@Override
-	public void process(PackedCollection<?> input, PackedCollection<?> output) {
+	public void process(PackedCollection input, PackedCollection output) {
 		int frames = input.getShape().getTotalSize();
 
 		// Update histogram if enabled
@@ -286,7 +286,7 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Des
 			histogram[binIndex]++;
 		}
 
-		PackedCollection<?> cf = cutoff.range(shape(frames));
+		PackedCollection cf = cutoff.range(shape(frames));
 		cutoffEnvelope.into(cf.traverseEach()).evaluate();
 		multiOrderFilter.into(output.traverse(1))
 				.evaluate(input.traverse(0), cf.traverse(0));

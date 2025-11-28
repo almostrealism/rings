@@ -34,14 +34,14 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public abstract class ValueSequenceComputation extends OperationComputationAdapter<PackedCollection<?>> implements CodeFeatures {
+public abstract class ValueSequenceComputation extends OperationComputationAdapter<PackedCollection> implements CodeFeatures {
 	protected HybridScope scope;
 	protected final boolean repeat;
 
 	public ValueSequenceComputation(BaseAudioData data,
-									Producer<PackedCollection<?>> durationFrames,
-									PackedCollection<?> output, boolean repeat,
-									Producer<PackedCollection<?>>... choices) {
+									Producer<PackedCollection> durationFrames,
+									PackedCollection output, boolean repeat,
+									Producer<PackedCollection>... choices) {
 		super(inputArgs(data, durationFrames, output, choices));
 		this.repeat = repeat;
 	}
@@ -51,11 +51,11 @@ public abstract class ValueSequenceComputation extends OperationComputationAdapt
 	public ArrayVariable getWaveLength() { return getArgument(2); }
 	public ArrayVariable getDurationFrames() { return getArgument(3); }
 
-	public Producer<PackedCollection<?>> output() { return (Producer) getInputs().get(0); }
-	public Producer<PackedCollection<?>> wavePosition() { return (Producer) getInputs().get(1); }
-	public Producer<PackedCollection<?>> durationFrames() { return (Producer) getInputs().get(3); }
+	public Producer<PackedCollection> output() { return (Producer) getInputs().get(0); }
+	public Producer<PackedCollection> wavePosition() { return (Producer) getInputs().get(1); }
+	public Producer<PackedCollection> durationFrames() { return (Producer) getInputs().get(3); }
 
-	public <T> List<T> choices(Function<Producer<PackedCollection<?>>, T> processor) {
+	public <T> List<T> choices(Function<Producer<PackedCollection>, T> processor) {
 		return IntStream.range(4, getInputs().size())
 				.mapToObj(i -> (T) processor.apply((Producer) getInputs().get(i)))
 				.collect(Collectors.toList());
@@ -64,8 +64,8 @@ public abstract class ValueSequenceComputation extends OperationComputationAdapt
 	@Override
 	public Scope getScope(KernelStructureContext context) { return scope; }
 
-	private static Producer[] inputArgs(BaseAudioData data, Producer<PackedCollection<?>> durationFrames,
-										PackedCollection<?> output, Producer<PackedCollection<?>>... choices) {
+	private static Producer[] inputArgs(BaseAudioData data, Producer<PackedCollection> durationFrames,
+										PackedCollection output, Producer<PackedCollection>... choices) {
 		Producer args[] = new Producer[4 + choices.length];
 		args[0] = () -> new Provider<>(output);
 		args[1] = data.getWavePosition();

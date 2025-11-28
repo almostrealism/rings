@@ -15,6 +15,7 @@
  */
 
 package com.almostrealism.util;
+import io.almostrealism.relation.Producer;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -365,7 +366,7 @@ public class FileLoader extends DefaultHandler implements CodeFeatures {
 			}
 			
 			if (this.set != null) {
-				this.set.addAbsorber(s, vector(p[0] * scale, p[1] * scale, p[2] * scale));
+				this.set.addAbsorber(s, (Producer) vector(p[0] * scale, p[1] * scale, p[2] * scale));
 				this.stack.push(this.set);
 				this.scales.push(new Double(this.scale));
 			}
@@ -402,7 +403,7 @@ public class FileLoader extends DefaultHandler implements CodeFeatures {
 					System.out.println("FileLoader: Created top level set.");
 				}
 				
-				this.set.addAbsorber(this.absorber, vector(p[0] * scale, p[1] * scale, p[2] * scale));
+				this.set.addAbsorber(this.absorber, (Producer) vector(p[0] * scale, p[1] * scale, p[2] * scale));
 			} catch (InstantiationException e) {
 				System.out.println("FileLoader: Error instantiating " + type +
 									" (" + e.getMessage() + ")");

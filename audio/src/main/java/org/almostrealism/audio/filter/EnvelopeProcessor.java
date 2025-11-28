@@ -31,5 +31,5 @@ public interface EnvelopeProcessor {
 
 	void setRelease(double release);
 
-	void process(PackedCollection<?> input, PackedCollection<?> output);
+	void process(PackedCollection input, PackedCollection output);
 }

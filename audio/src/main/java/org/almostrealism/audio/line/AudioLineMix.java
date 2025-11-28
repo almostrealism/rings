@@ -37,14 +37,14 @@ public class AudioLineMix implements AudioLineOperation, CellFeatures {
 	}
 
 	@Override
-	public TemporalRunner process(Producer<PackedCollection<?>> input,
-								  Producer<PackedCollection<?>> output,
+	public TemporalRunner process(Producer<PackedCollection> input,
+								  Producer<PackedCollection> output,
 								  int frames) {
-		PackedCollection<?> temp = new PackedCollection<>(frames);
+		PackedCollection temp = new PackedCollection(frames);
 		TemporalRunner wetRunner = operation.process(input, p(temp), frames);
 
-		CollectionProducer<PackedCollection<?>> dry = c(input).multiply(cleanLevel);
-		CollectionProducer<PackedCollection<?>> wet = cp(temp).multiply(1.0 - cleanLevel);
+		CollectionProducer<PackedCollection> dry = c(input).multiply(cleanLevel);
+		CollectionProducer<PackedCollection> wet = cp(temp).multiply(1.0 - cleanLevel);
 
 		OperationList op = new OperationList("AudioLineMix");
 		op.add(wetRunner.tick());

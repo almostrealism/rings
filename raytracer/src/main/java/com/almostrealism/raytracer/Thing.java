@@ -43,17 +43,17 @@ public class Thing extends AbstractSurface implements ScalarFeatures {
 	}
 
 	@Override
-	public Operator<PackedCollection<?>> expect() {
+	public Operator<PackedCollection> expect() {
 		return p.expect();
 	}
 
 	@Override
-	public Operator<PackedCollection<?>> get() {
+	public Operator<PackedCollection> get() {
 		return p.get();
 	}
 
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> point) {
-		return vector(0.0, 0.0, 1.0);
+	public Producer<PackedCollection> getNormalAt(Producer<PackedCollection> point) {
+		return (Producer) vector(0.0, 0.0, 1.0);
 	}
 }

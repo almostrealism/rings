@@ -23,12 +23,12 @@ public class CellListTests implements CellFeatures {
 		WaveData data = WaveData.load(new File("Library/Snare Perc DD.wav"));
 		int samples = data.getFrameCount();
 
-		PackedCollection<?> result = new PackedCollection<>(samples);
-		Producer<PackedCollection<?>> destination = p(result);
-		Producer<PackedCollection<?>> source = p(data.getChannelData(0));
+		PackedCollection result = new PackedCollection(samples);
+		Producer<PackedCollection> destination = p(result);
+		Producer<PackedCollection> source = p(data.getChannelData(0));
 
-		PackedCollection<?> input = new PackedCollection<>(samples);
-		PackedCollection<PackedCollection<?>> output = new PackedCollection<PackedCollection<?>>(shape(1, samples)).traverse(1);
+		PackedCollection input = new PackedCollection(samples);
+		PackedCollection output = new PackedCollection(shape(1, samples)).traverse(1);
 
 		CellList cells = cells(1, i -> new WaveCell(input.traverseEach(), OutputLine.sampleRate)); // .f(i -> lp(2000, 0.1));
 

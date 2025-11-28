@@ -65,8 +65,8 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	private List<PatternLayerManager> patterns;
 	private List<ProjectedChromosome> chromosomes;
 
-	private PackedCollection<?> volume;
-	private PackedCollection<?> destination;
+	private PackedCollection volume;
+	private PackedCollection destination;
 
 	public PatternSystemManager( List<ProjectedChromosome> chromosomes) {
 		this(new ArrayList<>(), chromosomes);
@@ -79,7 +79,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public void init() {
-		volume = new PackedCollection<>(1);
+		volume = new PackedCollection(1);
 		volume.setMem(0, 1.0);
 	}
 
@@ -213,8 +213,8 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				throw new UnsupportedOperationException("Lazy destination not compatible with computing max");
 			}
 
-			Producer<PackedCollection<?>> max = (Producer) cp(destination).traverse(0).max().isolate();
-			CollectionProducer<PackedCollection<?>> auto = greaterThan(max, c(0.0), c(0.8).divide(max), c(1.0));
+			Producer<PackedCollection> max = (Producer) cp(destination).traverse(0).max().isolate();
+			CollectionProducer<PackedCollection> auto = greaterThan(max, c(0.0), c(0.8).divide(max), c(1.0));
 			op.add(a(1, p(volume), auto));
 		}
 

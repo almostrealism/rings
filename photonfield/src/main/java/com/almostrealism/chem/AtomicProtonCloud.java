@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+
 package com.almostrealism.chem;
+import org.almostrealism.collect.PackedCollection;
 
 import com.almostrealism.physics.SphericalAbsorber;
 import io.almostrealism.relation.Producer;
@@ -53,7 +55,7 @@ public class AtomicProtonCloud extends ProtonCloud implements SphericalAbsorber 
 		return 0;
 	}
 
-	public Producer<Vector> getDisplacement() {
+	public Producer<PackedCollection> getDisplacement() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -63,7 +65,7 @@ public class AtomicProtonCloud extends ProtonCloud implements SphericalAbsorber 
 		return false;
 	}
 
-	public Producer<Vector> emit() {
+	public Producer<PackedCollection> emit() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -88,7 +90,7 @@ public class AtomicProtonCloud extends ProtonCloud implements SphericalAbsorber 
 		return null;
 	}
 
-	public Producer<Vector> getEmitPosition() {
+	public Producer<PackedCollection> getEmitPosition() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -27,15 +27,15 @@ import java.util.function.Consumer;
 
 public class ValueSequenceTick extends ValueSequenceComputation {
 	public ValueSequenceTick(BaseAudioData data,
-							 Producer<PackedCollection<?>> durationFrames,
-							 Producer<PackedCollection<?>>... choices) {
+							 Producer<PackedCollection> durationFrames,
+							 Producer<PackedCollection>... choices) {
 		this(data, durationFrames, true, choices);
 	}
 
 	public ValueSequenceTick(BaseAudioData data,
-							 Producer<PackedCollection<?>> durationFrames,
-							 boolean repeat, Producer<PackedCollection<?>>... choices) {
-		super(data, durationFrames, new PackedCollection<>(1), repeat, choices);
+							 Producer<PackedCollection> durationFrames,
+							 boolean repeat, Producer<PackedCollection>... choices) {
+		super(data, durationFrames, new PackedCollection(1), repeat, choices);
 	}
 
 	@Override

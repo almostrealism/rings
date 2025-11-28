@@ -55,11 +55,11 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 
 		TraversalPolicy grainShape = new TraversalPolicy(3);
 		Producer in = v(shape(1), 0);
-		Producer<PackedCollection<?>> g = v(shape(3).traverseEach(), 1);
+		Producer<PackedCollection> g = v(shape(3).traverseEach(), 1);
 
-		CollectionProducer<PackedCollection<?>> start = c(g, 0);
-		CollectionProducer<PackedCollection<?>> duration = c(g, 1);
-		CollectionProducer<PackedCollection<?>> rate = c(g, 2);
+		CollectionProducer<PackedCollection> start = c(g, 0);
+		CollectionProducer<PackedCollection> duration = c(g, 1);
+		CollectionProducer<PackedCollection> rate = c(g, 2);
 
 		int frames = 240 * OutputLine.sampleRate;
 
@@ -68,7 +68,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 //		Producer pos = _mod(in, c(0.5)).multiply(c(OutputLine.sampleRate));
 		Producer cursor = integers(0, frames);
 
-		PackedCollection<?> result = new PackedCollection<>(shape(frames), 1);
+		PackedCollection result = new PackedCollection(shape(frames), 1);
 		System.out.println("GrainTest: Evaluating timeline kernel...");
 		verboseLog(() -> {
 			c(source.getChannelData(0), cursor).get().into(result).evaluate();
@@ -91,28 +91,28 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		grain.setDuration(0.015);
 		grain.setRate(0.3);
 
-		PackedCollection<?> w = new PackedCollection<>(1);
+		PackedCollection w = new PackedCollection(1);
 		w.setMem(0.75);
 
-		Producer<PackedCollection<?>> g = v(shape(3), 1);
-		CollectionProducer<PackedCollection<?>> start = c(g, 0).multiply(c(OutputLine.sampleRate));
-		CollectionProducer<PackedCollection<?>> duration = c(g, 1).multiply(c(OutputLine.sampleRate));
-		CollectionProducer<PackedCollection<?>> rate = c(g, 2);
-		CollectionProducer<PackedCollection<?>> wavelength = multiply(p(w), c(OutputLine.sampleRate));
+		Producer<PackedCollection> g = v(shape(3), 1);
+		CollectionProducer<PackedCollection> start = c(g, 0).multiply(c(OutputLine.sampleRate));
+		CollectionProducer<PackedCollection> duration = c(g, 1).multiply(c(OutputLine.sampleRate));
+		CollectionProducer<PackedCollection> rate = c(g, 2);
+		CollectionProducer<PackedCollection> wavelength = multiply(p(w), c(OutputLine.sampleRate));
 
-		PackedCollection<?> input = wav.getChannelData(0);
+		PackedCollection input = wav.getChannelData(0);
 		int frames = 5 * OutputLine.sampleRate;
 
-		Producer<PackedCollection<?>> series = integers(0, frames);
-		Producer<PackedCollection<?>> max = c(wav.getFrameCount()).subtract(start);
-		Producer<PackedCollection<?>> pos  = start.add(mod(mod(series, duration), max));
+		Producer<PackedCollection> series = integers(0, frames);
+		Producer<PackedCollection> max = c(wav.getFrameCount()).subtract(start);
+		Producer<PackedCollection> pos  = start.add(mod(mod(series, duration), max));
 
-		CollectionProducer<PackedCollection<?>> generate = interpolate(v(1, 0), pos, rate);
+		CollectionProducer<PackedCollection> generate = interpolate(v(1, 0), pos, rate);
 		generate = generate.multiply(sinw(series, wavelength, c(1.0)));
 
 		System.out.println("GrainTest: Evaluating kernel...");
-		Evaluable<PackedCollection<?>> ev = generate.get();
-		PackedCollection<?> result = ev.into(new PackedCollection<>(shape(frames), 1))
+		Evaluable<PackedCollection> ev = generate.get();
+		PackedCollection result = ev.into(new PackedCollection(shape(frames), 1))
 										.evaluate(input.traverse(0), grain);
 		System.out.println("GrainTest: Kernel evaluated");
 
@@ -126,9 +126,9 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 	@Test
 	public void grainProcessor() throws IOException {
 		WaveData wav = WaveData.load(new File("Library/organ.wav"));
-		PackedCollection<?> input = wav.getChannelData(0);
+		PackedCollection input = wav.getChannelData(0);
 
-		Evaluable<PackedCollection<?>> processor =
+		Evaluable<PackedCollection> processor =
 				sampling(OutputLine.sampleRate, 5.0, () -> grains(
 					v(1, 0),
 					v(shape(3), 1),
@@ -144,16 +144,16 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 			grain.setDuration(Math.random() * 0.015);
 			grain.setRate(Math.random() * 0.5);
 
-			PackedCollection<?> w = new PackedCollection<>(1);
+			PackedCollection w = new PackedCollection(1);
 			w.setMem(Math.random() * 2 + 0.2);
 
-			PackedCollection<?> p = new PackedCollection<>(1);
+			PackedCollection p = new PackedCollection(1);
 			p.setMem(Math.random() - 0.5);
 
-			PackedCollection<?> a = new PackedCollection<>(1);
+			PackedCollection a = new PackedCollection(1);
 			a.setMem(1.0);
 
-			return new WaveData(processor.into(new PackedCollection<>(shape(tot), 1))
+			return new WaveData(processor.into(new PackedCollection(shape(tot), 1))
 					.evaluate(input.traverse(0), grain, w, p, a), OutputLine.sampleRate);
 		}).toArray(WaveData[]::new))
 				.sum()
@@ -164,13 +164,13 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 	@Test
 	public void grainProcessorEnvelope() throws IOException {
 		WaveData wav = WaveData.load(new File("Library/organ.wav"));
-		PackedCollection<?> input = wav.getChannelData(0);
+		PackedCollection input = wav.getChannelData(0);
 
 		double attack = 1.0;
 
 		EnvelopeSection env = envelope(attack(c(attack)));
 
-		Evaluable<PackedCollection<?>> processor =
+		Evaluable<PackedCollection> processor =
 						sampling(OutputLine.sampleRate, 5.0,
 								() -> env.get().getResultant(grains(
 									v(1, 0),
@@ -187,16 +187,16 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 			grain.setDuration(Math.random() * 0.015);
 			grain.setRate(Math.random() * 0.5);
 
-			PackedCollection<?> w = new PackedCollection<>(1);
+			PackedCollection w = new PackedCollection(1);
 			w.setMem(Math.random() * 2 + 0.2);
 
-			PackedCollection<?> p = new PackedCollection<>(1);
+			PackedCollection p = new PackedCollection(1);
 			p.setMem(Math.random() - 0.5);
 
-			PackedCollection<?> a = new PackedCollection<>(1);
+			PackedCollection a = new PackedCollection(1);
 			a.setMem(0.2);
 
-			return new WaveData(processor.into(new PackedCollection<>(shape(tot), 1))
+			return new WaveData(processor.into(new PackedCollection(shape(tot), 1))
 					.evaluate(input.traverse(0), grain, w, p, a), OutputLine.sampleRate);
 		}).toArray(WaveData[]::new))
 				.sum()

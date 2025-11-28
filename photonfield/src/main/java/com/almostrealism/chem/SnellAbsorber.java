@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+
 package com.almostrealism.chem;
+import org.almostrealism.collect.PackedCollection;
 
 import java.lang.Math;
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 	// Upon absorption energy of incoming rays is added to the Queue as an array
 	// with important information, like angle and energy, so that conservation is correct.
 	public boolean absorb(Vector Position, Vector Direction, double Energy) {
-		if (!this.volume.inside(v(Position))) return false;
+		if (!this.volume.inside((Producer) v(Position))) return false;
 		
 		Object data[] = {Position, Direction, new double[] { Energy }};
 		Queue.add(data);
@@ -63,7 +65,7 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 	 * Assumptions: incAngle will not be above 180
 	 */
 	@Override
-	public Producer<Vector> emit() {
+	public Producer<PackedCollection> emit() {
 		if (Queue.isEmpty()) return null;
 		
 		double d[];
@@ -77,7 +79,7 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 		d = ((double[][])(Queue.get(0)))[1];
 		
 		// Accepts position vector, returns the Normal 
-		normal = this.volume.getNormalAt(v((Vector) Queue.get(0)[0])).get().evaluate();
+		normal = (Vector) this.volume.getNormalAt((Producer) v((Vector) Queue.get(0)[0])).get().evaluate();
 		
 		// resultant = -(p + 2N(p.N)). What is this good for? 
 		// double resultant[] = VectorMath.subtract(VectorMath.multiply(n, VectorMath.dot(d, n) * 2), d);
@@ -98,7 +100,7 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 		this.Queue.remove(0);
 
 		R.normalize();
-		return v(R);
+		return (Producer) v(R);
 	}
 
 	// Get and Set methods follow
@@ -130,12 +132,12 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 
 	/** Returns Position vector of next item. */
 	@Override
-	public Producer<Vector> getEmitPosition() {
+	public Producer<PackedCollection> getEmitPosition() {
 		if (!Queue.isEmpty()) {
 			if (Math.random() < 0.0001)
 				System.out.println(Queue.get(0)[0].toString());
 
-			return v((Vector) Queue.get(0)[0]);
+			return (Producer) v((Vector) Queue.get(0)[0]);
 		} else {
 			return null;
 		}

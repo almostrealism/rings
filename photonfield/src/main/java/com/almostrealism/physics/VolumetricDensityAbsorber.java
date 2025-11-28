@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+
 package com.almostrealism.physics;
+import org.almostrealism.collect.PackedCollection;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
@@ -44,7 +46,7 @@ public class VolumetricDensityAbsorber implements Absorber {
 	}
 
 	@Override
-	public Producer<Vector> emit() {
+	public Producer<PackedCollection> emit() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -74,7 +76,7 @@ public class VolumetricDensityAbsorber implements Absorber {
 	}
 
 	@Override
-	public Producer<Vector> getEmitPosition() {
+	public Producer<PackedCollection> getEmitPosition() {
 		// TODO Auto-generated method stub
 		return null;
 	}

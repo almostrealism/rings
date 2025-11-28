@@ -48,10 +48,10 @@ public class SceneFactory implements Factory<Scene<ShadableSurface>> {
 	private ProbabilisticFactory<ShadableSurface> surfaces;
 	
 	public SceneFactory() {
-		this(new ProjectedChromosome(new PackedCollection<>().randFill()));
+		this(new ProjectedChromosome(new PackedCollection().randFill()));
 	}
 	
-	public SceneFactory(Chromosome<PackedCollection<?>> c) {
+	public SceneFactory(Chromosome<PackedCollection> c) {
 		List<Factory<ShadableSurface>> f =
 			Arrays.asList(
 					() -> new Sphere(location(), Math.random(), color())

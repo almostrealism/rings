@@ -72,7 +72,7 @@ public class ManualPlaybackTest {
 		while (framesWritten < totalFrames) {
 			// Create a PackedCollection for interleaved stereo samples
 			// Each frame has 2 samples (left, right)
-			PackedCollection<?> buffer = new PackedCollection<>(bufferSizeFrames * channels);
+			PackedCollection buffer = new PackedCollection(bufferSizeFrames * channels);
 
 			// Generate sine wave samples
 			for (int frame = 0; frame < bufferSizeFrames; frame++) {
@@ -128,7 +128,7 @@ public class ManualPlaybackTest {
 		int writes = sampleRate / bufferSize; // ~86 writes for 1 second
 
 		for (int w = 0; w < writes; w++) {
-			PackedCollection<?> buffer = new PackedCollection<>(bufferSize * channels);
+			PackedCollection buffer = new PackedCollection(bufferSize * channels);
 
 			for (int i = 0; i < bufferSize; i++) {
 				double t = (w * bufferSize + i) / (double) sampleRate;

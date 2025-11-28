@@ -27,10 +27,10 @@ import java.util.function.Supplier;
 
 public interface SamplingFeatures extends CodeFeatures {
 	ThreadLocal<Integer> sampleRate = new ThreadLocal<>();
-	ThreadLocal<Producer<PackedCollection<?>>> frames = new ThreadLocal<>();
+	ThreadLocal<Producer<PackedCollection>> frames = new ThreadLocal<>();
 
-	default <T> T frames(Producer<PackedCollection<?>> f, Supplier<T> r) {
-		Producer<PackedCollection<?>> lastT = frames.get();
+	default <T> T frames(Producer<PackedCollection> f, Supplier<T> r) {
+		Producer<PackedCollection> lastT = frames.get();
 
 		try {
 			frames.set(f);
@@ -40,8 +40,8 @@ public interface SamplingFeatures extends CodeFeatures {
 		}
 	}
 
-	default Producer<PackedCollection<?>> frame() {
-		Producer<PackedCollection<?>> f = frames.get();
+	default Producer<PackedCollection> frame() {
+		Producer<PackedCollection> f = frames.get();
 		if (f == null) {
 			throw new UnsupportedOperationException();
 		}
@@ -49,7 +49,7 @@ public interface SamplingFeatures extends CodeFeatures {
 		return f;
 	}
 
-	default CollectionProducer<PackedCollection<?>> time() { return divide(frame(), c(sampleRate())); }
+	default CollectionProducer<PackedCollection> time() { return divide(frame(), c(sampleRate())); }
 
 	default <T> T sampleRate(int sr, Supplier<T> r) {
 		Integer lastSr = sampleRate.get();
@@ -76,32 +76,32 @@ public interface SamplingFeatures extends CodeFeatures {
 
 	default int toFrames(double sec) { return (int) (sampleRate() * sec); }
 
-	default Producer<PackedCollection<?>> toFrames(Producer<PackedCollection<?>> sec) {
+	default Producer<PackedCollection> toFrames(Producer<PackedCollection> sec) {
 		return multiply(c(sampleRate()), sec);
 	}
 
 	default int toFramesMilli(int msec) { return (int) (sampleRate() * msec / 1000d); }
 
-	default Producer<PackedCollection<?>> toFramesMilli(Producer<PackedCollection<?>> msec) {
+	default Producer<PackedCollection> toFramesMilli(Producer<PackedCollection> msec) {
 		return multiply(c(sampleRate() / 1000d), msec);
 	}
 
-	default CollectionProducer<PackedCollection<?>> grains(Producer<PackedCollection<?>> input,
-														   Producer<Grain> grain,
-														   Producer<PackedCollection<?>> wavelength,
-														   Producer<PackedCollection<?>> phase,
-														   Producer<PackedCollection<?>> amp) {
-		CollectionProducer<PackedCollection<?>> start = c(grain, 0).multiply(c(sampleRate()));
-		CollectionProducer<PackedCollection<?>> d = c(grain, 1).multiply(c(sampleRate()));
-		CollectionProducer<PackedCollection<?>> rate = c(grain, 2);
-		CollectionProducer<PackedCollection<?>> w = multiply(wavelength, c(sampleRate()));
+	default CollectionProducer<PackedCollection> grains(Producer<PackedCollection> input,
+														Producer<Grain> grain,
+														Producer<PackedCollection> wavelength,
+														Producer<PackedCollection> phase,
+														Producer<PackedCollection> amp) {
+		CollectionProducer<PackedCollection> start = c(grain, 0).multiply(c(sampleRate()));
+		CollectionProducer<PackedCollection> d = c(grain, 1).multiply(c(sampleRate()));
+		CollectionProducer<PackedCollection> rate = c(grain, 2);
+		CollectionProducer<PackedCollection> w = multiply(wavelength, c(sampleRate()));
 
-		Producer<PackedCollection<?>> series = frame();
-//		Producer<PackedCollection<?>> max = subtract(p(count), start);
-//		Producer<PackedCollection<?>> pos  = start.add(_mod(_mod(series, d), max));
-		Producer<PackedCollection<?>> pos  = start.add(mod(series, d));
+		Producer<PackedCollection> series = frame();
+//		Producer<PackedCollection> max = subtract(p(count), start);
+//		Producer<PackedCollection> pos  = start.add(_mod(_mod(series, d), max));
+		Producer<PackedCollection> pos  = start.add(mod(series, d));
 
-		CollectionProducer<PackedCollection<?>> generate = interpolate(input, pos, rate);
+		CollectionProducer<PackedCollection> generate = interpolate(input, pos, rate);
 		return generate.multiply(sinw(series, w, phase, amp));
 	}
 }

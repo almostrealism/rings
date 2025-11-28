@@ -26,20 +26,20 @@ import org.almostrealism.collect.PackedCollection;
 import java.util.function.Supplier;
 
 public interface AudioProcessor extends Lifecycle {
-	Supplier<Runnable> process(Producer<PackedCollection<?>> destination,
-							   Producer<PackedCollection<?>> source);
+	Supplier<Runnable> process(Producer<PackedCollection> destination,
+							   Producer<PackedCollection> source);
 
 	static AudioProcessor fromWave(WaveData data, int channel) {
-		PackedCollection<?> position = new PackedCollection<>(1);
+		PackedCollection position = new PackedCollection(1);
 
 		return new AudioProcessor() {
 			@Override
-			public Supplier<Runnable> process(Producer<PackedCollection<?>> destination, Producer<PackedCollection<?>> source) {
+			public Supplier<Runnable> process(Producer<PackedCollection> destination, Producer<PackedCollection> source) {
 				return () -> {
-					Evaluable<PackedCollection<?>> dest = destination.get();
+					Evaluable<PackedCollection> dest = destination.get();
 
 					return () -> {
-						PackedCollection<?> out = dest.evaluate();
+						PackedCollection out = dest.evaluate();
 						int len = out.getMemLength();
 						int pos = (int) position.toDouble(0);
 						if (pos + len > data.getFrameCount()) {

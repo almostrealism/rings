@@ -39,8 +39,8 @@ public class WaveDetailsFactory implements CodeFeatures {
 
 	private int freqBins;
 	private int scaleBins, scaleTime;
-	private PackedCollection<?> buffer;
-	private Evaluable<PackedCollection<?>> sum;
+	private PackedCollection buffer;
+	private Evaluable<PackedCollection> sum;
 
 	private WaveDataFeatureProvider featureProvider;
 
@@ -104,16 +104,16 @@ public class WaveDetailsFactory implements CodeFeatures {
 		existing.setData(data.getData());
 
 		if (existing.getFreqFrameCount() <= 1) {
-			PackedCollection<?> fft = null;
+			PackedCollection fft = null;
 
 			for (int c = 0; c < data.getChannelCount(); c++) {
-				PackedCollection<?> df = data.fft(c, true);
+				PackedCollection df = data.fft(c, true);
 
 				int count = df.getShape().length(0) / scaleTime;
 				if (df.getShape().length(0) % scaleTime != 0) count++;
 
 				if (fft == null) {
-					fft = new PackedCollection<>(data.getChannelCount(), count, freqBins, 1);
+					fft = new PackedCollection(data.getChannelCount(), count, freqBins, 1);
 				}
 
 				processFft(df, fft.range(shape(count, freqBins, 1), c * freqBins));
@@ -129,7 +129,7 @@ public class WaveDetailsFactory implements CodeFeatures {
 		}
 
 		if (featureProvider != null) {
-			PackedCollection<?> features = prepareFeatures(provider);
+			PackedCollection features = prepareFeatures(provider);
 			existing.setFeatureSampleRate(featureProvider.getFeatureSampleRate());
 			existing.setFeatureChannelCount(1);
 			existing.setFeatureBinCount(features.getShape().length(1));
@@ -151,7 +151,7 @@ public class WaveDetailsFactory implements CodeFeatures {
 		}
 	}
 
-	public double productSimilarity(Producer<PackedCollection<?>> a, Producer<PackedCollection<?>> b, int limit) {
+	public double productSimilarity(Producer<PackedCollection> a, Producer<PackedCollection> b, int limit) {
 		double values[] = multiply(a, b).sum(1)
 				.divide(multiply(length(1, a), length(1, b)))
 				.evaluate().doubleStream().limit(limit).toArray();
@@ -170,7 +170,7 @@ public class WaveDetailsFactory implements CodeFeatures {
 		return DoubleStream.of(values).sorted().skip(skip).limit(total).average().orElseThrow();
 	}
 
-	protected PackedCollection<?> processFft(PackedCollection<?> fft, PackedCollection<?> output) {
+	protected PackedCollection processFft(PackedCollection fft, PackedCollection output) {
 		if (fft.getShape().length(0) < 1) {
 			throw new IllegalArgumentException();
 		}
@@ -188,15 +188,15 @@ public class WaveDetailsFactory implements CodeFeatures {
 				in = fft.range(inShape, i * inShape.getTotalSize());
 			}
 
-			PackedCollection<?> out = output.range(shape(freqBins, 1), i * freqBins);
+			PackedCollection out = output.range(shape(freqBins, 1), i * freqBins);
 			sum.into(out.traverseEach()).evaluate(in.traverseEach());
 		}
 
 		return output;
 	}
 
-	protected PackedCollection<?> prepareFeatures(WaveDataProvider provider) {
-		PackedCollection<?> features = featureProvider.computeFeatures(provider);
+	protected PackedCollection prepareFeatures(WaveDataProvider provider) {
+		PackedCollection features = featureProvider.computeFeatures(provider);
 
 		if (features.getShape().length(0) < 1) {
 			throw new IllegalArgumentException();

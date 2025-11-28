@@ -22,6 +22,7 @@ import com.jogamp.opengl.GL2;
 import io.almostrealism.lang.CodePrintWriter; //this is not good - remove it - Kristen added for experiment
 import io.almostrealism.code.ExpressionAssignment;
 import io.almostrealism.expression.Expression;
+import io.almostrealism.relation.Producer;
 import io.almostrealism.expression.StaticReference;
 import io.almostrealism.scope.Method;
 import io.almostrealism.scope.Scope;
@@ -49,9 +50,9 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 		for (Triangle t : getGeometry().triangles()) {
 			Vector v[] = t.getVertices();
 			Vector n[] = new Vector[] {
-						t.getNormalAt(v(v[0])).get().evaluate(),
-						t.getNormalAt(v(v[1])).get().evaluate(),
-						t.getNormalAt(v(v[2])).get().evaluate()};
+						(Vector) t.getNormalAt((Producer) v(v[0])).get().evaluate(),
+						(Vector) t.getNormalAt((Producer) v(v[1])).get().evaluate(),
+						(Vector) t.getNormalAt((Producer) v(v[2])).get().evaluate()};
 
 			vertices.add(v[0].getX());
 			vertices.add(v[0].getY());

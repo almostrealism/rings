@@ -38,12 +38,12 @@ public class PolymorphicAudioData extends DefaultWaveCellData implements SineWav
 	@Override
 	public Heap getDefaultDelegate() { return Heap.getDefault(); }
 
-	public static PackedCollection<PolymorphicAudioData> bank(int count) {
-		return new PackedCollection<>(new TraversalPolicy(count, SIZE * 2), 1, delegateSpec ->
+	public static PackedCollection bank(int count) {
+		return new PackedCollection(new TraversalPolicy(count, SIZE * 2), 1, delegateSpec ->
 			new PolymorphicAudioData(delegateSpec.getDelegate(), delegateSpec.getOffset()));
 	}
 
-	public static Supplier<PolymorphicAudioData> supply(IntFunction<PackedCollection<?>> supply) {
+	public static Supplier<PolymorphicAudioData> supply(IntFunction<PackedCollection> supply) {
 		return () -> new PolymorphicAudioData(supply.apply(2 * SIZE), 0);
 	}
 }

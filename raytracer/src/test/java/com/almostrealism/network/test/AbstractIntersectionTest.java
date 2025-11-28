@@ -27,7 +27,7 @@ import org.almostrealism.algebra.Vector;
 public class AbstractIntersectionTest implements ProjectionFeatures, CodeFeatures {
 	protected final int width = 400, height = 400;
 
-	protected Producer<PackedCollection<?>> combined() {
+	protected Producer<PackedCollection> combined() {
 		Vector viewDirection = new Vector(0.0, 0.0,  -1.0);
 		Vector upDirection = new Vector(0.0, 1.0, 0.0);
 

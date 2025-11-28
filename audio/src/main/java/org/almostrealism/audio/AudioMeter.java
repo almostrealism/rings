@@ -34,23 +34,23 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class AudioMeter implements Receptor<PackedCollection<?>>, Lifecycle, ScalarFeatures, PairFeatures {
-	private Receptor<PackedCollection<?>> forwarding;
+public class AudioMeter implements Receptor<PackedCollection>, Lifecycle, ScalarFeatures, PairFeatures {
+	private Receptor<PackedCollection> forwarding;
 	
-	private PackedCollection<?> clipCount = new PackedCollection<>(1);
+	private PackedCollection clipCount = new PackedCollection(1);
 	private Pair clipSettings = new Pair(-1.0, 1.0);
 	
-	private PackedCollection<?> silenceValue = new PackedCollection<>(1);
-	private PackedCollection<?> silenceDuration = new PackedCollection<>(1);
+	private PackedCollection silenceValue = new PackedCollection(1);
+	private PackedCollection silenceDuration = new PackedCollection(1);
 
-	private List<Consumer<PackedCollection<?>>> listeners;
+	private List<Consumer<PackedCollection>> listeners;
 	
 	public AudioMeter() {
 		listeners = new ArrayList<>();
 	}
 
-	public void setForwarding(Receptor<PackedCollection<?>> r) { this.forwarding = r; }
-	public Receptor<PackedCollection<?>> getForwarding() { return this.forwarding; }
+	public void setForwarding(Receptor<PackedCollection> r) { this.forwarding = r; }
+	public Receptor<PackedCollection> getForwarding() { return this.forwarding; }
 
 	public void setSilenceValue(double value) { this.silenceValue.setMem(value); }
 	
@@ -61,16 +61,16 @@ public class AudioMeter implements Receptor<PackedCollection<?>>, Lifecycle, Sca
 	
 	public long getClipCount() { return (long) clipCount.toDouble(); }
 
-	public void addListener(Consumer<PackedCollection<?>> listener) {
+	public void addListener(Consumer<PackedCollection> listener) {
 		listeners.add(listener);
 	}
 
-	public void removeListener(Consumer<PackedCollection<?>> listener) {
+	public void removeListener(Consumer<PackedCollection> listener) {
 		listeners.remove(listener);
 	}
 
 	@Override
-	public Supplier<Runnable> push(Producer<PackedCollection<?>> protein) {
+	public Supplier<Runnable> push(Producer<PackedCollection> protein) {
 		OperationList push = new OperationList("AudioMeter Push");
 		push.add(new ClipCounter(() -> new Provider<>(clipCount), v(clipSettings), protein));
 		push.add(new SilenceDurationComputation(() -> new Provider<>(silenceDuration), c(silenceValue), protein));

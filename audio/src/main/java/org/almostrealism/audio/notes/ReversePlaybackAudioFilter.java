@@ -24,13 +24,13 @@ import org.almostrealism.collect.computations.DynamicCollectionProducer;
 
 public class ReversePlaybackAudioFilter implements NoteAudioFilter, CodeFeatures {
 	@Override
-	public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> input,
-											   Producer<PackedCollection<?>> noteDuration,
-											   Producer<PackedCollection<?>> automationLevel) {
+	public Producer<PackedCollection> apply(Producer<PackedCollection> input,
+											   Producer<PackedCollection> noteDuration,
+											   Producer<PackedCollection> automationLevel) {
 		return new DynamicCollectionProducer<>(shape(input), args -> {
-			PackedCollection<?> audioData = input.get().evaluate();
+			PackedCollection audioData = input.get().evaluate();
 
-			PackedCollection<?> out = AudioProcessingUtils.getReverse()
+			PackedCollection out = AudioProcessingUtils.getReverse()
 					.evaluate(audioData.traverse(1), pack(audioData.getShape().getTotalSize()));
 
 			if (out.getShape().getTotalSize() == 1) {

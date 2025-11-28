@@ -41,12 +41,12 @@ import io.almostrealism.relation.Producer;
 public interface AbsorberSet<T> extends Absorber, Set<T> {
 	/**
 	 * Adds the specified absorber to this absorber set.
-	 * 
+	 *
 	 * @param a  Absorber instance to add.
 	 * @param x  {x, y, z} - Relative position of the absorber.
 	 * @return  The total number of absorbers stored by this set.
 	 */
-	int addAbsorber(Absorber a, Producer<Vector> x);
+	int addAbsorber(Absorber a, Producer x);
 	
 	/**
 	 * Removes the absorbers contained within the specified spherical volume.

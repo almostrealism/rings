@@ -22,12 +22,12 @@ import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.collect.PackedCollection;
 
 public interface StatelessFilter {
-	Producer<PackedCollection<?>> filter(BufferDetails buffer,
-										   Producer<PackedCollection<?>> params,
-										   Producer<PackedCollection<?>> input);
+	Producer<PackedCollection> filter(BufferDetails buffer,
+										   Producer<PackedCollection> params,
+										   Producer<PackedCollection> input);
 
 	default AudioProcessor toAudioProcessor(BufferDetails buffer,
-											Producer<PackedCollection<?>> params) {
+											Producer<PackedCollection> params) {
 		return (destination, source) -> Ops.o().a(destination, filter(buffer, params, source));
 	}
 }

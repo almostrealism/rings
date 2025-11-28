@@ -56,11 +56,11 @@ public interface OutputLine extends BufferedAudio, Destroyable {
 	 *
 	 * @see  BufferedAudio#getBufferSize()
 	 */
-	void write(PackedCollection<?> sample);
+	void write(PackedCollection sample);
 
-	default Supplier<Runnable> write(Producer<PackedCollection<?>> frames) {
+	default Supplier<Runnable> write(Producer<PackedCollection> frames) {
 		return () -> {
-			Evaluable<PackedCollection<?>> sample = frames.get();
+			Evaluable<PackedCollection> sample = frames.get();
 			return () -> write(sample.evaluate());
 		};
 	}

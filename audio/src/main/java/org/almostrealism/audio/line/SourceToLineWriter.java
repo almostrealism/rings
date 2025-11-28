@@ -39,11 +39,11 @@ import java.util.function.Supplier;
  */
 @Deprecated
 public class SourceToLineWriter implements Temporal {
-	private Source<PackedCollection<?>> source;
+	private Source<PackedCollection> source;
 	private OutputLine line;
 	private List<Temporal> dependencies;
 
-	public SourceToLineWriter(Source<PackedCollection<?>> source, OutputLine line) {
+	public SourceToLineWriter(Source<PackedCollection> source, OutputLine line) {
 		this.source = source;
 		this.line = line;
 		this.dependencies = new ArrayList<>();
@@ -67,10 +67,10 @@ public class SourceToLineWriter implements Temporal {
 
 		dependencies.stream().map(Temporal::tick).forEach(tick::add);
 
-		Producer<PackedCollection<?>> next = source.next();
+		Producer<PackedCollection> next = source.next();
 
 		tick.add(() -> () -> {
-			PackedCollection<?> n = next.get().evaluate();
+			PackedCollection n = next.get().evaluate();
 			if (n == null) {
 				throw new RuntimeException("No next value from source");
 			}

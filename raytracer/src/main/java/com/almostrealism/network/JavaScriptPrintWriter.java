@@ -142,7 +142,7 @@ public class JavaScriptPrintWriter extends CodePrintWriterAdapter {
 		}
 
 		if (o instanceof PackedCollection) {
-			o = ((PackedCollection<?>) o).toDouble(0);
+			o = ((PackedCollection) o).toDouble(0);
 		}
 
 		if (o instanceof String) {

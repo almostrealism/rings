@@ -23,6 +23,7 @@ import org.almostrealism.geometry.TransformMatrix;
 
 import org.almostrealism.projection.PinholeCamera;
 import org.almostrealism.algebra.Vector;
+import io.almostrealism.relation.Producer;
 
 import static org.almostrealism.Ops.*;
 
@@ -36,7 +37,7 @@ public class ParticleGroupRenderer {
         TransformMatrix m = c.getRotationMatrix();
         
         i: for (int i = 0; i < v.length; i++) {
-            Vector l = m.transform(o().vector(v[i][0], v[i][1], v[i][2]), TransformMatrix.TRANSFORM_AS_LOCATION).get().evaluate();
+            Vector l = (Vector) m.transform((Producer) o().vector(v[i][0], v[i][1], v[i][2]), TransformMatrix.TRANSFORM_AS_LOCATION).get().evaluate();
             
             if (l.getZ() < 0.0) continue i;
             

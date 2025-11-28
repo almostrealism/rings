@@ -30,16 +30,16 @@ public class ValueSequencePush extends ValueSequenceComputation implements CodeF
 	private Switch choice;
 
 	public ValueSequencePush(BaseAudioData data,
-							 Producer<PackedCollection<?>> durationFrames,
-							 PackedCollection<?> output,
-							 Producer<PackedCollection<?>>... choices) {
+							 Producer<PackedCollection> durationFrames,
+							 PackedCollection output,
+							 Producer<PackedCollection>... choices) {
 		this(data, durationFrames, output, true, choices);
 	}
 
 	public ValueSequencePush(BaseAudioData data,
-							 Producer<PackedCollection<?>> durationFrames,
-							 PackedCollection<?> output, boolean repeat,
-							 Producer<PackedCollection<?>>... choices) {
+							 Producer<PackedCollection> durationFrames,
+							 PackedCollection output, boolean repeat,
+							 Producer<PackedCollection>... choices) {
 		super(data, durationFrames, output, repeat, choices);
 		choice = new Switch((CollectionProducer) divide(wavePosition(), durationFrames()),
 						choices(in -> a(1, output(), in)));

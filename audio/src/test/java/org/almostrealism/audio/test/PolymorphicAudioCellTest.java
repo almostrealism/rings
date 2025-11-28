@@ -55,11 +55,11 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 	public static final boolean enableLoop = false;
 	private static final int DURATION_FRAMES = 10 * OutputLine.sampleRate;
 
-	protected Receptor<PackedCollection<?>> loggingReceptor() {
+	protected Receptor<PackedCollection> loggingReceptor() {
 		return protein -> () -> () -> System.out.println(protein.get().evaluate().toDouble(0));
 	}
 
-	protected Cell<PackedCollection<?>> loggingCell() { return new ReceptorCell<>(loggingReceptor()); }
+	protected Cell<PackedCollection> loggingCell() { return new ReceptorCell<>(loggingReceptor()); }
 
 	protected CellList cells(int count) {
 		return poly(count, PolymorphicAudioData::new, i -> c(0.5),
@@ -217,13 +217,13 @@ public class PolymorphicAudioCellTest implements CellFeatures, TestFeatures {
 		};
 	}
 
-	protected void loggingCellPair(Cell<PackedCollection<?>> input) {
-		List<Cell<PackedCollection<?>>> cells = new ArrayList<>();
+	protected void loggingCellPair(Cell<PackedCollection> input) {
+		List<Cell<PackedCollection>> cells = new ArrayList<>();
 		cells.add(loggingCell());
 
-		MultiCell<PackedCollection<?>> m = new MultiCell<>(cells, identityGene());
+		MultiCell<PackedCollection> m = new MultiCell<>(cells, identityGene());
 		m.setName("LoggingMultiCell");
-		new CellPair<>(input, m, null, new IdentityFactor<>()).init();
+		new CellPair(input, m, null, new IdentityFactor<>()).init();
 	}
 
 	@Test

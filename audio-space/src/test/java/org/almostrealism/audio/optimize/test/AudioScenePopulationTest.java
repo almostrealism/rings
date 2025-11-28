@@ -49,7 +49,7 @@ import java.util.stream.IntStream;
 public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryTest {
 	protected AudioScenePopulation population(AudioScene<?> scene, MultiChannelAudioOutput output) {
 		int params = 8;
-		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+		List<Genome<PackedCollection>> genomes = new ArrayList<>();
 		genomes.add(new ProjectedGenome(params));
 		genomes.add(new ProjectedGenome(params));
 		genomes.add(new ProjectedGenome(params));
@@ -181,7 +181,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 
 		if (file.exists()) {
 			try {
-				List<Genome<PackedCollection<?>>> genomes = AudioScenePopulation.read(new FileInputStream(file));
+				List<Genome<PackedCollection>> genomes = AudioScenePopulation.read(new FileInputStream(file));
 				log("Loaded " + genomes.size() + " genomes from " + file);
 				return new AudioScenePopulation(scene, genomes);
 			} catch (IOException e) {
