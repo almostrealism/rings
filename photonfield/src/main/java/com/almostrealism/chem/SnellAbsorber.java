@@ -16,9 +16,9 @@
 
 
 package com.almostrealism.chem;
+
 import org.almostrealism.collect.PackedCollection;
 
-import java.lang.Math;
 import java.util.ArrayList;
 
 import io.almostrealism.relation.Producer;
@@ -27,7 +27,6 @@ import org.almostrealism.physics.Absorber;
 import org.almostrealism.space.Volume;
 import org.almostrealism.physics.Clock;
 import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Evaluable;
 
 /**
  * A {@link SnellAbsorber} is an Absorber implementation that absorbs and emits photons
@@ -39,16 +38,16 @@ import io.almostrealism.relation.Evaluable;
 public class SnellAbsorber implements Absorber, CodeFeatures {
 	private Volume<?> volume;
 	private Clock clock;
-	private ArrayList<Object[]> Queue = new ArrayList<>();
+	private ArrayList<Object[]> queue = new ArrayList<>();
 	private double[] n = {0, 0}; // Refraction values for mediums 
 		
 	// Upon absorption energy of incoming rays is added to the Queue as an array
 	// with important information, like angle and energy, so that conservation is correct.
 	public boolean absorb(Vector Position, Vector Direction, double Energy) {
-		if (!this.volume.inside((Producer) v(Position))) return false;
+		if (!this.volume.inside(v(Position))) return false;
 		
 		Object data[] = {Position, Direction, new double[] { Energy }};
-		Queue.add(data);
+		queue.add(data);
 		return true;
 	}
 
@@ -66,7 +65,7 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 	 */
 	@Override
 	public Producer<PackedCollection> emit() {
-		if (Queue.isEmpty()) return null;
+		if (queue.isEmpty()) return null;
 		
 		double d[];
 		Vector normal;
@@ -76,10 +75,10 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 		n[1] = 1.0001;
 		
 		// d is the direction vector
-		d = ((double[][])(Queue.get(0)))[1];
+		d = ((double[][])(queue.get(0)))[1];
 		
 		// Accepts position vector, returns the Normal 
-		normal = (Vector) this.volume.getNormalAt((Producer) v((Vector) Queue.get(0)[0])).get().evaluate();
+		normal = (Vector) this.volume.getNormalAt(v((Vector) queue.get(0)[0])).get().evaluate();
 		
 		// resultant = -(p + 2N(p.N)). What is this good for? 
 		// double resultant[] = VectorMath.subtract(VectorMath.multiply(n, VectorMath.dot(d, n) * 2), d);
@@ -97,10 +96,10 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 			System.out.println(R.toString());
 		}
 		
-		this.Queue.remove(0);
+		this.queue.remove(0);
 
 		R.normalize();
-		return (Producer) v(R);
+		return v(R);
 	}
 
 	// Get and Set methods follow
@@ -118,13 +117,13 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 	// Returns energy of next item in the queue
 	@Override
 	public double getEmitEnergy() {
-		return ((double[][])(Queue.get(0)))[2][0];
+		return ((double[][])(queue.get(0)))[2][0];
 	}
 	
 	/** Returns confirmation of existence of another item in queue. */
 	@Override
 	public double getNextEmit() {
-		if (!Queue.isEmpty())
+		if (!queue.isEmpty())
 			return 0.0; // Confirms next item exists
 		else
 			return Double.MAX_VALUE;
@@ -133,11 +132,11 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 	/** Returns Position vector of next item. */
 	@Override
 	public Producer<PackedCollection> getEmitPosition() {
-		if (!Queue.isEmpty()) {
+		if (!queue.isEmpty()) {
 			if (Math.random() < 0.0001)
-				System.out.println(Queue.get(0)[0].toString());
+				System.out.println(queue.get(0)[0].toString());
 
-			return (Producer) v((Vector) Queue.get(0)[0]);
+			return v((Vector) queue.get(0)[0]);
 		} else {
 			return null;
 		}
