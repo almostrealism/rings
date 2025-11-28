@@ -18,7 +18,6 @@ package org.almostrealism.audio;
 
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.collect.CollectionProducer;
-import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 
 import java.util.Arrays;
@@ -27,17 +26,17 @@ import java.util.function.Function;
 
 public class PolymorphicAudioCell extends AudioCellChoiceAdapter {
 
-	public PolymorphicAudioCell(PolymorphicAudioData data, CollectionProducer<PackedCollection> decision,
+	public PolymorphicAudioCell(PolymorphicAudioData data, CollectionProducer decision,
 								Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>... choices) {
 		this(data, decision, Arrays.asList(choices));
 	}
 
-	public PolymorphicAudioCell(PolymorphicAudioData data, CollectionProducer<PackedCollection> decision,
+	public PolymorphicAudioCell(PolymorphicAudioData data, CollectionProducer decision,
 								List<Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>> choices) {
 		super(decision, i -> data, choices, false);
 	}
 
-	public PolymorphicAudioCell(CollectionProducer<PackedCollection> decision,
+	public PolymorphicAudioCell(CollectionProducer decision,
 								List<CollectionTemporalCellAdapter> choices) {
 		super(decision, choices, false);
 	}

@@ -87,7 +87,7 @@ public class MeshFile implements MeshSource, ShadableSurfaceWrapper, ShadableSur
 	public BoundingSolid calculateBoundingSolid() { return mesh.calculateBoundingSolid(); }
 
 	@Override public Producer<PackedCollection> getNormalAt(Producer<PackedCollection> point) { return this.getSurface().getNormalAt(point); }
-	@Override public ContinuousField intersectAt(Producer<Ray> ray) { return this.getSurface().intersectAt(ray); }
+	@Override public ContinuousField intersectAt(Producer<?> ray) { return this.getSurface().intersectAt(ray); }
 
 	@Override public Operator<PackedCollection> get() { return getSurface().get(); }
 

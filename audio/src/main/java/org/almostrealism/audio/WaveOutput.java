@@ -79,7 +79,7 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 	private long sampleRate;
 
 	private WavFile wav;
-	private List<CollectionProducer<PackedCollection>> data;
+	private List<CollectionProducer> data;
 	private List<Writer> channels;
 
 	public WaveOutput() { this((File) null); }
@@ -168,7 +168,7 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 		return new ReceptorCell<>(getWriter(channel));
 	}
 
-	public CollectionProducer<PackedCollection> getChannelData(int channel) {
+	public CollectionProducer getChannelData(int channel) {
 		return channel < data.size() ? data.get(channel) : null;
 	}
 

@@ -260,26 +260,26 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 				min, max);
 	}
 
-	default CollectionProducer<PackedCollection> polycyclic(Producer<PackedCollection> speedUpWavelength,
-																Producer<PackedCollection> speedUpAmp,
-																Producer<PackedCollection> slowDownWavelength,
-																Producer<PackedCollection> slowDownAmp,
-																Producer<PackedCollection> polySpeedUpWaveLength,
-																Producer<PackedCollection> polySpeedUpExp,
-																Producer<PackedCollection> time) {
+	default CollectionProducer polycyclic(Producer<PackedCollection> speedUpWavelength,
+										  Producer<PackedCollection> speedUpAmp,
+										  Producer<PackedCollection> slowDownWavelength,
+										  Producer<PackedCollection> slowDownAmp,
+										  Producer<PackedCollection> polySpeedUpWaveLength,
+										  Producer<PackedCollection> polySpeedUpExp,
+										  Producer<PackedCollection> time) {
 		return c(1.0).add(sinw(time, speedUpWavelength, speedUpAmp).pow(c(2.0)))
 				.multiply(c(1.0).subtract(sinw(time, slowDownWavelength, slowDownAmp).pow(c(2.0))))
 				.multiply(c(1.0).add(pow(polySpeedUpWaveLength, c(-1.0))
 						.multiply(time).pow(polySpeedUpExp)));
 	}
 
-	default CollectionProducer<PackedCollection> riseFall(double minValue, double maxValue, double minScale,
-															  Producer<PackedCollection> d,
-															  Producer<PackedCollection> m,
-															  Producer<PackedCollection> p,
-															  Producer<PackedCollection> e,
-															  Producer<PackedCollection> time,
-															  Producer<PackedCollection> duration) {
+	default CollectionProducer riseFall(double minValue, double maxValue, double minScale,
+										Producer<PackedCollection> d,
+										Producer<PackedCollection> m,
+										Producer<PackedCollection> p,
+										Producer<PackedCollection> e,
+										Producer<PackedCollection> time,
+										Producer<PackedCollection> duration) {
 		PackedCollection directionChoices = new PackedCollection(shape(2, 1).traverse(1));
 		directionChoices.setMem(0, -1);
 		directionChoices.setMem(1, 1);
@@ -307,10 +307,10 @@ public interface OptimizeFactorFeatures extends HeredityFeatures, CodeFeatures {
 		return add(start, multiply(end.subtract(start), pos));
 	}
 
-	default CollectionProducer<PackedCollection> durationAdjustment(Producer<PackedCollection> rp,
-																		Producer<PackedCollection> speedUpDuration,
-																		Producer<PackedCollection> speedUpOffset,
-																		Producer<PackedCollection> time) {
+	default CollectionProducer durationAdjustment(Producer<PackedCollection> rp,
+												  Producer<PackedCollection> speedUpDuration,
+												  Producer<PackedCollection> speedUpOffset,
+												  Producer<PackedCollection> time) {
 		CollectionProducer initial = pow(c(2.0), c(16).multiply(c(-0.5).add(rp)));
 
 		Producer<PackedCollection> speedUp = max(c(0.0), subtract(time, speedUpOffset));

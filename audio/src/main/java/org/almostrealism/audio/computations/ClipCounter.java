@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 
 public class ClipCounter extends OperationComputationAdapter<PackedCollection> {
 	public ClipCounter(Producer<PackedCollection> clipCount,
-					   Producer<Pair> clipSettings,
+					   Producer<PackedCollection> clipSettings,
 					   Producer<PackedCollection> value) {
 		super(new Producer[] { clipCount, clipSettings, value });
 	}

@@ -31,7 +31,6 @@ import org.almostrealism.audio.grains.GranularSynthesizer;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import io.almostrealism.collect.TraversalPolicy;
-import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.time.Frequency;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
@@ -57,9 +56,9 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		Producer in = v(shape(1), 0);
 		Producer<PackedCollection> g = v(shape(3).traverseEach(), 1);
 
-		CollectionProducer<PackedCollection> start = c(g, 0);
-		CollectionProducer<PackedCollection> duration = c(g, 1);
-		CollectionProducer<PackedCollection> rate = c(g, 2);
+		CollectionProducer start = c(g, 0);
+		CollectionProducer duration = c(g, 1);
+		CollectionProducer rate = c(g, 2);
 
 		int frames = 240 * OutputLine.sampleRate;
 
@@ -95,10 +94,10 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		w.setMem(0.75);
 
 		Producer<PackedCollection> g = v(shape(3), 1);
-		CollectionProducer<PackedCollection> start = c(g, 0).multiply(c(OutputLine.sampleRate));
-		CollectionProducer<PackedCollection> duration = c(g, 1).multiply(c(OutputLine.sampleRate));
-		CollectionProducer<PackedCollection> rate = c(g, 2);
-		CollectionProducer<PackedCollection> wavelength = multiply(p(w), c(OutputLine.sampleRate));
+		CollectionProducer start = c(g, 0).multiply(c(OutputLine.sampleRate));
+		CollectionProducer duration = c(g, 1).multiply(c(OutputLine.sampleRate));
+		CollectionProducer rate = c(g, 2);
+		CollectionProducer wavelength = multiply(p(w), c(OutputLine.sampleRate));
 
 		PackedCollection input = wav.getChannelData(0);
 		int frames = 5 * OutputLine.sampleRate;
@@ -107,7 +106,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		Producer<PackedCollection> max = c(wav.getFrameCount()).subtract(start);
 		Producer<PackedCollection> pos  = start.add(mod(mod(series, duration), max));
 
-		CollectionProducer<PackedCollection> generate = interpolate(v(1, 0), pos, rate);
+		CollectionProducer generate = interpolate(v(1, 0), pos, rate);
 		generate = generate.multiply(sinw(series, wavelength, c(1.0)));
 
 		System.out.println("GrainTest: Evaluating kernel...");

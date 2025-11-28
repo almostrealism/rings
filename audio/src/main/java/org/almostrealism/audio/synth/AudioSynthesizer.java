@@ -117,10 +117,10 @@ public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeat
 			List<Producer<?>> series = new ArrayList<>();
 
 			for (Frequency f : tones) {
-				CollectionProducer<PackedCollection> t =
+				CollectionProducer t =
 						integers(0, buffer.getFrames()).divide(buffer.getSampleRate());
 				Producer<PackedCollection> ft = frequency.getResultant(t);
-				CollectionProducer<PackedCollection> signal =
+				CollectionProducer signal =
 						sin(t.multiply(2 * Math.PI).multiply(f.asHertz()).multiply(ft));
 
 				if (model != null) {

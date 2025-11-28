@@ -54,7 +54,7 @@ public class ComposableAudioFeatures implements Factor<PackedCollection>, Destro
 	 */
 	@Override
 	public Producer<PackedCollection> getResultant(Producer<PackedCollection> value) {
-		CollectionProducer<PackedCollection> scale = c(weights).traverse(2).multiply(c(value)).sum();
+		CollectionProducer scale = c(weights).traverse(2).multiply(c(value)).sum();
 		scale = scale.reshape(scale.getShape().trim());
 		return c(features).multiply(max(scale, c(0)));
 	}

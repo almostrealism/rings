@@ -49,7 +49,7 @@ public interface SamplingFeatures extends CodeFeatures {
 		return f;
 	}
 
-	default CollectionProducer<PackedCollection> time() { return divide(frame(), c(sampleRate())); }
+	default CollectionProducer time() { return divide(frame(), c(sampleRate())); }
 
 	default <T> T sampleRate(int sr, Supplier<T> r) {
 		Integer lastSr = sampleRate.get();
@@ -86,22 +86,22 @@ public interface SamplingFeatures extends CodeFeatures {
 		return multiply(c(sampleRate() / 1000d), msec);
 	}
 
-	default CollectionProducer<PackedCollection> grains(Producer<PackedCollection> input,
-														Producer<Grain> grain,
-														Producer<PackedCollection> wavelength,
-														Producer<PackedCollection> phase,
-														Producer<PackedCollection> amp) {
-		CollectionProducer<PackedCollection> start = c(grain, 0).multiply(c(sampleRate()));
-		CollectionProducer<PackedCollection> d = c(grain, 1).multiply(c(sampleRate()));
-		CollectionProducer<PackedCollection> rate = c(grain, 2);
-		CollectionProducer<PackedCollection> w = multiply(wavelength, c(sampleRate()));
+	default CollectionProducer grains(Producer<PackedCollection> input,
+									  Producer<Grain> grain,
+									  Producer<PackedCollection> wavelength,
+									  Producer<PackedCollection> phase,
+									  Producer<PackedCollection> amp) {
+		CollectionProducer start = c(grain, 0).multiply(c(sampleRate()));
+		CollectionProducer d = c(grain, 1).multiply(c(sampleRate()));
+		CollectionProducer rate = c(grain, 2);
+		CollectionProducer w = multiply(wavelength, c(sampleRate()));
 
 		Producer<PackedCollection> series = frame();
 //		Producer<PackedCollection> max = subtract(p(count), start);
 //		Producer<PackedCollection> pos  = start.add(_mod(_mod(series, d), max));
 		Producer<PackedCollection> pos  = start.add(mod(series, d));
 
-		CollectionProducer<PackedCollection> generate = interpolate(input, pos, rate);
+		CollectionProducer generate = interpolate(input, pos, rate);
 		return generate.multiply(sinw(series, w, phase, amp));
 	}
 }

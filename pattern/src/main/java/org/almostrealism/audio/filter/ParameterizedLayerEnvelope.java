@@ -102,7 +102,7 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 			PackedCollection v3 = new PackedCollection(1);
 			v3.set(0, getVolume3());
 
-			return new DynamicCollectionProducer<>(shape(audio), args -> {
+			return new DynamicCollectionProducer(shape(audio), args -> {
 				PackedCollection audioData = audio.get().evaluate();
 				PackedCollection dr = duration.get().evaluate();
 

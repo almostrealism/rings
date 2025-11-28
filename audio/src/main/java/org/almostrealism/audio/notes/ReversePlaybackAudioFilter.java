@@ -27,7 +27,7 @@ public class ReversePlaybackAudioFilter implements NoteAudioFilter, CodeFeatures
 	public Producer<PackedCollection> apply(Producer<PackedCollection> input,
 											   Producer<PackedCollection> noteDuration,
 											   Producer<PackedCollection> automationLevel) {
-		return new DynamicCollectionProducer<>(shape(input), args -> {
+		return new DynamicCollectionProducer(shape(input), args -> {
 			PackedCollection audioData = input.get().evaluate();
 
 			PackedCollection out = AudioProcessingUtils.getReverse()

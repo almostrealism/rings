@@ -37,13 +37,13 @@ import java.util.stream.IntStream;
 
 public abstract class AudioCellChoiceAdapter extends CollectionTemporalCellAdapter implements CellFeatures {
 
-	private CollectionProducer<PackedCollection> decision;
+	private CollectionProducer decision;
 	private final List<CollectionTemporalCellAdapter> cells;
 	private final boolean parallel;
 
 	private final PackedCollection storage;
 
-	public AudioCellChoiceAdapter(CollectionProducer<PackedCollection> decision,
+	public AudioCellChoiceAdapter(CollectionProducer decision,
 								  IntFunction<PolymorphicAudioData> data,
 								  List<Function<PolymorphicAudioData, ? extends CollectionTemporalCellAdapter>> choices,
 								  boolean parallel) {
@@ -52,7 +52,7 @@ public abstract class AudioCellChoiceAdapter extends CollectionTemporalCellAdapt
 			.collect(Collectors.toList()), parallel);
 	}
 
-	public AudioCellChoiceAdapter(CollectionProducer<PackedCollection> decision,
+	public AudioCellChoiceAdapter(CollectionProducer decision,
 								  List<CollectionTemporalCellAdapter> choices,
 								  boolean parallel) {
 		this.decision = decision;
@@ -68,7 +68,7 @@ public abstract class AudioCellChoiceAdapter extends CollectionTemporalCellAdapt
 		}
 	}
 
-	public void setDecision(CollectionProducer<PackedCollection> decision) {
+	public void setDecision(CollectionProducer decision) {
 		this.decision = decision;
 	}
 

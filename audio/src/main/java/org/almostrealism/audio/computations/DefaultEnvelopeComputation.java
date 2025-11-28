@@ -29,7 +29,7 @@ import org.almostrealism.collect.computations.CollectionProducerComputationBase;
 import java.util.function.Consumer;
 
 @Deprecated
-public class DefaultEnvelopeComputation extends CollectionProducerComputationBase<PackedCollection, PackedCollection> implements ProducerComputation<PackedCollection> {
+public class DefaultEnvelopeComputation extends CollectionProducerComputationBase implements ProducerComputation<PackedCollection> {
 
 	public DefaultEnvelopeComputation(Producer<PackedCollection> notePosition) {
 		super(null, new TraversalPolicy(1), (Producer) notePosition);

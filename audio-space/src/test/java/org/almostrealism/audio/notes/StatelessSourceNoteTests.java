@@ -56,7 +56,7 @@ public class StatelessSourceNoteTests implements CellFeatures, SamplingFeatures,
 
 		// Source for the synth note
 		StatelessSource sine = (buffer, params, frequency) -> sampling(sampleRate, () -> {
-			CollectionProducer<PackedCollection> t =
+			CollectionProducer t =
 					integers(0, frames).divide(sampleRate);
 
 			// Frequency is a function of time, but to avoid

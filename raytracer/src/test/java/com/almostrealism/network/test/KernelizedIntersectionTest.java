@@ -58,7 +58,7 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 	}
 
 	@Deprecated
-	protected static PackedCollection bank(int count, Evaluable<Pair> source) {
+	protected static PackedCollection bank(int count, Evaluable<PackedCollection> source) {
 		PackedCollection bank = Pair.bank(count);
 		for (int i = 0; i < bank.getCount(); i++) {
 			bank.set(i, source.evaluate());

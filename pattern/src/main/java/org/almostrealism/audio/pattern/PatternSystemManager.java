@@ -16,15 +16,12 @@
 
 package org.almostrealism.audio.pattern;
 
-import io.almostrealism.profile.OperationMetadata;
-import io.almostrealism.profile.OperationWithInfo;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.ParameterFunction;
-import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.audio.notes.NoteAudioChoice;
 import org.almostrealism.audio.notes.NoteSourceProvider;
@@ -35,10 +32,8 @@ import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ProjectedChromosome;
-import org.almostrealism.heredity.ProjectedGenome;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -214,7 +209,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 			}
 
 			Producer<PackedCollection> max = (Producer) cp(destination).traverse(0).max().isolate();
-			CollectionProducer<PackedCollection> auto = greaterThan(max, c(0.0), c(0.8).divide(max), c(1.0));
+			CollectionProducer auto = greaterThan(max, c(0.0), c(0.8).divide(max), c(1.0));
 			op.add(a(1, p(volume), auto));
 		}
 

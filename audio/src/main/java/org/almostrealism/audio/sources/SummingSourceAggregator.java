@@ -33,12 +33,12 @@ public class SummingSourceAggregator implements SourceAggregator, CellFeatures {
 												   Producer<PackedCollection> params,
 												   Producer<PackedCollection> frequency,
 												   Producer<PackedCollection>... sources) {
-		return new DynamicCollectionProducer<>(shape(buffer.getFrames()), null) {
+		return new DynamicCollectionProducer(shape(buffer.getFrames()), null) {
 			public Evaluable<PackedCollection> get() {
 				List<Evaluable<PackedCollection>> layerAudio =
 						Stream.of(sources).map(Producer::get).toList();
 				int frames[] = Stream.of(sources)
-						.map(this::shape)
+						.map(SummingSourceAggregator.this::shape)
 						.map(shape -> shape.getCount() == 1 ? shape.traverse() : shape)
 						.mapToInt(TraversalPolicy::getCount)
 						.toArray();

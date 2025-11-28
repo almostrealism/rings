@@ -50,14 +50,14 @@ public class AudioProcessingUtils {
 					o.sizeOf(o.cv(o.shape(-1), 0)).subtract(o.integers()))
 				.get();
 
-		CollectionProducer<PackedCollection> mainDuration = o.cv(o.shape(1), 1);
-		CollectionProducer<PackedCollection> duration0 = mainDuration.multiply(o.cv(o.shape(1), 2));
-		CollectionProducer<PackedCollection> duration1 = mainDuration.multiply(o.cv(o.shape(1), 3));
-		CollectionProducer<PackedCollection> duration2 = mainDuration.multiply(o.cv(o.shape(1), 4));
-		CollectionProducer<PackedCollection> volume0 = o.cv(o.shape(1), 5);
-		CollectionProducer<PackedCollection> volume1 = o.cv(o.shape(1), 6);
-		CollectionProducer<PackedCollection> volume2 = o.cv(o.shape(1), 7);
-		CollectionProducer<PackedCollection> volume3 = o.cv(o.shape(1), 8);
+		CollectionProducer mainDuration = o.cv(o.shape(1), 1);
+		CollectionProducer duration0 = mainDuration.multiply(o.cv(o.shape(1), 2));
+		CollectionProducer duration1 = mainDuration.multiply(o.cv(o.shape(1), 3));
+		CollectionProducer duration2 = mainDuration.multiply(o.cv(o.shape(1), 4));
+		CollectionProducer volume0 = o.cv(o.shape(1), 5);
+		CollectionProducer volume1 = o.cv(o.shape(1), 6);
+		CollectionProducer volume2 = o.cv(o.shape(1), 7);
+		CollectionProducer volume3 = o.cv(o.shape(1), 8);
 
 		Factor<PackedCollection> volumeFactor =
 				o.envelope(o.v(1, 1),

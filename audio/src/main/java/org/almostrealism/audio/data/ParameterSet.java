@@ -61,7 +61,7 @@ public class ParameterSet {
 	}
 
 	public static ParameterSet fromGene(Gene<PackedCollection> gene) {
-		CollectionProducer<PackedCollection> one =
+		CollectionProducer one =
 				CollectionFeatures.getInstance().c(1.0);
 
 		ParameterSet params = new ParameterSet();

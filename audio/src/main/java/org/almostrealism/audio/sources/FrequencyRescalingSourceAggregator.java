@@ -31,7 +31,7 @@ public class FrequencyRescalingSourceAggregator implements SourceAggregator, Cel
 
 	private int fftBins = WaveData.FFT_BINS;
 
-	protected FourierTransform fft(CollectionProducer<PackedCollection> input) {
+	protected FourierTransform fft(CollectionProducer input) {
 		int frames = shape(input).getTotalSize();
 		int slices = frames / fftBins;
 
@@ -45,7 +45,7 @@ public class FrequencyRescalingSourceAggregator implements SourceAggregator, Cel
 		return fft(fftBins, input, ComputeRequirement.CPU);
 	}
 
-	protected FourierTransform ifft(CollectionProducer<PackedCollection> input) {
+	protected FourierTransform ifft(CollectionProducer input) {
 		return ifft(fftBins, input, ComputeRequirement.CPU);
 	}
 
@@ -54,8 +54,8 @@ public class FrequencyRescalingSourceAggregator implements SourceAggregator, Cel
 								   Producer<PackedCollection> params,
 								   Producer<PackedCollection> frequency,
 								   Producer<PackedCollection>... sources) {
-		CollectionProducer<PackedCollection> input = c(sources[0]);
-		CollectionProducer<PackedCollection> filter = c(sources[1]);
+		CollectionProducer input = c(sources[0]);
+		CollectionProducer filter = c(sources[1]);
 
 		filter = extractFilter(filter);
 
@@ -71,13 +71,13 @@ public class FrequencyRescalingSourceAggregator implements SourceAggregator, Cel
 		filter = filter.traverse(0).repeat(2 * inputSlices)
 				.reshape(inputSlices, 2, fftBins);
 
-		CollectionProducer<PackedCollection> result = ifft(enableFilter ? input.multiply(filter) : input);
+		CollectionProducer result = ifft(enableFilter ? input.multiply(filter) : input);
 		result = subset(shape(inputSlices, 1, fftBins), result, 0, 0, 0);
 		return result.flatten();
 	}
 
-	protected CollectionProducer<PackedCollection> extractFilter(CollectionProducer<PackedCollection> input) {
-		CollectionProducer<PackedCollection> filter = fft(input);
+	protected CollectionProducer extractFilter(CollectionProducer input) {
+		CollectionProducer filter = fft(input);
 		filter = filter.transpose(2).magnitude(2);
 
 		int slices = filter.getShape().length(0);

@@ -34,8 +34,8 @@ public class VolumeRescalingSourceAggregator implements SourceAggregator, CellFe
 												   Producer<PackedCollection> params,
 												   Producer<PackedCollection> frequency,
 												   Producer<PackedCollection>... sources) {
-		CollectionProducer<PackedCollection> input = c(sources[0]);
-		CollectionProducer<PackedCollection> filter = c(sources[1]);
+		CollectionProducer input = c(sources[0]);
+		CollectionProducer filter = c(sources[1]);
 
 		Producer<PackedCollection> inputEnv = envExtract.filter(buffer, params, input);
 		Producer<PackedCollection> filterEnv = envExtract.filter(buffer, params, filter);

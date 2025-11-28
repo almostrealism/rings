@@ -72,17 +72,17 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 
 	int timesteps = 300;
 
-	CollectionProducer<PackedCollection> betas = linearBetaSchedule(timesteps);
+	CollectionProducer betas = linearBetaSchedule(timesteps);
 
-	CollectionProducer<PackedCollection> alphas = c(1.0).subtract(betas);
-	CollectionProducer<PackedCollection> alphasCumProd = cumulativeProduct(alphas, false);
-	CollectionProducer<PackedCollection> alphasCumProdPrev = cumulativeProduct(alphas, true);
-	CollectionProducer<PackedCollection> sqrtRecipAlphas = sqrt(alphas.reciprocal());
+	CollectionProducer alphas = c(1.0).subtract(betas);
+	CollectionProducer alphasCumProd = cumulativeProduct(alphas, false);
+	CollectionProducer alphasCumProdPrev = cumulativeProduct(alphas, true);
+	CollectionProducer sqrtRecipAlphas = sqrt(alphas.reciprocal());
 
 	PackedCollection sqrtAlphasCumProd = sqrt(alphasCumProd).evaluate();
 	PackedCollection sqrtOneMinusAlphasCumProd = sqrt(c(1.0).subtract(alphasCumProd)).evaluate();
 
-	CollectionProducer<PackedCollection> posteriorVariance = betas
+	CollectionProducer posteriorVariance = betas
 			.multiply(c(1.0).subtract(alphasCumProdPrev))
 			.divide(c(1.0).subtract(alphasCumProd));
 
@@ -109,9 +109,9 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 			block.add(compose("scaleShift", scaleShift,
 					(in, ss) -> {
 						TraversalPolicy shape = scaleShift.getOutputShape().traverse(1).item();
-						CollectionProducer<PackedCollection> scale =
+						CollectionProducer scale =
 								subset(shape.prependDimension(1), ss, 0, 0, 0, 0, 0);
-						CollectionProducer<PackedCollection> shift =
+						CollectionProducer shift =
 								subset(shape.prependDimension(1), ss, 1, 0, 0, 0, 0);
 						return multiply(in, scale.add(1.0)).add(shift);
 					}));
@@ -181,10 +181,10 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 
 		return compose("weightedSum", v, shape(batchSize, heads, size, dimHead),
 				(a, b) -> {
-					CollectionProducer<PackedCollection> pa = c(a)
+					CollectionProducer pa = c(a)
 							.traverse(4)
 							.repeat(dimHead);
-					CollectionProducer<PackedCollection> pb = c(b)
+					CollectionProducer pb = c(b)
 							.traverse(2)
 							.enumerate(3, 1)
 							.traverse(2)
@@ -274,7 +274,7 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 		PackedCollection values = new PackedCollection(hd).fill(pos -> pos[0] * -scale);
 
 		return layer("sinEmbed", shape(batchSize, 1), shape(batchSize, dim), (in) -> {
-			CollectionProducer<PackedCollection> embeddings =
+			CollectionProducer embeddings =
 					multiply(
 							c(in).repeat(1, hd).reshape(batchSize, hd),
 							cp(values).repeat(batchSize).reshape(batchSize, hd));
@@ -389,21 +389,21 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 		return unet;
 	}
 
-	public CollectionProducer<PackedCollection> linearBetaSchedule(int timesteps) {
+	public CollectionProducer linearBetaSchedule(int timesteps) {
 		double betaStart = 0.0001;
 		double betaEnd = 0.02;
 		return linear(betaStart, betaEnd, timesteps);
 	}
 
-	public CollectionProducer<PackedCollection> extract(CollectionProducer<PackedCollection> a,
-														   CollectionProducer<PackedCollection> t,
-														   TraversalPolicy xShape) {
+	public CollectionProducer extract(CollectionProducer a,
+									  CollectionProducer t,
+									  TraversalPolicy xShape) {
 		if (t.getShape().getDimensions() != 1) {
 			throw new IllegalArgumentException();
 		}
 
 		int batches = t.getShape().length(0);
-		CollectionProducer<PackedCollection> out = a.traverseAll().valueAt(t); // a.valueAt(integers(0, batches), t);
+		CollectionProducer out = a.traverseAll().valueAt(t); // a.valueAt(integers(0, batches), t);
 
 		int depth = xShape.getDimensions();
 		TraversalPolicy resultShape =
@@ -411,39 +411,39 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 		return out.reshape(resultShape);
 	}
 
-	public CollectionProducer<PackedCollection> imageTransform(CollectionProducer<PackedCollection> image) {
+	public CollectionProducer imageTransform(CollectionProducer image) {
 		return image.multiply(2).subtract(1.0);
 	}
 
-	public CollectionProducer<PackedCollection> imageTransformReverse(Producer<PackedCollection> data) {
+	public CollectionProducer imageTransformReverse(Producer<PackedCollection> data) {
 		return c(data).add(1.0).divide(2);
 	}
 
-	public CollectionProducer<PackedCollection> qSample(
-			CollectionProducer<PackedCollection> xStart,
-			CollectionProducer<PackedCollection> t) {
+	public CollectionProducer qSample(
+			CollectionProducer xStart,
+			CollectionProducer t) {
 		return qSample(xStart, t, null);
 	}
 
-	public CollectionProducer<PackedCollection> qSample(
-														   CollectionProducer<PackedCollection> xStart,
-														   CollectionProducer<PackedCollection> t,
+	public CollectionProducer qSample(
+														   CollectionProducer xStart,
+														   CollectionProducer t,
 														   Producer<PackedCollection> noise) {
 		if (noise == null) {
 			noise = randn(shape(xStart));
 		}
 
-		CollectionProducer<PackedCollection> sqrtAlphasCumProdT =
+		CollectionProducer sqrtAlphasCumProdT =
 				extract(cp(sqrtAlphasCumProd), t, shape(xStart));
-		CollectionProducer<PackedCollection> sqrtOneMinusAlphasCumProdT =
+		CollectionProducer sqrtOneMinusAlphasCumProdT =
 				extract(cp(sqrtOneMinusAlphasCumProd), t, shape(xStart));
 		return xStart.multiply(sqrtAlphasCumProdT)
 				.add(sqrtOneMinusAlphasCumProdT.multiply(noise));
 	}
 
-	public CollectionProducer<PackedCollection> getNoisyImage(
-																 CollectionProducer<PackedCollection> xStart,
-																 CollectionProducer<PackedCollection> t) {
+	public CollectionProducer getNoisyImage(
+																 CollectionProducer xStart,
+																 CollectionProducer t) {
 		TraversalPolicy shape = shape(xStart);
 		Evaluable<PackedCollection> qSample = qSample(
 				cv(shape, 0),
@@ -460,7 +460,7 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 
 	@Test
 	public void imageTransform() throws IOException {
-		CollectionProducer<PackedCollection> data =
+		CollectionProducer data =
 				imageTransform(channels(new File("/Users/michael/Desktop/output_cats_128.jpg")));
 		log(data.getShape());
 

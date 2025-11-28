@@ -191,13 +191,13 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 		}
 		
 		public void addIncidence(double u, double v, Producer<PackedCollection> e, boolean front) {
-			this.incidence.addVector(u, v, (Producer) e, front);
+			this.incidence.addVector(u, v, e, front);
 			if (this.listener != null)
 				this.listener.updateIncidenceBuffer(u, v, this.getVolume(), this.incidence, front);
 		}
 
 		public void addExitance(double u, double v, Producer<PackedCollection> e, boolean front) {
-			this.exitance.addVector(u, v, (Producer) e, front);
+			this.exitance.addVector(u, v, e, front);
 			if (this.listener != null)
 				this.listener.updateExitanceBuffer(u, v, this.getVolume(), this.exitance, front);
 		}
@@ -842,9 +842,9 @@ public class AbsorberHashSet extends HashSet<AbsorberHashSet.StoredItem> impleme
 	public boolean getShadeFront() { return true; }
 
 	@Override
-	public ShadableIntersection intersectAt(Producer<Ray> r) {
+	public ShadableIntersection intersectAt(Producer<?> r) {
 		return new ShadableIntersection(this, r, () -> (Evaluable<PackedCollection>) args -> {
-			Ray ray = r.get().evaluate(args);
+			Ray ray = new Ray((PackedCollection) r.get().evaluate(args), 0);
 
 			double dist = getDistance(ray.getOrigin(), ray.getDirection(), false, true);
 

@@ -127,12 +127,12 @@ public class AudioComposer implements Factor<PackedCollection>, Destroyable, Cod
 		return autoencoder.decode(getInterpolatedLatent(value));
 	}
 
-	protected CollectionProducer<PackedCollection> createWeights(Producer<PackedCollection> features) {
+	protected CollectionProducer createWeights(Producer<PackedCollection> features) {
 		double scale = 1.0;
 		int bins = shape(features).length(0);
 		int time = shape(features).length(1);
 
-		CollectionProducer<PackedCollection> rand = randn(shape(dim), scale, scale * getDeviation(), random);
+		CollectionProducer rand = randn(shape(dim), scale, scale * getDeviation(), random);
 		if (normalizeWeights)
 			rand = normalize(rand);
 		return rand.repeat(bins).repeat(time);

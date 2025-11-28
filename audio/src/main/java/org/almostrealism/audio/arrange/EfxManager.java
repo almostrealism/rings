@@ -153,10 +153,10 @@ public class EfxManager implements CellFeatures {
 		Producer<PackedCollection> cutoff = c(20000)
 				.multiply(delayLevels.valueAt(channel.getPatternChannel(), 3).getResultant(c(1.0)));
 
-		CollectionProducer<PackedCollection> lpCoefficients =
+		CollectionProducer lpCoefficients =
 				lowPassCoefficients(cutoff, sampleRate, filterOrder)
 						.reshape(1, filterOrder + 1);
-		CollectionProducer<PackedCollection> hpCoefficients =
+		CollectionProducer hpCoefficients =
 				highPassCoefficients(cutoff, sampleRate, filterOrder)
 						.reshape(1, filterOrder + 1);
 

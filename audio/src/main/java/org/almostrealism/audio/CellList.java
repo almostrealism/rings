@@ -108,7 +108,7 @@ public class CellList extends ArrayList<Cell<PackedCollection>> implements Cells
 		return branch(this, dest);
 	}
 
-	public CellList poly(IntFunction<CollectionProducer<PackedCollection>> decision) {
+	public CellList poly(IntFunction<CollectionProducer> decision) {
 		CellList l = poly(1, () -> null, decision,
 				stream().map(c -> (Function<DefaultWaveCellData, CollectionTemporalCellAdapter>) data -> (CollectionTemporalCellAdapter) c).toArray(Function[]::new));
 		// TODO  By dropping the parent, we may be losing necessary dependencies

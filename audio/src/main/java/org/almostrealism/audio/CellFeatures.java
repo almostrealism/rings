@@ -249,18 +249,18 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 		return cells;
 	}
 
-	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<CollectionProducer<PackedCollection>> decision, Frequency... choices) {
+	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<CollectionProducer> decision, Frequency... choices) {
 		return poly(count, data, decision, Stream.of(choices)
 				.map(f -> (Function<PolymorphicAudioData, CollectionTemporalCellAdapter>) d -> (CollectionTemporalCellAdapter) w(data, f).get(0)).
 				toArray(Function[]::new));
 	}
 
-	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<CollectionProducer<PackedCollection>> decision,
+	default CellList poly(int count, Supplier<PolymorphicAudioData> data, IntFunction<CollectionProducer> decision,
 						  Function<PolymorphicAudioData, CollectionTemporalCellAdapter>... choices) {
 		return poly(count, i -> data.get(), decision, choices);
 	}
 
-	default CellList poly(int count, IntFunction<PolymorphicAudioData> data, IntFunction<CollectionProducer<PackedCollection>> decision,
+	default CellList poly(int count, IntFunction<PolymorphicAudioData> data, IntFunction<CollectionProducer> decision,
 						  Function<PolymorphicAudioData, CollectionTemporalCellAdapter>... choices) {
 		CellList cells = new CellList();
 		IntStream.range(0, count).mapToObj(i -> new PolymorphicAudioCell(data.apply(i), decision.apply(i), choices)).forEach(cells::addRoot);
