@@ -16,12 +16,12 @@
 
 package com.almostrealism.buffers;
 
-import java.io.IOException;
-
-import org.almostrealism.color.RGB;
-import org.almostrealism.space.Scene;
-import org.almostrealism.color.ShadableSurface;
 import io.almostrealism.relation.Factory;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.space.Scene;
+
+import java.io.IOException;
 
 public interface ColorBuffer {
 	void addColor(double u, double v, boolean front, RGB c);

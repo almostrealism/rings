@@ -16,13 +16,13 @@
 
 
 package com.almostrealism.physics;
-import org.almostrealism.collect.PackedCollection;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.physics.Absorber;
-import org.almostrealism.space.Volume;
 import org.almostrealism.physics.Clock;
+import org.almostrealism.space.Volume;
 
 /**
  * {@link VolumetricDensityAbsorber} is an {@link Absorber} implementation that absorbs

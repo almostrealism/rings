@@ -16,6 +16,26 @@
 
 package org.almostrealism.audio;
 
+import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.lifecycle.Destroyable;
+import io.almostrealism.lifecycle.Lifecycle;
+import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
+import org.almostrealism.Ops;
+import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.collect.CollectionFeatures;
+import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.graph.Receptor;
+import org.almostrealism.graph.ReceptorCell;
+import org.almostrealism.hardware.OperationList;
+import org.almostrealism.hardware.ctx.ContextSpecific;
+import org.almostrealism.hardware.ctx.DefaultContextSpecific;
+import org.almostrealism.hardware.mem.MemoryDataCopy;
+import org.almostrealism.io.Console;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -27,30 +47,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import io.almostrealism.collect.TraversalPolicy;
-import io.almostrealism.lifecycle.Destroyable;
-import io.almostrealism.lifecycle.Lifecycle;
-import io.almostrealism.relation.Evaluable;
-import org.almostrealism.Ops;
-import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.collect.CollectionFeatures;
-import org.almostrealism.collect.CollectionProducer;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.Receptor;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.hardware.ctx.ContextSpecific;
-import org.almostrealism.hardware.OperationList;
-import org.almostrealism.hardware.ctx.DefaultContextSpecific;
-import org.almostrealism.hardware.mem.MemoryDataCopy;
-import org.almostrealism.io.Console;
-import org.almostrealism.CodeFeatures;
-
 public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 	public static boolean enableVerbose = false;
 
-	public static int defaultTimelineFrames = (int) (OutputLine.sampleRate * 230);
+	public static int defaultTimelineFrames = OutputLine.sampleRate * 230;
 
 	public static ContextSpecific<PackedCollection> timeline;
 
@@ -74,9 +74,9 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 		timeline.init();
 	}
 
-	private Supplier<File> file;
-	private int bits;
-	private long sampleRate;
+	private final Supplier<File> file;
+	private final int bits;
+	private final long sampleRate;
 
 	private WavFile wav;
 	private List<CollectionProducer> data;
@@ -215,8 +215,8 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 					return;
 				}
 
-				double framesLeft[] = l.toArray(0, frames);
-				double framesRight[] = r == null ? framesLeft : r.toArray(0, frames);
+				double[] framesLeft = l.toArray(0, frames);
+				double[] framesRight = r == null ? framesLeft : r.toArray(0, frames);
 
 				for (int i = 0; i < frames; i++) {
 					try {
@@ -286,7 +286,7 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 	public Console console() { return CellFeatures.console; }
 
 	protected class Writer implements Receptor<PackedCollection>, Lifecycle, Destroyable {
-		private int channel;
+		private final int channel;
 		private PackedCollection cursor;
 
 		public Writer(int channel) {
@@ -312,7 +312,7 @@ public class WaveOutput implements Lifecycle, Destroyable, CodeFeatures {
 
 			Producer slot = c(shape(1), getChannelData(channel), p(cursor));
 
-			push.add(a("WaveOutput Insert", slot, (Producer) protein));
+			push.add(a("WaveOutput Insert", slot, protein));
 			push.add(a("WaveOutput Cursor Increment", cp(cursor), cp(cursor).add(1)));
 			return push;
 		}

@@ -22,7 +22,7 @@ import org.almostrealism.time.Frequency;
 import java.util.Arrays;
 
 public class UniformFrequencySeries implements RelativeFrequencySet {
-	private double frequencies[];
+	private final double[] frequencies;
 
 	public UniformFrequencySeries(double start, double length, int count) {
 		frequencies = new double[count];
@@ -32,7 +32,7 @@ public class UniformFrequencySeries implements RelativeFrequencySet {
 		}
 	}
 
-	public UniformFrequencySeries(double frequencyRatios[]) {
+	public UniformFrequencySeries(double[] frequencyRatios) {
 		this.frequencies = frequencyRatios;
 	}
 

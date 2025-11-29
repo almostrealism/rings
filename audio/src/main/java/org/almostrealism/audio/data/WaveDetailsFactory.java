@@ -34,13 +34,14 @@ public class WaveDetailsFactory implements CodeFeatures {
 
 	protected static WaveDetailsFactory defaultFactory;
 
-	private int sampleRate;
-	private double fftSampleRate;
+	private final int sampleRate;
+	private final double fftSampleRate;
 
-	private int freqBins;
-	private int scaleBins, scaleTime;
-	private PackedCollection buffer;
-	private Evaluable<PackedCollection> sum;
+	private final int freqBins;
+	private final int scaleBins;
+	private final int scaleTime;
+	private final PackedCollection buffer;
+	private final Evaluable<PackedCollection> sum;
 
 	private WaveDataFeatureProvider featureProvider;
 
@@ -152,7 +153,7 @@ public class WaveDetailsFactory implements CodeFeatures {
 	}
 
 	public double productSimilarity(Producer<PackedCollection> a, Producer<PackedCollection> b, int limit) {
-		double values[] = multiply(a, b).sum(1)
+		double[] values = multiply(a, b).sum(1)
 				.divide(multiply(length(1, a), length(1, b)))
 				.evaluate().doubleStream().limit(limit).toArray();
 		if (values.length == 0) return -1.0;

@@ -5,7 +5,7 @@ import org.tensorflow.Operand;
 import org.tensorflow.types.TFloat64;
 
 public class TensorFlowConstant extends TensorFlowExpression {
-	private double value;
+	private final double value;
 	private TensorFlowInput input;
 
 	public TensorFlowConstant(double value) {

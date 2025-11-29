@@ -16,12 +16,12 @@
 
 package org.almostrealism.audio.optimize;
 
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.filter.AudioPassFilter;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.heredity.Chromosome;
-import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.ProjectedGene;
 
@@ -29,7 +29,7 @@ public class FixedFilterChromosome implements Chromosome<PackedCollection>, Cell
 	public static final int SIZE = 2;
 
 	public static double defaultResonance = 0.2;
-	private static double maxFrequency = 20000;
+	private static final double maxFrequency = 20000;
 
 	private final Chromosome<PackedCollection> source;
 	private final int sampleRate;
@@ -63,7 +63,7 @@ public class FixedFilterChromosome implements Chromosome<PackedCollection>, Cell
 		public Factor<PackedCollection> valueAt(int pos) {
 			Producer<PackedCollection> lowFrequency = multiply(c(maxFrequency), source.valueAt(index, 0).getResultant(c(1.0)));
 			Producer<PackedCollection> highFrequency = multiply(c(maxFrequency), source.valueAt(index, 1).getResultant(c(1.0)));
-			Producer<PackedCollection> resonance = (Producer) scalar(defaultResonance);
+			Producer<PackedCollection> resonance = scalar(defaultResonance);
 			return new AudioPassFilter(sampleRate, lowFrequency, resonance, true)
 					.andThen(new AudioPassFilter(sampleRate, highFrequency, resonance, false));
 		}

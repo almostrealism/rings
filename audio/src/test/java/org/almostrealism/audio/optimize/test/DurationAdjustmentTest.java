@@ -16,17 +16,17 @@
 
 package org.almostrealism.audio.optimize.test;
 
+import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.optimize.OptimizeFactorFeatures;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
-import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.TemporalFactor;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;

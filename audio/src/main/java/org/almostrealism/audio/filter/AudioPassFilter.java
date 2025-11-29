@@ -16,8 +16,8 @@
 
 package org.almostrealism.audio.filter;
 
-import io.almostrealism.relation.Producer;
 import io.almostrealism.lifecycle.Lifecycle;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.data.AudioFilterData;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.collect.PackedCollection;
@@ -28,12 +28,12 @@ import java.util.function.Supplier;
 public class AudioPassFilter implements TemporalFactor<PackedCollection>, Lifecycle {
 	public static final double MIN_FREQUENCY = 10.0;
 
-	private AudioFilterData data;
+	private final AudioFilterData data;
 	private Producer<PackedCollection> frequency;
 	private Producer<PackedCollection> resonance;
 	private Producer<PackedCollection> input;
 
-	private boolean high;
+	private final boolean high;
 
 	public AudioPassFilter(int sampleRate, Producer<PackedCollection> frequency, Producer<PackedCollection> resonance, boolean high) {
 		this(sampleRate, new PolymorphicAudioData(), frequency, resonance, high);

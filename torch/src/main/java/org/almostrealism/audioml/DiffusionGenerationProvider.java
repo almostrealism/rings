@@ -16,10 +16,10 @@
 
 package org.almostrealism.audioml;
 
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.GenerationResourceManager;
 import org.almostrealism.audio.generative.GeneratorStatus;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 
@@ -32,8 +32,8 @@ import java.util.stream.IntStream;
 public class DiffusionGenerationProvider implements GenerationProvider {
 	public static final int SAMPLE_RATE = OutputLine.sampleRate;
 
-	private TorchDiffusion model;
-	private GenerationResourceManager resources;
+	private final TorchDiffusion model;
+	private final GenerationResourceManager resources;
 
 	public DiffusionGenerationProvider(GenerationResourceManager resources) {
 		this.model = new TorchDiffusion();
@@ -76,7 +76,7 @@ public class DiffusionGenerationProvider implements GenerationProvider {
 			NoteAudioProvider out = resources.getAudio(requestId + ":" + i);
 			if (out == null) {
 				available = false;
-				break i;
+				break;
 			} else {
 				existing.add(out);
 			}

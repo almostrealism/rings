@@ -16,12 +16,10 @@
 
 
 package com.almostrealism.physics;
-import org.almostrealism.collect.PackedCollection;
 
-import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
+import org.almostrealism.collect.PackedCollection;
 
 /**
  * A {@link MonochromeBody} absorbs all radiation and only emits photons of one energy level.

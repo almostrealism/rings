@@ -20,8 +20,8 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 
 public class TremoloAudioFilter implements NoteAudioFilter {
-	private Type type;
-	private double duration;
+	private final Type type;
+	private final double duration;
 
 	public TremoloAudioFilter() {
 		this(Type.GATE, 0.2);

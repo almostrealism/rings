@@ -19,11 +19,12 @@ package org.almostrealism.audio;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.cycle.Setup;
 import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
-import io.almostrealism.cycle.Setup;
+import io.almostrealism.uml.ModelEntity;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.EfxManager;
@@ -40,8 +41,8 @@ import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
-import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.notes.NoteAudioChoice;
+import org.almostrealism.audio.pattern.ChordProgressionManager;
 import org.almostrealism.audio.pattern.NoteAudioChoiceList;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
@@ -49,15 +50,14 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.TimingMetric;
-import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.space.Animation;
-import io.almostrealism.uml.ModelEntity;
 import org.almostrealism.time.Frequency;
 
 import java.io.File;
@@ -81,7 +81,7 @@ import java.util.stream.IntStream;
 @ModelEntity
 public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable, CellFeatures {
 	public static final Console console = CellFeatures.console.child();
-	private static TimingMetric getCellsTime = console.timing("getCells");
+	private static final TimingMetric getCellsTime = console.timing("getCells");
 
 	public static final int DEFAULT_SOURCE_COUNT = 6;
 	public static final int DEFAULT_DELAY_LAYERS = 3;
@@ -143,40 +143,40 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 				};
 	}
 
-	private int sampleRate;
+	private final int sampleRate;
 	private double bpm;
-	private int channelCount;
-	private int delayLayerCount;
+	private final int channelCount;
+	private final int delayLayerCount;
 	private int measureSize = 4;
 	private int totalMeasures = 1;
 
-	private Animation<T> scene;
+	private final Animation<T> scene;
 
-	private GlobalTimeManager time;
+	private final GlobalTimeManager time;
 	private KeyboardTuning tuning;
-	private ChordProgressionManager progression;
+	private final ChordProgressionManager progression;
 
 	private AudioLibrary library;
-	private PatternSystemManager patterns;
+	private final PatternSystemManager patterns;
 	private Map<ChannelInfo, PackedCollection> patternDestinations;
-	private List<String> channelNames;
+	private final List<String> channelNames;
 	private double patternActivityBias;
 
-	private SceneSectionManager sections;
-	private AutomationManager automation;
-	private EfxManager efx;
-	private RiseManager riser;
-	private MixdownManager mixdown;
+	private final SceneSectionManager sections;
+	private final AutomationManager automation;
+	private final EfxManager efx;
+	private final RiseManager riser;
+	private final MixdownManager mixdown;
 
-	private GenerationManager generation;
+	private final GenerationManager generation;
 
-	private ProjectedGenome genome;
+	private final ProjectedGenome genome;
 	
 	private OperationList setup;
 	private Function<PackedCollection, Factor<PackedCollection>> automationLevel;
 
-	private List<Consumer<Frequency>> tempoListeners;
-	private List<DoubleConsumer> durationListeners;
+	private final List<Consumer<Frequency>> tempoListeners;
+	private final List<DoubleConsumer> durationListeners;
 
 	public AudioScene(Animation<T> scene, double bpm, int sampleRate) {
 		this(scene, bpm, DEFAULT_SOURCE_COUNT, DEFAULT_DELAY_LAYERS, sampleRate);
@@ -523,7 +523,7 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 			totalSamples = getTotalSamples();
 		}
 
-		int channelIndex[] = channels.stream().mapToInt(i -> i).toArray();
+		int[] channelIndex = channels.stream().mapToInt(i -> i).toArray();
 		CellList main = all(channelIndex.length, i ->
 				getPatternChannel(new ChannelInfo(channelIndex[i], ChannelInfo.Voicing.MAIN, audioChannel), totalSamples, setup));
 		CellList wet = all(channelIndex.length, i ->

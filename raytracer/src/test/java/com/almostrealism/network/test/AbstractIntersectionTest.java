@@ -16,13 +16,13 @@
 
 package com.almostrealism.network.test;
 
-import org.almostrealism.CodeFeatures;
-import org.almostrealism.projection.ProjectionFeatures;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.primitives.Sphere;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.primitives.Sphere;
+import org.almostrealism.projection.ProjectionFeatures;
 
 public class AbstractIntersectionTest implements ProjectionFeatures, CodeFeatures {
 	protected final int width = 400, height = 400;

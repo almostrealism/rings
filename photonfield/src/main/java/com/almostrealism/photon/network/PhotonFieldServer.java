@@ -16,7 +16,7 @@ import java.io.FileOutputStream;
 import java.util.concurrent.CompletableFuture;
 
 public class PhotonFieldServer {
-	public static void main(String args[]) throws FileNotFoundException {
+	public static void main(String[] args) throws FileNotFoundException {
 		FlowTreeCliServer.start(args);
 
 		final String sceneFile = BlackBody.createScene();

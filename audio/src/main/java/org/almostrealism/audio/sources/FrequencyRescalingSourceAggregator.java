@@ -16,8 +16,8 @@
 
 package org.almostrealism.audio.sources;
 
-import io.almostrealism.compute.ComputeRequirement;
 import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.compute.ComputeRequirement;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.data.WaveData;
@@ -29,7 +29,7 @@ public class FrequencyRescalingSourceAggregator implements SourceAggregator, Cel
 	public static boolean enableFilter = true;
 	public static boolean enableNormalization = false;
 
-	private int fftBins = WaveData.FFT_BINS;
+	private final int fftBins = WaveData.FFT_BINS;
 
 	protected FourierTransform fft(CollectionProducer input) {
 		int frames = shape(input).getTotalSize();

@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.Map;
 
 public class FileWaveDataProvider extends WaveDataProviderAdapter implements PathResource {
-	private static List<String> corruptFiles = new ArrayList<>();
-	private static Map<String, String> identifiers = new HashMap<>(); // TODO  Use FrequencyCache
+	private static final List<String> corruptFiles = new ArrayList<>();
+	private static final Map<String, String> identifiers = new HashMap<>(); // TODO  Use FrequencyCache
 
 	private Integer sampleRate;
 	private Integer count;

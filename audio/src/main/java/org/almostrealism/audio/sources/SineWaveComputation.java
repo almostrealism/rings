@@ -17,8 +17,8 @@
 package org.almostrealism.audio.sources;
 
 import io.almostrealism.expression.InstanceReference;
-import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.relation.Producer;
+import io.almostrealism.scope.ArrayVariable;
 import org.almostrealism.Ops;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationComputationAdapter;
@@ -35,7 +35,7 @@ public abstract class SineWaveComputation extends OperationComputationAdapter<Pa
 				data.getPhase(),
 				data.getAmplitude(),
 				data.getDepth(),
-				(Producer) envelope);
+				envelope);
 	}
 
 	public ArrayVariable<Double> getOutput() { return getArgument(0); }

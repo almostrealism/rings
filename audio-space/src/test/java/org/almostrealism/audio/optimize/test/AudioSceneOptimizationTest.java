@@ -17,26 +17,25 @@
 package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.CellFeatures;
+import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.Cells;
+import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.pattern.PatternLayerManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.io.SystemUtils;
 import org.almostrealism.time.TemporalRunner;
-import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.CellList;
-import org.almostrealism.audio.Cells;
-import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.WaveOutput;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 public class AudioSceneOptimizationTest implements CellFeatures {

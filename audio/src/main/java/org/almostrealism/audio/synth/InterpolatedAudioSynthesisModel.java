@@ -26,10 +26,10 @@ import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
 
 public class InterpolatedAudioSynthesisModel implements AudioSynthesisModel, CellFeatures {
-	private double[] frequencyRatios;
-	private double sampleRate;
-	private PackedCollection levelData;
-	private int samples;
+	private final double[] frequencyRatios;
+	private final double sampleRate;
+	private final PackedCollection levelData;
+	private final int samples;
 
 	public InterpolatedAudioSynthesisModel(double[] frequencyRatios,
 										   double sampleRate,

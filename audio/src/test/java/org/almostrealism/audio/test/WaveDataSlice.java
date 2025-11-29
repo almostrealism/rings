@@ -31,7 +31,7 @@ public class WaveDataSlice implements CellFeatures {
 
 		i: for (int i = 0; ; i++) {
 			if ((i + 1) * sliceDuration > wave.getDuration()) {
-				break i;
+				break;
 			}
 
 			WaveData slice = wave.range(0, i * sliceDuration, sliceDuration);

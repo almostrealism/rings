@@ -18,11 +18,6 @@ package org.almostrealism.audio.line;
 
 import org.almostrealism.collect.PackedCollection;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -30,6 +25,10 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 public class LineUtilities {
 	protected static AudioFormat lastFormat;
@@ -88,7 +87,7 @@ public class LineUtilities {
 	 * @param format The target audio format
 	 * @return Byte array containing interleaved audio frames
 	 */
-	public static byte[] toBytes(double frames[][], AudioFormat format) {
+	public static byte[] toBytes(double[][] frames, AudioFormat format) {
 		if (frames.length == 0 || frames[0].length == 0) {
 			return new byte[0];
 		}

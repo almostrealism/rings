@@ -16,15 +16,15 @@
 
 
 package com.almostrealism.physics;
-import org.almostrealism.collect.PackedCollection;
 
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.physics.Absorber;
-import org.almostrealism.space.Volume;
-import org.almostrealism.physics.Clock;
-import org.almostrealism.CodeFeatures;
 import io.almostrealism.uml.Nameable;
+import org.almostrealism.CodeFeatures;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.Clock;
+import org.almostrealism.space.Volume;
 
 /**
  * A {@link VolumeAbsorber} is a wrapper for {@link Absorber} implementations that
@@ -67,7 +67,7 @@ public class VolumeAbsorber implements Absorber, Nameable, CodeFeatures {
 	 */
 	@Override
 	public boolean absorb(Vector x, Vector p, double energy) {
-		if (this.volume.inside((Producer) v(x)))
+		if (this.volume.inside(v(x)))
 			return this.absorber.absorb(x, p, energy);
 		else
 			return false;

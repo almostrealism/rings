@@ -27,8 +27,8 @@ import java.util.List;
 
 public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 
-	private ParameterizedEnvelopeLayers parent;
-	private int layer;
+	private final ParameterizedEnvelopeLayers parent;
+	private final int layer;
 
 	public ParameterizedLayerEnvelope(ParameterizedEnvelopeLayers parent, int layer) {
 		this.parent = parent;
@@ -41,8 +41,8 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 	}
 
 	public class Filter implements NoteAudioFilter, EnvelopeFeatures {
-		private ParameterSet params;
-		private ChannelInfo.Voicing voicing;
+		private final ParameterSet params;
+		private final ChannelInfo.Voicing voicing;
 
 		public Filter(ParameterSet params, ChannelInfo.Voicing voicing) {
 			this.params = params;
@@ -130,8 +130,7 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 			if (filter.getVolume0() != getVolume0()) return false;
 			if (filter.getVolume1() != getVolume1()) return false;
 			if (filter.getVolume2() != getVolume2()) return false;
-			if (filter.getVolume3() != getVolume3()) return false;
-			return true;
+			return filter.getVolume3() == getVolume3();
 		}
 
 		@Override

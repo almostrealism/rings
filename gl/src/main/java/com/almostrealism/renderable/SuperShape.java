@@ -57,7 +57,7 @@ public class SuperShape extends GLSpatial {
 	}
 	public static final int PARAMS = 15;
 
-	public static final float sParams[][] =
+	public static final float[][] sParams =
 			{
 					// m  a     b     n1      n2     n3     m     a     b     n1     n2      n3   res1 res2 scale  (org.res1,res2)
 					new float[]{10, 1, 2, 90, 1, -45, 8, 1, 1, -1, 1, -0.4f, 20, 30, 2}, // 40, 60
@@ -173,7 +173,7 @@ public class SuperShape extends GLSpatial {
 						 	i < (params.currentVertex + 6) * DefaultGLCanvas.cComps;
 						 	i += DefaultGLCanvas.cComps) {
 						int j;
-						float color[] = new float[3];
+						float[] color = new float[3];
 						for (j = 0; j < 3; ++j) {
 							color[j] = (float) (ca * params.baseColor[j]);
 							if (color[j] > 1.0f) color[j] = 1.0f;
@@ -235,7 +235,7 @@ public class SuperShape extends GLSpatial {
 	}
 
 	public static class SuperShapeParams {
-		float params[];
+		float[] params;
 		int resol1;
 		int resol2;
 		// latitude 0 to pi/2 for no mirrored bottom
@@ -246,11 +246,11 @@ public class SuperShape extends GLSpatial {
 		int latitudeCount = latitudeEnd - latitudeBegin;
 		int triangleCount = longitudeCount * latitudeCount * 2;
 		int vertices = triangleCount * 3;
-		float baseColor[] = new float[3];
+		float[] baseColor = new float[3];
 		int a, longitude, latitude;
 		int currentVertex, currentQuad;
 
-		public SuperShapeParams(float params[]) {
+		public SuperShapeParams(float[] params) {
 			this.params = params;
 			resol1 = (int) params[SuperShape.PARAMS - 3];
 			resol2 = (int) params[SuperShape.PARAMS - 2];

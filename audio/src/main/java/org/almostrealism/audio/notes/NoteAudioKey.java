@@ -21,8 +21,8 @@ import org.almostrealism.audio.tone.KeyPosition;
 import java.util.Objects;
 
 public class NoteAudioKey {
-	private KeyPosition<?> position;
-	private int audioChannel;
+	private final KeyPosition<?> position;
+	private final int audioChannel;
 
 	public NoteAudioKey(KeyPosition<?> position, int audioChannel) {
 		this.position = position;

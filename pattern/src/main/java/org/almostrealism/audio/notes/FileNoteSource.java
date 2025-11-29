@@ -29,7 +29,7 @@ public class FileNoteSource implements NoteAudioSource {
 
 	private NoteAudioProvider note;
 
-	public FileNoteSource() { this((String) null); }
+	public FileNoteSource() { this(null); }
 
 	public FileNoteSource(String sourceFile) {
 		this(sourceFile, WesternChromatic.C1);

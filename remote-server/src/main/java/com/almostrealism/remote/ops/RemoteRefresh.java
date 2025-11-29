@@ -18,14 +18,14 @@ package com.almostrealism.remote.ops;
 
 import com.almostrealism.remote.AccessManager;
 import com.almostrealism.remote.GenerationProviderQueue;
-import org.almostrealism.audio.notes.NoteAudio;
-import org.almostrealism.io.ConsoleFeatures;
-import org.almostrealism.remote.api.Generation;
 import io.grpc.stub.StreamObserver;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.generative.GenerationProvider;
+import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.io.ConsoleFeatures;
+import org.almostrealism.remote.api.Generation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest>,
 	private final GenerationProviderQueue queue;
 	private final StreamObserver<Generation.Status> reply;
 
-	private Map<String, RefreshOperation> operations;
+	private final Map<String, RefreshOperation> operations;
 
 	public RemoteRefresh(AccessManager accessManager,
 						 GenerationProviderQueue queue,
@@ -88,14 +88,14 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest>,
 	}
 
 	public static class RefreshOperation implements Operation, ConsoleFeatures {
-		private String requestId;
-		private String generatorId;
+		private final String requestId;
+		private final String generatorId;
 
-		private List<NoteAudio> sources;
+		private final List<NoteAudio> sources;
 		private PackedCollection currentSource;
 		private int currentIndex;
 
-		private Consumer<Boolean> success;
+		private final Consumer<Boolean> success;
 
 		public RefreshOperation(String requestId, String generatorId, Consumer<Boolean> success) {
 			this.requestId = requestId;

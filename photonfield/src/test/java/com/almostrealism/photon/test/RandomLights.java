@@ -16,23 +16,21 @@
 
 package com.almostrealism.photon.test;
 
-import java.io.IOException;
-
-import javax.swing.JFrame;
-
+import com.almostrealism.geometry.Sphere;
+import com.almostrealism.light.LightBulb;
 import com.almostrealism.physics.AbsorberHashSet;
 import com.almostrealism.physics.BlackBody;
 import com.almostrealism.physics.DefaultPhotonField;
 import com.almostrealism.physics.VolumeAbsorber;
-import org.almostrealism.primitives.AbsorptionPlane;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
-import org.almostrealism.physics.PhotonField;
 import org.almostrealism.physics.Clock;
+import org.almostrealism.physics.PhotonField;
+import org.almostrealism.primitives.AbsorptionPlane;
 
-import com.almostrealism.geometry.Sphere;
-import com.almostrealism.light.LightBulb;
-import static org.almostrealism.Ops.*;
+import javax.swing.*;
+import java.io.IOException;
+
+import static org.almostrealism.Ops.o;
 
 public class RandomLights {
 	public static double verbose = 0.01;
@@ -42,7 +40,7 @@ public class RandomLights {
 	 */
 	public static void main(String[] args) {
 		AbsorberHashSet a = new AbsorberHashSet();
-		a.setBound(1.0 * Math.pow(10.0, 1.0));
+		a.setBound(Math.pow(10.0, 1.0));
 		
 		for (int i = 0; i < 4; i++) {
 			double r = Math.random();
@@ -53,12 +51,12 @@ public class RandomLights {
 			LightBulb l = new LightBulb();
 			l.setPower(LightBulb.wattsToEvMsec * 0.005 * Math.random());
 			
-			double p[] = {Math.random() * 400 - 200,
+			double[] p = {Math.random() * 400 - 200,
 					Math.random() * 400 - 200,
 					3 * Math.random() - 1.5};
 			
-			a.addAbsorber(v, (Producer) o().vector(p[0], p[1], p[2]));
-			a.addAbsorber(l, (Producer) o().vector(p[0], p[1], p[2] - r * 1.1));
+			a.addAbsorber(v, o().vector(p[0], p[1], p[2]));
+			a.addAbsorber(l, o().vector(p[0], p[1], p[2] - r * 1.1));
 		}
 		
 		// Create an AbsorptionPlane to display radiation that is
@@ -70,9 +68,9 @@ public class RandomLights {
 		plane.setThickness(1); // One micrometer thick
 		// Facing the negative X direction and oriented so
 		// that the positive Y axis is "upward".
-		plane.setSurfaceNormal((Producer) Ops.o().vector(-1.0, 0.0, 0.0));
+		plane.setSurfaceNormal(Ops.o().vector(-1.0, 0.0, 0.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
-		a.addAbsorber(plane, (Producer) o().vector(5.0, 0.0, 0.0));
+		a.addAbsorber(plane, o().vector(5.0, 0.0, 0.0));
 		
 		// Create photon field and set absorber to the absorber set
 		// containing the black body and the light bulb

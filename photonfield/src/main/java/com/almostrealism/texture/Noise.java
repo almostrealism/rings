@@ -18,9 +18,11 @@ package com.almostrealism.texture;
 
 // TODO  Move to common
 public class Noise implements IntensityMap {
-	private double scaleU = 10.0, scaleV = 10.0, scaleW = 10.0;
-	private double g[][];
-	private int p[];
+	private final double scaleU = 10.0;
+	private final double scaleV = 10.0;
+	private final double scaleW = 10.0;
+	private final double[][] g;
+	private final int[] p;
 	
 	public Noise() { this(256); }
 	
@@ -80,7 +82,7 @@ public class Noise implements IntensityMap {
 	}
 	
 	protected double gamma(int i, int j, int k, double u, double v, double w) {
-		double x[] = this.g[this.phi(i + this.phi(j + this.phi(k)))];
+		double[] x = this.g[this.phi(i + this.phi(j + this.phi(k)))];
 		return x[0] * u + x[1] * v + x[2] * w;
 	}
 	

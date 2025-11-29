@@ -56,14 +56,14 @@ public class AudioLibrary implements ConsoleFeatures {
 	public static double DEFAULT_PRIORITY = 0.5;
 	public static double HIGH_PRIORITY = 1.0;
 
-	private FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root;
-	private int sampleRate;
+	private final FileWaveDataProviderTree<? extends Supplier<FileWaveDataProvider>> root;
+	private final int sampleRate;
 
-	private Map<String, String> identifiers;
-	private Map<String, WaveDetails> info;
+	private final Map<String, String> identifiers;
+	private final Map<String, WaveDetails> info;
 
-	private WaveDetailsFactory factory;
-	private PriorityBlockingQueue<WaveDetailsJob> queue;
+	private final WaveDetailsFactory factory;
+	private final PriorityBlockingQueue<WaveDetailsJob> queue;
 	private int totalJobs;
 
 	private DoubleConsumer progressListener;

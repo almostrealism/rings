@@ -45,8 +45,8 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 	public static final int WRITE_SIZE = 32;
 
 	private String groupKey;
-	private LibraryDestination destination;
-	private ExecutorService executor;
+	private final LibraryDestination destination;
+	private final ExecutorService executor;
 
 	private String sampleKey;
 	private List<Audio.WaveDetailData> buffer;
@@ -54,7 +54,7 @@ public class AudioLibraryDataWriter implements ConsoleFeatures {
 	private Consumer<String> sampleListener;
 	private Supplier<String> groupKeyProvider;
 
-	private BlockingQueue<Audio.WaveRecording> queue;
+	private final BlockingQueue<Audio.WaveRecording> queue;
 	private int groupCount;
 	private int groupTotalFrames;
 	private int groupFrameLimit;

@@ -19,10 +19,10 @@ package org.almostrealism.audio.health;
 import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.data.WaveDetails;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.data.WaveDetails;
 import org.almostrealism.audio.data.WaveDetailsFactory;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.TemporalCellular;
@@ -53,8 +53,8 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 	public static OperationProfile profile;
 	private static long totalGeneratedFrames, totalGenerationTime;
 
-	private static long timeout = 40 * 60 * 1000l;
-	private static long timeoutInterval = 5000;
+	private static final long timeout = 40 * 60 * 1000L;
+	private static final long timeoutInterval = 5000;
 
 	private long max = standardDurationFrames;
 	private int iter;
@@ -134,7 +134,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 				if (endTimeoutTrigger) {
 					timeoutTrigger = null;
-					break w;
+					break;
 				}
 			}
 		});
@@ -231,7 +231,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 				});
 
 				// If clipping or silence occurs, report the health score
-				if (getMeasures().values().stream().anyMatch(m -> m.getClipCount() > 0) || encounteredSilence) break l;
+				if (getMeasures().values().stream().anyMatch(m -> m.getClipCount() > 0) || encounteredSilence) break;
 
 				if (enableVerbose && (l + iter) % (OutputLine.sampleRate / 10) == 0) {
 					double v = l + iter;
@@ -312,7 +312,7 @@ public class StableDurationHealthComputation extends SilenceDurationHealthComput
 
 
 	private class AverageAmplitude implements Consumer<PackedCollection> {
-		private List<PackedCollection> values = new ArrayList<>();
+		private final List<PackedCollection> values = new ArrayList<>();
 
 		@Override
 		public void accept(PackedCollection s) {

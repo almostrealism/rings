@@ -39,23 +39,23 @@ import java.util.stream.IntStream;
 public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures {
 	public static boolean enableUnifiedClock = false;
 
-	private int sampleRate;
-	private int bufferFrames;
+	private final int sampleRate;
+	private final int bufferFrames;
 
-	private PackedCollection raw;
-	private List<DoubleConsumer> timeListeners;
+	private final PackedCollection raw;
+	private final List<DoubleConsumer> timeListeners;
 
-	private SampleMixer mixer;
+	private final SampleMixer mixer;
 	private TimeCell clock;
 	private PackedCollection[] level;
-	private PackedCollection loopDuration[];
+	private PackedCollection[] loopDuration;
 	private AudioLine outputLine;
 
-	private boolean loaded[];
-	private boolean muted[];
-	private double volume[];
-	private double playbackDuration[];
-	private double sampleDuration[];
+	private final boolean[] loaded;
+	private final boolean[] muted;
+	private final double[] volume;
+	private final double[] playbackDuration;
+	private final double[] sampleDuration;
 	private double passthrough;
 	private boolean playing;
 
@@ -187,7 +187,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 				return;
 			}
 
-			double result[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
+			double[][] result = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
 			in.readFrames(result, (int) in.getFramesRemaining());
 
 			int frames = resetPlayer(player, result[0].length);

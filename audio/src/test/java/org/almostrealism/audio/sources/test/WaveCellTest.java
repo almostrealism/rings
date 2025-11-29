@@ -140,7 +140,7 @@ public class WaveCellTest implements CellFeatures, TestFeatures {
 		Runnable r = ops.get();
 		r.run();
 		System.out.println("Result after 10s: " + out.toDouble(0) + " (expected !" + 0.0 + ")");
-		Assert.assertFalse(out.toDouble(0) == 0.0);
+		Assert.assertNotEquals(0.0, out.toDouble(0), 0.0);
 	}
 
 	@Test

@@ -22,8 +22,8 @@ import org.almostrealism.algebra.computations.Switch;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 import org.almostrealism.graph.Cell;
+import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 import org.almostrealism.hardware.OperationList;
 
 import java.util.HashSet;

@@ -19,15 +19,14 @@ package org.almostrealism.ml.audio;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.profile.OperationProfileNode;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.hardware.Hardware;
 import org.almostrealism.ml.StateDictionary;
 import org.almostrealism.model.Block;
 import org.almostrealism.model.CompiledModel;
-import org.almostrealism.model.SequentialBlock;
 import org.almostrealism.model.Model;
+import org.almostrealism.model.SequentialBlock;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -225,7 +224,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 				shape(batchSize, audioSeqLen, embedDim),
 				shape(batchSize, audioSeqLen + 1, embedDim),
 				in ->
-						concat(1,  (Producer) add(cp(globalCond), cp(timestep)).reshape(batchSize, 1, embedDim), c(in)));
+						concat(1, add(cp(globalCond), cp(timestep)).reshape(batchSize, 1, embedDim), c(in)));
 	}
 
 	protected void addTransformerBlocks(SequentialBlock main,

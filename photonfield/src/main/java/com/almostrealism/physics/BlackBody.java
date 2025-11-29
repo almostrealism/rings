@@ -16,7 +16,21 @@
 
 
 package com.almostrealism.physics;
+
+import com.almostrealism.chem.ElectronCloud;
+import com.almostrealism.geometry.Sphere;
+import com.almostrealism.light.LightBulb;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.ZeroVector;
+import org.almostrealism.chem.Alloy;
+import org.almostrealism.chem.PeriodicTable;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.Clock;
+import org.almostrealism.physics.PhotonField;
+import org.almostrealism.physics.PhysicalConstants;
+import org.almostrealism.primitives.PinholeCameraAbsorber;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -25,22 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.Arrays;
-
-import org.almostrealism.primitives.PinholeCameraAbsorber;
-import com.almostrealism.chem.ElectronCloud;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.ZeroVector;
-import org.almostrealism.chem.Alloy;
-import org.almostrealism.chem.PeriodicTable;
-import org.almostrealism.physics.Absorber;
-import org.almostrealism.physics.PhotonField;
-import org.almostrealism.physics.PhysicalConstants;
-import org.almostrealism.physics.Clock;
-
-import com.almostrealism.geometry.Sphere;
-import com.almostrealism.light.LightBulb;
+import java.util.List;
 
 import static org.almostrealism.Ops.o;
 
@@ -54,12 +53,12 @@ public class BlackBody implements Absorber, PhysicalConstants {
 //	public static double verbose = 0.08;
 	public static double verbose = 1.1;
 	
-	private static DecimalFormat format = new DecimalFormat("0.000E0");
+	private static final DecimalFormat format = new DecimalFormat("0.000E0");
 
 	protected double energy;
 	private Clock clock;
 	
-	public static void main(String args[]) throws FileNotFoundException {
+	public static void main(String[] args) throws FileNotFoundException {
 		Clock c;
 
 		try (XMLDecoder decoder = new XMLDecoder(new FileInputStream(createScene()))) {
@@ -124,11 +123,11 @@ public class BlackBody implements Absorber, PhysicalConstants {
 		// Add black body and light bulb to absorber set
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(100000000);
-		a.addAbsorber(v, (Producer) o().vector(500000.0, 0.0, 0.0)); a.setColorBufferDimensions(1, 1, 1.0);
-		a.addAbsorber(l, (Producer) o().vector(0.0, 500000.0, 0.0)); a.setColorBufferDimensions(1, 1, 1.0);
+		a.addAbsorber(v, o().vector(500000.0, 0.0, 0.0)); a.setColorBufferDimensions(1, 1, 1.0);
+		a.addAbsorber(l, o().vector(0.0, 500000.0, 0.0)); a.setColorBufferDimensions(1, 1, 1.0);
 
 		// Add the absorption plane
-		a.addAbsorber(camera, (Producer) o().vector(0.0, 0.0, 1000000));
+		a.addAbsorber(camera, o().vector(0.0, 0.0, 1000000));
 //		a.setColorBufferDimensions((int) (camera.getWidth() / camera.getPixelSize()),
 //				(int) (camera.getHeight() / camera.getPixelSize()),
 //				1.0);
@@ -136,14 +135,14 @@ public class BlackBody implements Absorber, PhysicalConstants {
 
 		// Add some atoms
 		ElectronCloud ec = new ElectronCloud(
-				new Alloy(Arrays.asList(PeriodicTable.Gold), 1.0), 10);
+				new Alloy(List.of(PeriodicTable.Gold), 1.0), 10);
 		v = new VolumeAbsorber(new Sphere(1000.0), ec);
 		a.addAbsorber(v, ZeroVector.getInstance());
 
 		// Add a SpectralLineDiagram
 		SpectralLineDiagram d = new SpectralLineDiagram(1200, 40);
 		v = new VolumeAbsorber(new Sphere(1000.0), d);
-		a.addAbsorber(v, (Producer) o().vector(0.0, 0.0, -1000000.0));
+		a.addAbsorber(v, o().vector(0.0, 0.0, -1000000.0));
 
 		// Create photon field and set absorber to the absorber set
 		// containing the black body and the light bulb

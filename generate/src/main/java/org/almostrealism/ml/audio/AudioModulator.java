@@ -28,6 +28,7 @@ import org.almostrealism.persistence.AssetGroup;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -77,12 +78,12 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 
 	public PackedCollection project(PackedCollection position) {
 		try (PackedCollection result = composer.getResultant(cp(position)).evaluate()) {
-			double data[] = result.toArray();
+			double[] data = result.toArray();
 			int totalSamples = data.length;
 			int channelSamples = totalSamples / 2; // Stereo audio, 2 channels
 			int finalSamples = (int) (getAudioDuration() * composer.getSampleRate());
 
-			double stereoAudio[] = new double[2 * finalSamples];
+			double[] stereoAudio = new double[2 * finalSamples];
 			for (int i = 0; i < finalSamples; i++) {
 				stereoAudio[i] = data[i];
 				stereoAudio[finalSamples + i] = data[channelSamples + i];
@@ -116,9 +117,7 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 		String outputPath = args[1];
 
 		List<String> inputs = new ArrayList<>();
-		for (int i = 2; i < args.length; i++) {
-			inputs.add(args[i]);
-		}
+		inputs.addAll(Arrays.asList(args).subList(2, args.length));
 
 		long seed = 79;
 		Random rand = new Random(seed + 1000);

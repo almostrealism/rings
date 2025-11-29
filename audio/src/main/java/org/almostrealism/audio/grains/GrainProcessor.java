@@ -23,10 +23,10 @@ import org.almostrealism.collect.PackedCollection;
 
 @Deprecated
 public class GrainProcessor implements SamplingFeatures {
-	private int frames;
-	private int sampleRate;
+	private final int frames;
+	private final int sampleRate;
 
-	private Evaluable<PackedCollection> ev;
+	private final Evaluable<PackedCollection> ev;
 
 	public GrainProcessor(double duration, int sampleRate) {
 		this.frames = (int) (duration * sampleRate);

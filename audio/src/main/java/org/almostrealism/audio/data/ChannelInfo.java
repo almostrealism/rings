@@ -19,10 +19,10 @@ package org.almostrealism.audio.data;
 import java.util.Objects;
 
 public class ChannelInfo {
-	private int patternChannel;
-	private Type type;
-	private Voicing voicing;
-	private StereoChannel audioChannel;
+	private final int patternChannel;
+	private final Type type;
+	private final Voicing voicing;
+	private final StereoChannel audioChannel;
 
 	public ChannelInfo(int patternChannel) {
 		this(patternChannel, Type.PATTERN, null, null);

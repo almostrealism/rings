@@ -29,11 +29,11 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 	public static boolean enableSilenceCheck = false;
 	
 	private int maxSilence;
-	private double silenceValue = 0.001; // Lowest permissable volume
+	private final double silenceValue = 0.001; // Lowest permissable volume
 
-	private long max = standardDurationFrames;
+	private final long max = standardDurationFrames;
 
-	private List<Runnable> silenceListeners;
+	private final List<Runnable> silenceListeners;
 	
 	public SilenceDurationHealthComputation(int channels) {
 		this(channels, false, 2);
@@ -46,10 +46,10 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 		silenceListeners = new ArrayList<>();
 	}
 	
-	public void setMaxSilence(int sec) { this.maxSilence = (int) (sec * OutputLine.sampleRate); }
+	public void setMaxSilence(int sec) { this.maxSilence = sec * OutputLine.sampleRate; }
 	
 	public static void setStandardDuration(int sec) {
-		standardDurationFrames = (int) (sec * OutputLine.sampleRate);
+		standardDurationFrames = sec * OutputLine.sampleRate;
 	}
 
 	public void addSilenceListener(Runnable listener) { silenceListeners.add(listener); }
@@ -76,8 +76,8 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 
 		// Runnable push = organ.push(null).get();
 		Runnable tick = getTarget().tick().get();
-		
-		l: for (l = 0; l < max; l++) {
+
+		for (l = 0; l < max; l++) {
 			// push.run();
 
 			for (AudioMeter m : getMeasures().values()) {
@@ -86,7 +86,7 @@ public class SilenceDurationHealthComputation extends HealthComputationAdapter {
 					return new AudioHealthScore(l, (double) l / standardDurationFrames);
 				}
 			}
-			
+
 			tick.run();
 		}
 		

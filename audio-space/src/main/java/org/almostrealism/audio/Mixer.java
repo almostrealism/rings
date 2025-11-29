@@ -22,8 +22,8 @@ import org.almostrealism.graph.CollectionCachedStateCell;
 import org.almostrealism.graph.SummationCell;
 
 public class Mixer implements CellFeatures {
-	private SummationCell channels[];
-	private CellList cells;
+	private final SummationCell[] channels;
+	private final CellList cells;
 
 	public Mixer() { this(24); }
 

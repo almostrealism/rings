@@ -22,7 +22,7 @@ import org.almostrealism.audio.data.WaveDataFeatureProvider;
 import org.almostrealism.collect.PackedCollection;
 
 public class AutoEncoderFeatureProvider implements WaveDataFeatureProvider, CodeFeatures {
-	private AutoEncoder autoencoder;
+	private final AutoEncoder autoencoder;
 
 	public AutoEncoderFeatureProvider(AutoEncoder autoencoder) {
 		this.autoencoder = autoencoder;

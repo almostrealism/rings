@@ -16,28 +16,26 @@
 
 package com.almostrealism.gl;
 
-import java.awt.Graphics;
-
 import org.almostrealism.algebra.ParticleGroup;
-import org.almostrealism.geometry.TransformMatrix;
-
-import org.almostrealism.projection.PinholeCamera;
 import org.almostrealism.algebra.Vector;
-import io.almostrealism.relation.Producer;
+import org.almostrealism.geometry.TransformMatrix;
+import org.almostrealism.projection.PinholeCamera;
 
-import static org.almostrealism.Ops.*;
+import java.awt.*;
+
+import static org.almostrealism.Ops.o;
 
 /**
  * @author Michael Murray
  */
 public class ParticleGroupRenderer {
     public static void draw(ParticleGroup p, PinholeCamera c, Graphics g, double ox, double oy, double scale, double minSize, double maxSize, double far) {
-        double v[][] = p.getParticleVertices();
+        double[][] v = p.getParticleVertices();
         
         TransformMatrix m = c.getRotationMatrix();
         
         i: for (int i = 0; i < v.length; i++) {
-            Vector l = (Vector) m.transform((Producer) o().vector(v[i][0], v[i][1], v[i][2]), TransformMatrix.TRANSFORM_AS_LOCATION).get().evaluate();
+            Vector l = (Vector) m.transform(o().vector(v[i][0], v[i][1], v[i][2]), TransformMatrix.TRANSFORM_AS_LOCATION).get().evaluate();
             
             if (l.getZ() < 0.0) continue i;
             

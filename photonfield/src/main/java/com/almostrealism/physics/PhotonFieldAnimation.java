@@ -2,16 +2,16 @@ package com.almostrealism.physics;
 
 import com.almostrealism.raytracer.RayTracedAnimation;
 import org.almostrealism.algebra.ZeroVector;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.PhotonField;
-import org.almostrealism.color.ShadableSurface;
 
 import java.util.Collection;
 import java.util.Iterator;
 
 public class PhotonFieldAnimation<T extends ShadableSurface> extends RayTracedAnimation<T> {
-	private PhotonField field;
-	private AbsorberHashSet absorber;
+	private final PhotonField field;
+	private final AbsorberHashSet absorber;
 
 	public PhotonFieldAnimation() {
 		absorber = new AbsorberHashSet();

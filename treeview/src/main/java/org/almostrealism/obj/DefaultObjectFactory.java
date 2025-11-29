@@ -27,9 +27,9 @@ import java.lang.reflect.Method;
  * @author  Mike Murray
  */
 public class DefaultObjectFactory implements ObjectFactory {
-	private Method localOverlayMethod;
+	private final Method localOverlayMethod;
 	
-	private Class type;
+	private final Class type;
 	private Method overlayMethod;
 	private Object overlayInvoker;
 	
@@ -58,10 +58,10 @@ public class DefaultObjectFactory implements ObjectFactory {
 				throw new IllegalArgumentException(
 						m.getName() + " does not return " + this.type.getName());
 			else if (m.getParameterTypes().length != 1 ||
-					m.getParameterTypes()[0].isArray() == false)
+					!m.getParameterTypes()[0].isArray())
 				throw new IllegalArgumentException(
 						m.getName() + " does not take one parameter.");
-			else if (m.getParameterTypes()[0].isArray() == false)
+			else if (!m.getParameterTypes()[0].isArray())
 				throw new IllegalArgumentException(
 						m.getName() + " does not accept an array.");
 		}
@@ -69,7 +69,7 @@ public class DefaultObjectFactory implements ObjectFactory {
 		this.overlayMethod = m;
 	}
 	
-	public Object overlay(Object values[]) {
+	public Object overlay(Object[] values) {
 		if (this.overlayMethod == null) return null;
 		
 		Object result = null;

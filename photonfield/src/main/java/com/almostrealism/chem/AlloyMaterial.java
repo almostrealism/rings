@@ -6,7 +6,7 @@ import org.almostrealism.chem.Material;
 public class AlloyMaterial extends Material {
 	public static final int defaultSamples = 10;
 
-	private ElectronCloud electrons; // TODO  Replace with ElectronDensityAbsorber
+	private final ElectronCloud electrons; // TODO  Replace with ElectronDensityAbsorber
 	private ProtonCloud protons;  // TODO
 
 	public AlloyMaterial(Alloy m) {

@@ -67,7 +67,7 @@ public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatur
 
 	int batchSize = 1;
 	int channels = 1;
-	int dimFactors[] = { 1, 2, 4 };
+	int[] dimFactors = { 1, 2, 4 };
 	// int dimFactors[] = { 1, 2, 4, 8 };
 
 	int timesteps = 300;

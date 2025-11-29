@@ -64,35 +64,35 @@ public class WaveDetailsNode implements Tree<WaveDetailsNode> {
 	 * Comparator for sorting similarity scores in descending order.
 	 * Higher similarity values appear first.
 	 */
-	private static Comparator<Map.Entry<String, Double>> comparator =
+	private static final Comparator<Map.Entry<String, Double>> comparator =
 			Map.Entry.<String, Double>comparingByValue().reversed();
 
 	/**
 	 * The audio library containing all available samples and similarity data.
 	 */
-	private AudioLibrary library;
+	private final AudioLibrary library;
 
 	/**
 	 * The audio sample metadata represented by this node.
 	 */
-	private WaveDetails details;
+	private final WaveDetails details;
 
 	/**
 	 * Maximum number of children (similar samples) to create for this node.
 	 */
-	private int childLimit;
+	private final int childLimit;
 
 	/**
 	 * Set of sample identifiers to exclude when computing children.
 	 * This prevents cycles and ensures navigation reveals new samples.
 	 * Typically contains the parent and sibling identifiers.
 	 */
-	private Set<String> excludedIdentifiers;
+	private final Set<String> excludedIdentifiers;
 
 	/**
 	 * Cached file path to the audio resource. Lazy-loaded on first access.
 	 */
-	private String resourcePath;
+	private final String resourcePath;
 
 	/**
 	 * List of child nodes representing similar audio samples. Null until

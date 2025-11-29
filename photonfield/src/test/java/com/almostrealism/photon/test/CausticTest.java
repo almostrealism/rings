@@ -16,8 +16,13 @@
 
 package com.almostrealism.photon.test;
 
-import org.almostrealism.color.PointLight;
 import com.almostrealism.network.FileDecoder;
+import org.almostrealism.CodeFeatures;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.PointLight;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.primitives.Sphere;
 import org.almostrealism.projection.ThinLensCamera;
 import org.almostrealism.rayshade.ReflectionShader;
@@ -26,16 +31,11 @@ import org.almostrealism.raytrace.FogParameters;
 import org.almostrealism.raytrace.RayIntersectionEngine;
 import org.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.render.RayTracedScene;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.RGB;
-import org.almostrealism.color.RGBFeatures;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
-import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.texture.StripeTexture;
-import org.almostrealism.CodeFeatures;
 import org.junit.Test;
 
 import java.io.File;
@@ -149,7 +149,7 @@ public class CausticTest implements Runnable, RGBFeatures, CodeFeatures {
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         new CausticTest().run();
         System.exit(0);
     }

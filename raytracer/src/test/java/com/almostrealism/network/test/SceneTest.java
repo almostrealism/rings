@@ -1,12 +1,12 @@
 package com.almostrealism.network.test;
 
 import com.almostrealism.network.TestScene;
-import org.almostrealism.raytrace.IntersectionalLightingEngine;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.ShadableIntersection;
+import org.almostrealism.raytrace.IntersectionalLightingEngine;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 

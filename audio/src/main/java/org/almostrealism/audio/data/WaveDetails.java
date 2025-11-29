@@ -29,9 +29,9 @@ import java.util.Map;
 public class WaveDetails implements CodeFeatures {
 	public static boolean enableNormalizeSimilarity = false;
 
-	private static Map<Integer, Evaluable<PackedCollection>> differenceCalc = new HashMap<>();
+	private static final Map<Integer, Evaluable<PackedCollection>> differenceCalc = new HashMap<>();
 
-	private String identifier;
+	private final String identifier;
 
 	private int sampleRate;
 	private int channelCount;

@@ -25,8 +25,8 @@ import java.util.function.Supplier;
 
 public class SilenceDetectionOutputLine implements OutputLine, CellFeatures {
 	private final OutputLine out;
-	private double threshold;
-	private PackedCollection max;
+	private final double threshold;
+	private final PackedCollection max;
 
 	public SilenceDetectionOutputLine(OutputLine out) {
 		this(out, 0.05);

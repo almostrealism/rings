@@ -15,33 +15,29 @@
  */
 
 package com.almostrealism.photon.ui;
-import io.almostrealism.relation.Producer;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-
-import javax.swing.JPanel;
-
-import org.almostrealism.primitives.PinholeCameraAbsorber;
-import org.almostrealism.primitives.Plane;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.ZeroVector;
-import org.almostrealism.color.ProbabilityDistribution;
-import org.almostrealism.physics.Absorber;
-import org.almostrealism.physics.PhysicalConstants;
-import org.almostrealism.space.Volume;
-import org.almostrealism.swing.displays.ProgressDisplay;
-import org.almostrealism.texture.ImageCanvas;
-import org.almostrealism.physics.Clock;
-
+import com.almostrealism.geometry.Sphere;
+import com.almostrealism.light.LightBulb;
+import com.almostrealism.light.PlanarLight;
 import com.almostrealism.physics.AbsorberHashSet;
 import com.almostrealism.physics.DefaultPhotonField;
 import com.almostrealism.physics.SpecularAbsorber;
 import com.almostrealism.physics.VolumeAbsorber;
-import com.almostrealism.geometry.Sphere;
-import com.almostrealism.light.LightBulb;
-import com.almostrealism.light.PlanarLight;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.ZeroVector;
+import org.almostrealism.color.ProbabilityDistribution;
+import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.Clock;
+import org.almostrealism.physics.PhysicalConstants;
+import org.almostrealism.primitives.PinholeCameraAbsorber;
+import org.almostrealism.primitives.Plane;
+import org.almostrealism.space.Volume;
+import org.almostrealism.swing.displays.ProgressDisplay;
+import org.almostrealism.texture.ImageCanvas;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author  Michael Murray
@@ -50,19 +46,19 @@ public class AbsorberPreviewPanel extends JPanel
 								implements Runnable,
 								ProbabilityDistribution.Sampler,
 								PhysicalConstants, CodeFeatures {
-	private Clock clock;
+	private final Clock clock;
 	
-	private AbsorberHashSet set;
+	private final AbsorberHashSet set;
 	private Absorber absorber;
 	private LightBulb light;
 	
 	private ProgressDisplay progPanel;
 	private ImageCanvas canvas;
 	
-	private double specEnd = H * C / 0.380;
-	private double specStart = H * C / 0.780;
-	private int bufDim = 25;
-	private double bufScale = 0.1;
+	private final double specEnd = H * C / 0.380;
+	private final double specStart = H * C / 0.780;
+	private final int bufDim = 25;
+	private final double bufScale = 0.1;
 	
 	private Thread updateThread;
 	private boolean stopUpdate;
@@ -85,7 +81,7 @@ public class AbsorberPreviewPanel extends JPanel
 		this.initAbsorber();
 		
 		this.light = l;
-		this.set.addAbsorber(l, (Producer) vector(0.0, 15.0, 0.0));
+		this.set.addAbsorber(l, vector(0.0, 15.0, 0.0));
 		
 		this.initCanvas();
 	}
@@ -129,7 +125,7 @@ public class AbsorberPreviewPanel extends JPanel
 		camera.setHeight(h);
 		camera.setPixelSize(0.1);
 		
-		this.set.addAbsorber(camera, (Producer) vector(0.0, 0.0, 10.0));
+		this.set.addAbsorber(camera, vector(0.0, 0.0, 10.0));
 		
 		this.canvas = new ImageCanvas(w, h);
 		this.progPanel = new ProgressDisplay(w * h / 1000, w * h, false);
@@ -163,12 +159,12 @@ public class AbsorberPreviewPanel extends JPanel
 		((PlanarLight) light).setSurfaceNormal(new Vector(0.0, -1.0, 0.0));
 		((PlanarLight) light).setOrientation(new Vector(0.0, 0.0, 1.0));
 		
-		this.set.addAbsorber(light, (Producer) vector(0.0, 15.0, 0.0));
+		this.set.addAbsorber(light, vector(0.0, 15.0, 0.0));
 	}
 	
 	protected void initFloor() {
 		Plane p = new Plane();
-		p.setSurfaceNormal((Producer) vector(0.0, 1.0, 0.0));
+		p.setSurfaceNormal(vector(0.0, 1.0, 0.0));
 		p.setOrientation(new double[] {0.0, 0.0, 1.0});
 		p.setWidth(20.0);
 		p.setHeight(20.0);
@@ -181,7 +177,7 @@ public class AbsorberPreviewPanel extends JPanel
 		a.setSpectra(new ProbabilityDistribution(this));
 		a.setVolume(p);
 		
-		this.set.addAbsorber(a, (Producer) vector(0.0, -5.0, 0.0));
+		this.set.addAbsorber(a, vector(0.0, -5.0, 0.0));
 		this.set.setColorBufferDimensions(this.bufDim, this.bufDim, this.bufScale);
 	}
 

@@ -21,9 +21,9 @@ import org.almostrealism.collect.PackedCollection;
 import java.util.function.Supplier;
 
 public class SupplierWaveDataProvider extends WaveDataProviderAdapter {
-	private String key;
-	private Supplier<PackedCollection> source;
-	private int sampleRate;
+	private final String key;
+	private final Supplier<PackedCollection> source;
+	private final int sampleRate;
 
 	public SupplierWaveDataProvider(String key, Supplier<PackedCollection> source, int sampleRate) {
 		this.key = key;

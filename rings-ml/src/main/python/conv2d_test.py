@@ -1,12 +1,12 @@
+import csv
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+from PIL import Image
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchvision import transforms
-from PIL import Image
-import csv
 
-import torch.nn as nn
-import torch.optim as optim
-import torch.nn.functional as F
 
 class ShapeDataset(Dataset):
     def __init__(self, csv_file, transform=None):

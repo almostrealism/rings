@@ -17,8 +17,8 @@
 package org.almostrealism.audio.filter;
 
 import io.almostrealism.compute.Process;
-import io.almostrealism.relation.Producer;
 import io.almostrealism.lifecycle.Lifecycle;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
@@ -29,20 +29,21 @@ import java.util.function.Supplier;
 public class DelayNetwork implements TemporalFactor<PackedCollection>, Lifecycle, CodeFeatures {
 	public static boolean enableIsolation = false;
 
-	private double gain;
-	private int size;
-	private int maxDelayFrames;
-	private boolean parallel;
+	private final double gain;
+	private final int size;
+	private final int maxDelayFrames;
+	private final boolean parallel;
 
-	private double[][] matrix;
+	private final double[][] matrix;
 
 	private Producer<PackedCollection> input;
-	private PackedCollection delayIn, delayOut;
-	private PackedCollection delayBuffer;
-	private PackedCollection bufferLengths;
-	private PackedCollection bufferIndices;
-	private PackedCollection feedback;
-	private PackedCollection output;
+	private final PackedCollection delayIn;
+	private final PackedCollection delayOut;
+	private final PackedCollection delayBuffer;
+	private final PackedCollection bufferLengths;
+	private final PackedCollection bufferIndices;
+	private final PackedCollection feedback;
+	private final PackedCollection output;
 
 
 	public DelayNetwork(int sampleRate, boolean parallel) {

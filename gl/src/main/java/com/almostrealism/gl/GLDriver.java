@@ -18,16 +18,6 @@ package com.almostrealism.gl;
 
 import com.almostrealism.gl.shaders.FragmentShader;
 import com.almostrealism.gl.shaders.VertexShader;
-import io.almostrealism.code.ExpressionFeatures;
-import io.almostrealism.code.Precision;
-import io.almostrealism.expression.Expression;
-import io.almostrealism.lang.LanguageOperations;
-import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.c.CLanguageOperations;
-import org.almostrealism.projection.OrthographicCamera;
-import org.almostrealism.projection.PinholeCamera;
-import org.almostrealism.raytrace.FogParameters;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLException;
@@ -35,24 +25,33 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
+import io.almostrealism.code.ExpressionFeatures;
+import io.almostrealism.code.Precision;
+import io.almostrealism.expression.Expression;
+import io.almostrealism.lang.LanguageOperations;
+import org.almostrealism.algebra.Pair;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.c.CLanguageOperations;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.geometry.Camera;
 import org.almostrealism.geometry.TransformMatrix;
+import org.almostrealism.projection.OrthographicCamera;
+import org.almostrealism.projection.PinholeCamera;
+import org.almostrealism.raytrace.FogParameters;
 import org.almostrealism.space.Triangle;
 import org.almostrealism.texture.ImageTexture;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.joml.Vector4d;
 
-import java.awt.Component;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -105,7 +104,7 @@ public class GLDriver implements ExpressionFeatures {
 
         this.cameraStack = new Stack<>();
         this.projection_joml = new Matrix4d();
-		this.lighting = new GLLightingConfiguration(Arrays.asList());
+		this.lighting = new GLLightingConfiguration(List.of());
 
 		this.transform = new TransformMatrix();
 		this.matrixStack = new Stack<>();
@@ -223,7 +222,7 @@ public class GLDriver implements ExpressionFeatures {
 	}
 
 	/** It is recommended to use {@link org.almostrealism.texture.Texture} instead. */
-	@Deprecated public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte buf[]) {
+	@Deprecated public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte[] buf) {
 		gl.glTexImage2D(a, b, c, d, e, f, g, h, ByteBuffer.wrap(buf));
 	}
 
@@ -286,8 +285,8 @@ public class GLDriver implements ExpressionFeatures {
 	}
 
 	public void triangle(Triangle t) {
-		Vector v[] = t.getVertices();
-		float tex[][] = t.getTextureCoordinates();
+		Vector[] v = t.getVertices();
+		float[][] tex = t.getTextureCoordinates();
 
 		glVertex(v[0]);
 		uv(new Pair(tex[0][0], tex[0][1]));
@@ -388,7 +387,7 @@ public class GLDriver implements ExpressionFeatures {
 		GLSLPrintWriter p = new GLSLPrintWriter(out, lang);
 		// TODO  Need it to be named vshade
 		this.vertexShader.getScope(null).write(p);
-		String shader = new String(out.toByteArray());
+		String shader = out.toString();
 		compileShader("GL_VERTEX_SHADER", shader);
 	}
 
@@ -401,7 +400,7 @@ public class GLDriver implements ExpressionFeatures {
 		GLSLPrintWriter p = new GLSLPrintWriter(out, lang);
 		// TODO  Need it to be named fshade
 		this.fragmentShader.getScope(null).write(p);
-		String shader = new String(out.toByteArray());
+		String shader = out.toString();
 		compileShader("GL_FRAGMENT_SHADER", shader);
 	}
 
@@ -451,7 +450,7 @@ public class GLDriver implements ExpressionFeatures {
 
 	public void glPopAttrib() { gl.glPopAttrib(); }
 
-	public void glGenBuffers(int a, int b[], int c) { gl.glGenBuffers(a, b, c); }
+	public void glGenBuffers(int a, int[] b, int c) { gl.glGenBuffers(a, b, c); }
 
 	public Expression createProgram() {
 		return null; // TODO
@@ -583,7 +582,7 @@ public class GLDriver implements ExpressionFeatures {
 		glu.gluLookAt(e.getX(), e.getY(), e.getZ(), c.getX(), c.getY(), c.getZ(), var13, var15, var17);
 	}
 
-	public boolean gluUnProject(Vector w, double modelview[], double projection[], int viewport[], Vector worldpos) {
+	public boolean gluUnProject(Vector w, double[] modelview, double[] projection, int[] viewport, Vector worldpos) {
 		return glu.gluUnProject((float) w.getX(), (float) w.getY(), (float) w.getZ(),
 				FloatBuffer.wrap(toFloat(modelview)), FloatBuffer.wrap(toFloat(projection)),
 				IntBuffer.wrap(viewport), FloatBuffer.wrap(toFloat(worldpos.toArray())));
@@ -604,7 +603,7 @@ public class GLDriver implements ExpressionFeatures {
 		return gluUnProject(w, modelview, projection, viewport, worldpos);
 	}
 
-	public void gluPickMatrix(float x, float y, float w, float h, int viewport[]) {
+	public void gluPickMatrix(float x, float y, float w, float h, int[] viewport) {
 		glu.gluPickMatrix(x, y, w, h, IntBuffer.wrap(viewport));
 	}
 
@@ -670,8 +669,7 @@ public class GLDriver implements ExpressionFeatures {
 	protected void glProjection(Camera c) {
 		projection_joml = new Matrix4d();
 
-		if (c instanceof PinholeCamera) {
-			PinholeCamera camera = (PinholeCamera) c;
+		if (c instanceof PinholeCamera camera) {
 
 			Vector eye = camera.getLocation();
 			Vector center = eye.add(camera.getViewingDirection());
@@ -684,8 +682,7 @@ public class GLDriver implements ExpressionFeatures {
 							new Vector3d(center.getX(), center.getY(), center.getZ()),
 							new Vector3d(0, 1, 0));
 		}
-		else if (c instanceof OrthographicCamera) {
-			OrthographicCamera camera = (OrthographicCamera) c;
+		else if (c instanceof OrthographicCamera camera) {
 
 			// TODO: Orthographic projection matrix.
 		}
@@ -762,15 +759,15 @@ public class GLDriver implements ExpressionFeatures {
 		int n = -slices;
 		int size = Math.abs(n);
 		double angle = 2 * Math.PI / (double) ((n == 0) ? 1 : n);
-		double sint1[] = new double[size + 1];
-		double cost1[] = new double[size + 1];
+		double[] sint1 = new double[size + 1];
+		double[] cost1 = new double[size + 1];
 		circleTable(sint1, cost1, size, angle);
 
 		n = stacks * 2;
 		size = Math.abs(n);
 		angle = 2 * Math.PI / (double) ((n == 0) ? 1 : n);
-		double sint2[] = new double[size + 1];
-		double cost2[] = new double[size + 1];
+		double[] sint2 = new double[size + 1];
+		double[] cost2 = new double[size + 1];
 		circleTable(sint2, cost2, size, angle);
 
     	/* The top stack is covered with a triangle fan */
@@ -859,14 +856,14 @@ public class GLDriver implements ExpressionFeatures {
 	}
 
 	public double[] getModelViewMatrix() {
-		double modelview[] = new double[16];
+		double[] modelview = new double[16];
 		gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, DoubleBuffer.wrap(modelview));
 		return modelview;
 	}
 
 	public double[] getProjectionMatrix() {
 	
-			double projection[] = new double[16];
+			double[] projection = new double[16];
 			gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, DoubleBuffer.wrap(projection));
 			return projection;
 	
@@ -874,13 +871,13 @@ public class GLDriver implements ExpressionFeatures {
 	}
 
 	public int[] getViewport() {
-		int viewport[] = new int[4];
+		int[] viewport = new int[4];
 		gl.glGetIntegerv(GL2.GL_VIEWPORT, IntBuffer.wrap(viewport));
 		return viewport;
 	}
 
 	public int getMatrixMode() {
-		int matrixMode[] = new int[1];
+		int[] matrixMode = new int[1];
 		gl.glGetIntegerv(GL2.GL_MATRIX_MODE, IntBuffer.wrap(matrixMode));
 		return matrixMode[0];
 	}
@@ -899,7 +896,7 @@ public class GLDriver implements ExpressionFeatures {
 		return gle;
 	}
 
-	private static void circleTable(double sint[], double cost[], int size, double angle) {
+	private static void circleTable(double[] sint, double[] cost, int size, double angle) {
 		int i;
 
     	/* Compute cos and sin around the circle */

@@ -23,13 +23,13 @@ import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.relation.Validity;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.data.DelegateWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProvider;
 import org.almostrealism.audio.data.SupplierWaveDataProvider;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDataProvider;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
@@ -49,7 +49,7 @@ import java.util.stream.IntStream;
 public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAudioProvider>, SamplingFeatures {
 	public static boolean enableVerbose = false;
 
-	private static CacheManager<PackedCollection> audioCache = new CacheManager<>();
+	private static final CacheManager<PackedCollection> audioCache = new CacheManager<>();
 
 	static {
 		OperationList accessListener = new OperationList();
@@ -83,9 +83,9 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 	private KeyboardTuning tuning;
 	private KeyPosition<?> root;
 	private Double bpm;
-	private int sampleRate;
+	private final int sampleRate;
 
-	private Map<NoteAudioKey, Producer<PackedCollection>> notes;
+	private final Map<NoteAudioKey, Producer<PackedCollection>> notes;
 
 	public NoteAudioProvider(WaveDataProvider provider, KeyPosition<?> root) {
 		this(provider, root, null);

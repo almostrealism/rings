@@ -16,29 +16,29 @@
 
 package com.almostrealism.buffers;
 
+import io.almostrealism.relation.Factory;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.space.Scene;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.almostrealism.color.RGB;
-import org.almostrealism.space.Scene;
-import org.almostrealism.color.ShadableSurface;
-import io.almostrealism.relation.Factory;
 
 /**
  * @author  Michael Murray
  */
 public class TriangularMeshColorBuffer implements ColorBuffer {
-	private static double bytemax = Byte.MAX_VALUE;
-	private static double shortmax = Short.MAX_VALUE;
+	private static final double bytemax = Byte.MAX_VALUE;
+	private static final double shortmax = Short.MAX_VALUE;
 	
 	protected abstract class Node {
 		int start, end, third;
 		Node left, right;
-		abstract void add(int index, short uv[]);
-		abstract Node[] get(short uv[]);
-		abstract Node[] get(short uv[], Node n);
-		abstract short[] interpolate(Node n, short uv[]);
+		abstract void add(int index, short[] uv);
+		abstract Node[] get(short[] uv);
+		abstract Node[] get(short[] uv, Node n);
+		abstract short[] interpolate(Node n, short[] uv);
 		abstract double u();
 		abstract double v();
 		abstract double r();
@@ -49,7 +49,10 @@ public class TriangularMeshColorBuffer implements ColorBuffer {
 	protected class ByteNode extends Node {
 		public short colorThreshold = 255 * 3;
 		
-		private short pa[], pb[], ca[], cb[];
+		private final short[] pa;
+		private final short[] pb;
+		private final short[] ca;
+		private final short[] cb;
 		private short u, v, du, dv;
 		// private byte r, g, b;
 		private boolean wasLeft;
@@ -74,17 +77,16 @@ public class TriangularMeshColorBuffer implements ColorBuffer {
 			TriangularMeshColorBuffer.this.size++;
 		}
 		
-		public void add(int index, short uv[]) {
-			Node ns[] = this.get(uv);
+		public void add(int index, short[] uv) {
+			Node[] ns = this.get(uv);
 			ByteNode n = (ByteNode) ns[1];
 			
 			if (n == null) {
 				n = (ByteNode) ns[0];
 			} else if (n instanceof ByteNode &&
-					ns[0] instanceof ByteNode) {
-				ByteNode bns = (ByteNode) ns[0];
-				short rgb[] = bns.interpolate((ByteNode) n, uv);
-				short nrgb[] = (short[]) TriangularMeshColorBuffer.this.colors.get(index);
+					ns[0] instanceof ByteNode bns) {
+				short[] rgb = bns.interpolate(n, uv);
+				short[] nrgb = (short[]) TriangularMeshColorBuffer.this.colors.get(index);
 				
 				if (bns.du * bns.du +
 						bns.dv * bns.du < rDelta ||
@@ -113,7 +115,7 @@ public class TriangularMeshColorBuffer implements ColorBuffer {
 			}
 		}
 		
-		public Node[] get(short uv[]) {
+		public Node[] get(short[] uv) {
 			this.wasLeft = v * (uv[0] - pa[0]) / u > uv[1];
 			
 			if (this.wasLeft && this.left == null) {
@@ -127,7 +129,7 @@ public class TriangularMeshColorBuffer implements ColorBuffer {
 			}
 		}
 		
-		public Node[] get(short uv[], Node n) {
+		public Node[] get(short[] uv, Node n) {
 			if (this.u == 0)
 				this.wasLeft = pa[0] > uv[0];
 			else
@@ -144,17 +146,17 @@ public class TriangularMeshColorBuffer implements ColorBuffer {
 			}
 		}
 		
-		public short[] interpolate(Node n, short uv[]) {
+		public short[] interpolate(Node n, short[] uv) {
 			return this.interpolate((ByteNode) n, uv);
 		}
 		
-		public short[] interpolate(ByteNode n, short uv[]) {
-			short d[] = {(short) (uv[0] - this.pb[0]),
+		public short[] interpolate(ByteNode n, short[] uv) {
+			short[] d = {(short) (uv[0] - this.pb[0]),
 							(short) (uv[1] - this.pb[1])};
 			this.du = (short) ((d[0] * this.u + d[1] * this.v) / -Short.MAX_VALUE);
 			this.dv = (short) ((d[1] * n.u + d[1] * n.v) / Short.MAX_VALUE);
 			
-			short rgb[] = {(short) (cb[0] + (du * this.r() + dv * n.r()) / Byte.MAX_VALUE),
+			short[] rgb = {(short) (cb[0] + (du * this.r() + dv * n.r()) / Byte.MAX_VALUE),
 							(short) (cb[1] + (du * this.g() + dv * n.g()) / Byte.MAX_VALUE),
 							(short) (cb[2] + (du * this.b() + dv * n.b()) / Byte.MAX_VALUE)};
 			
@@ -174,12 +176,12 @@ public class TriangularMeshColorBuffer implements ColorBuffer {
 		double b() { return (cb[2] - ca[2]) / (shortmax * bytemax); }
 	}
 	
-	private List coords;
-	private List colors;
+	private final List coords;
+	private final List colors;
 	private Node front, back;
 	private int size;
-	private int resolution = 128;
-	private short rDelta = (short) (Math.pow(Short.MAX_VALUE / resolution, 2));
+	private final int resolution = 128;
+	private final short rDelta = (short) (Math.pow(Short.MAX_VALUE / resolution, 2));
 	
 	public TriangularMeshColorBuffer() {
 		this.coords = new ArrayList();
@@ -188,8 +190,8 @@ public class TriangularMeshColorBuffer implements ColorBuffer {
 	}
 	
 	public void addColor(double u, double v, boolean front, RGB c) {
-		short uv[] = {(short) (u * shortmax), (short) (v * shortmax)};
-		short rgb[] = {(short) (c.getRed() * shortmax),
+		short[] uv = {(short) (u * shortmax), (short) (v * shortmax)};
+		short[] rgb = {(short) (c.getRed() * shortmax),
 						(short) (c.getGreen() * shortmax),
 						(short) (c.getBlue() * shortmax)};
 		
@@ -203,15 +205,15 @@ public class TriangularMeshColorBuffer implements ColorBuffer {
 	}
 	
 	public RGB getColorAt(double u, double v, boolean front) {
-		short uv[] = {(short) (u * shortmax), (short) (v * shortmax)};
-		Node n[];
+		short[] uv = {(short) (u * shortmax), (short) (v * shortmax)};
+		Node[] n;
 		
 		if (front)
 			n = this.front.get(uv);
 		else
 			n = this.back.get(uv);
 		
-		short rgb[] = n[0].interpolate(n[1], uv);
+		short[] rgb = n[0].interpolate(n[1], uv);
 		return new RGB(48, rgb[0] / shortmax, rgb[1] / shortmax, rgb[2] / shortmax);
 	}
 	
@@ -219,10 +221,10 @@ public class TriangularMeshColorBuffer implements ColorBuffer {
 		this.coords.clear();
 		this.colors.clear();
 		
-		short one[] = {0, 0};
-		short two[] = {Short.MAX_VALUE, 0};
-		short three[] = {Short.MAX_VALUE, Short.MAX_VALUE};
-		short four[] = {0, Short.MAX_VALUE};
+		short[] one = {0, 0};
+		short[] two = {Short.MAX_VALUE, 0};
+		short[] three = {Short.MAX_VALUE, Short.MAX_VALUE};
+		short[] four = {0, Short.MAX_VALUE};
 		
 		this.coords.add(one);
 		this.coords.add(two);

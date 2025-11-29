@@ -19,18 +19,16 @@ package org.almostrealism.sound;
 import org.almostrealism.audio.line.LineUtilities;
 import org.almostrealism.audio.line.SourceDataOutputLine;
 
-import java.awt.GridLayout;
+import javax.sound.sampled.SourceDataLine;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.sound.sampled.SourceDataLine;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 public class KeyBoardSampleDisplay extends JPanel implements KeyListener {
-	private Sample samples[];
-	private SampleDisplayPane displays[];
-	private SourceDataLine lines[];
+	private final Sample[] samples;
+	private final SampleDisplayPane[] displays;
+	private final SourceDataLine[] lines;
 	
 	public KeyBoardSampleDisplay() {
 		super(new GridLayout(2, 9));

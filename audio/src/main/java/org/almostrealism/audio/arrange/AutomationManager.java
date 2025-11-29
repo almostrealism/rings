@@ -31,14 +31,14 @@ import java.util.function.Supplier;
 public class AutomationManager implements Setup, CellFeatures {
 	public static final int GENE_LENGTH = 6;
 
-	private ProjectedChromosome chromosome;
-	private TimeCell clock;
-	private DoubleSupplier measureDuration;
-	private int sampleRate;
+	private final ProjectedChromosome chromosome;
+	private final TimeCell clock;
+	private final DoubleSupplier measureDuration;
+	private final int sampleRate;
 
-	private PackedCollection scale;
-	private double r = 1.0;
-	private double p = 0.5;
+	private final PackedCollection scale;
+	private final double r = 1.0;
+	private final double p = 0.5;
 
 	public AutomationManager(ProjectedChromosome chromosome, TimeCell clock,
 							 DoubleSupplier measureDuration, int sampleRate) {

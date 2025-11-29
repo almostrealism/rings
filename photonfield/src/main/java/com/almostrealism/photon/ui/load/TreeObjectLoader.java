@@ -17,12 +17,11 @@
 package com.almostrealism.photon.ui.load;
 
 import io.almostrealism.tree.ui.ObjectTreeDisplay;
+import org.almostrealism.obj.DefaultObjectFactory;
 
-import java.awt.Container;
+import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
-
-import org.almostrealism.obj.DefaultObjectFactory;
 
 /**
  * @author  Mike Murray
@@ -32,7 +31,7 @@ public abstract class TreeObjectLoader implements ObjectLoader {
 	
 	public Container getUI() {
 		Class c = this.getParentType();
-		Class cl[] = this.loadTypes();
+		Class[] cl = this.loadTypes();
 		Hashtable op = this.loadOperations();
 		
 		DefaultObjectFactory factory = new DefaultObjectFactory(c);

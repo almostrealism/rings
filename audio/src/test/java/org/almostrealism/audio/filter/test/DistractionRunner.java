@@ -158,7 +158,7 @@ public class DistractionRunner implements Destroyable, CollectionFeatures {
 	 */
 	public void addSum() {
 		initialize();
-		Evaluable<PackedCollection> op = (Evaluable) sum(p(bufferA)).get();
+		Evaluable<PackedCollection> op = sum(p(bufferA)).get();
 		addOperation("sum", op, scalarResult);
 	}
 

@@ -19,9 +19,9 @@ package org.almostrealism.audio.data;
 import org.almostrealism.collect.PackedCollection;
 
 public class DelegateWaveDataProvider extends WaveDataProviderAdapter {
-	private WaveDataProvider delegate;
-	private int delegateOffset;
-	private int length;
+	private final WaveDataProvider delegate;
+	private final int delegateOffset;
+	private final int length;
 
 	public DelegateWaveDataProvider(WaveDataProvider delegate, int delegateOffset, int length) {
 		this.delegate = delegate;

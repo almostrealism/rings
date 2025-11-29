@@ -31,9 +31,9 @@ import java.net.InetSocketAddress;
 import java.util.Base64;
 
 public class AudioServer implements HttpHandler, CodeFeatures {
-	private FrequencyCache<String, HttpAudioHandler> handlers;
+	private final FrequencyCache<String, HttpAudioHandler> handlers;
 
-	private HttpServer server;
+	private final HttpServer server;
 
 	public AudioServer(int port) throws IOException {
 		handlers = new FrequencyCache<>(100, 0.6);

@@ -16,10 +16,9 @@
 
 package org.almostrealism.sound;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.sound.sampled.SourceDataLine;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -28,20 +27,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.sound.sampled.SourceDataLine;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
 public class SampleRowColumnDisplay extends JPanel
 									implements Runnable,
 									ActionListener, KeyListener {
-	private int cols;
-	private JButton colHeads[];
-	private boolean colHeadValues[];
+	private final int cols;
+	private final JButton[] colHeads;
+	private final boolean[] colHeadValues;
 	
 	private KeyBoardSampleDisplay keyboardSamples;
 	
-	private List rows, downKeys;
+	private final List rows;
+	private final List downKeys;
 	
 	private boolean stop = true;
 	
@@ -113,7 +109,7 @@ public class SampleRowColumnDisplay extends JPanel
 		while (itr.hasNext()) ((SampleRowDisplay)itr.next()).playAndWait(index);
 	}
 	
-	public void addSampleRow(Sample samples[], SourceDataLine line) {
+	public void addSampleRow(Sample[] samples, SourceDataLine line) {
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.gridy = this.rows.size() + 2;
@@ -184,11 +180,11 @@ public class SampleRowColumnDisplay extends JPanel
 			}
 		}
 		
-		this.downKeys.add(new Integer(e.getKeyCode()));
+		this.downKeys.add(Integer.valueOf(e.getKeyCode()));
 	}
 	
 	public void keyReleased(KeyEvent e) {
-		this.downKeys.remove(new Integer(e.getKeyCode()));
+		this.downKeys.remove(Integer.valueOf(e.getKeyCode()));
 	}
 	
 	public void keyTyped(KeyEvent e) { }

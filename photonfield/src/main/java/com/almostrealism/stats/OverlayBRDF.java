@@ -16,15 +16,15 @@
 
 package com.almostrealism.stats;
 
-import java.lang.reflect.Method;
-
 import io.almostrealism.relation.Producer;
+import io.almostrealism.uml.Nameable;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.space.Length;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
-import org.almostrealism.CodeFeatures;
-import io.almostrealism.uml.Nameable;
+
+import java.lang.reflect.Method;
 
 /**
  * An OverlayBRDF simply takes the sum of the samples provided by each
@@ -35,12 +35,12 @@ import io.almostrealism.uml.Nameable;
  * @author  Michael Murray
  */
 public class OverlayBRDF implements SphericalProbabilityDistribution, Nameable, Length, CodeFeatures {
-	private SphericalProbabilityDistribution children[];
+	private final SphericalProbabilityDistribution[] children;
 	private double m = 1.0;
 	private boolean norm = true;
 	public String name;
 
-	public OverlayBRDF(SphericalProbabilityDistribution children[]) {
+	public OverlayBRDF(SphericalProbabilityDistribution[] children) {
 		this.children = children;
 	}
 
@@ -52,7 +52,7 @@ public class OverlayBRDF implements SphericalProbabilityDistribution, Nameable, 
 	public boolean getNormalizeResult() { return this.norm; }
 
 	@Override
-	public Producer<PackedCollection> getSample(double in[], double orient[]) {
+	public Producer<PackedCollection> getSample(double[] in, double[] orient) {
 		Vector result = new Vector();
 
 		for (int i = 0; i < this.children.length; i++)
@@ -64,19 +64,19 @@ public class OverlayBRDF implements SphericalProbabilityDistribution, Nameable, 
 
 		if (this.m != 1.0) result.multiplyBy(this.m);
 
-		return (Producer) v(result);
+		return v(result);
 	}
 	
 	public static Method getOverlayMethod() {
 		try {
 			return OverlayBRDF.class.getMethod("createOverlayBRDF",
-					new Class[] {SphericalProbabilityDistribution[].class});
+					SphericalProbabilityDistribution[].class);
 		} catch (NoSuchMethodException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
-	public static OverlayBRDF createOverlayBRDF(SphericalProbabilityDistribution children[]) {
+	public static OverlayBRDF createOverlayBRDF(SphericalProbabilityDistribution[] children) {
 		return new OverlayBRDF(children);
 	}
 

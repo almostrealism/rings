@@ -16,30 +16,27 @@
 
 package org.almostrealism.swing.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.swing.DynamicDisplay;
 import org.almostrealism.swing.panels.EditVectorPanel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
   An EditVectorDialog object can be used to allow a user to specify
   the data for a Vector object.
 */
 public class EditVectorDialog extends JFrame {
-  private Vector vector;
-  private DynamicDisplay display;
+  private final Vector vector;
+  private final DynamicDisplay display;
   
-  private EditVectorPanel editPanel;
-  private JPanel buttonPanel;
-  private JButton okButton, cancelButton;
+  private final EditVectorPanel editPanel;
+  private final JPanel buttonPanel;
+  private final JButton okButton;
+	private final JButton cancelButton;
 
 	/**
 	  Constructs a new EditVectorDialog that can be used to edit

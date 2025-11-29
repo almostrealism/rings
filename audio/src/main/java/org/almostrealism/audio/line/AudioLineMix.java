@@ -25,7 +25,7 @@ import org.almostrealism.time.TemporalRunner;
 
 public class AudioLineMix implements AudioLineOperation, CellFeatures {
 	private final AudioLineOperation operation;
-	private double cleanLevel;
+	private final double cleanLevel;
 
 	public AudioLineMix(AudioLineOperation operation, double cleanLevel) {
 		this.operation = operation;

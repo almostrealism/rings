@@ -17,21 +17,19 @@
 package com.almostrealism.buffers;
 
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Vector;
-import io.almostrealism.relation.Evaluable;
 import org.almostrealism.collect.PackedCollection;
 
 /**
  * @author  Mike Murray
  */
 public class AveragedVectorMap2D96Bit implements AveragedVectorMap2D {
-	private static double shortmax = Short.MAX_VALUE;
+	private static final double shortmax = Short.MAX_VALUE;
 	
-	private double vector[];
+	private double[] vector;
 	private int w, h;
-	private int fcount[][], bcount[][];
-	private int fxBuf[], fyBuf[], fzBuf[];
-	private int bxBuf[], byBuf[], bzBuf[];
+	private int[][] fcount, bcount;
+	private int[] fxBuf, fyBuf, fzBuf;
+	private int[] bxBuf, byBuf, bzBuf;
 
 	public AveragedVectorMap2D96Bit() { }
 	
@@ -93,14 +91,14 @@ public class AveragedVectorMap2D96Bit implements AveragedVectorMap2D {
 		int py = (int) (v * h);
 		int t = px + py * w;
 		
-		int count[][] = this.fcount;
+		int[][] count = this.fcount;
 		if (!front) count = this.bcount;
 		
 		count[px][py]++;
 //		if (count[px][py] >= Short.MAX_VALUE)
 //			System.out.print("AveragedVectorMap2D96Bit: Overflow.");
 		
-		if (this.vector != null) return;
+		if (this.vector != null) {}
 
 //		TODO
 //		if (front) {
@@ -127,13 +125,13 @@ public class AveragedVectorMap2D96Bit implements AveragedVectorMap2D {
 		int t = px + py * w;
 		
 		if (front) {
-			double xyz[] = {(this.fxBuf[t] / shortmax) / this.fcount[px][py],
+			double[] xyz = {(this.fxBuf[t] / shortmax) / this.fcount[px][py],
 							(this.fyBuf[t] / shortmax) / this.fcount[px][py],
 							(this.fzBuf[t] / shortmax) / this.fcount[px][py]};
 			return xyz;
 		} else {
 
-			double xyz[] = {(this.bxBuf[t] / shortmax) / this.bcount[px][py],
+			double[] xyz = {(this.bxBuf[t] / shortmax) / this.bcount[px][py],
 							(this.byBuf[t] / shortmax) / this.bcount[px][py],
 							(this.bzBuf[t] / shortmax) / this.bcount[px][py]};
 			return xyz;

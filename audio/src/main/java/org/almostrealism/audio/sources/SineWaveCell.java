@@ -16,15 +16,14 @@
 
 package org.almostrealism.audio.sources;
 
-import io.almostrealism.relation.Evaluable;
-import org.almostrealism.audio.line.OutputLine;
+import io.almostrealism.relation.Factor;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.data.PolymorphicAudioData;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.hardware.OperationList;
-import io.almostrealism.relation.Factor;
 
 import java.util.function.Supplier;
 
@@ -95,7 +94,7 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 	public Supplier<Runnable> push(Producer<PackedCollection> protein) {
 		PackedCollection value = new PackedCollection(1);
 		OperationList push = new OperationList("SineWaveCell Push");
-		Producer<PackedCollection> envelope = env == null ? (Producer) scalar(1.0) :
+		Producer<PackedCollection> envelope = env == null ? scalar(1.0) :
 					env.getResultant(cp(data.notePosition()));
 		push.add(new SineWavePush(data, envelope, value));
 		push.add(super.push(p(value)));
@@ -105,7 +104,7 @@ public class SineWaveCell extends CollectionTemporalCellAdapter implements Sampl
 	@Override
 	public Supplier<Runnable> tick() {
 		OperationList tick = new OperationList("SineWaveCell Tick");
-		Producer<PackedCollection> envelope = env == null ? (Producer) scalar(1.0) :
+		Producer<PackedCollection> envelope = env == null ? scalar(1.0) :
 				env.getResultant(cp(data.notePosition()));
 		tick.add(new SineWaveTick(data, envelope));
 		tick.add(super.tick());

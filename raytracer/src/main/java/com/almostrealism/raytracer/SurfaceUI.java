@@ -17,15 +17,14 @@
 package com.almostrealism.raytracer;
 
 
-import java.awt.Graphics;
-
-import javax.swing.Icon;
-
-import org.almostrealism.geometry.Camera;
+import io.almostrealism.uml.Nameable;
 import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.geometry.Camera;
 import org.almostrealism.space.ShadableSurfaceWrapper;
 import org.almostrealism.swing.Dialog;
-import io.almostrealism.uml.Nameable;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * The SurfaceUI interface is implemented by classes that represent a Surface object that can be used

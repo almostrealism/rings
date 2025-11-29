@@ -20,20 +20,19 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.DynamicAudioCell;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
 import org.almostrealism.audio.data.ParameterFunctionSequence;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.PolymorphicAudioData;
-import org.almostrealism.audio.sources.SineWaveCell;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.sequence.ValueSequenceCell;
 import org.almostrealism.audio.sequence.ValueSequencePush;
 import org.almostrealism.audio.sequence.ValueSequenceTick;
+import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
-import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.hardware.AcceleratedOperation;
 import org.almostrealism.heredity.ScaleFactor;
 import org.almostrealism.time.Frequency;
@@ -245,7 +244,7 @@ public class SequenceTest implements CellFeatures, TestFeatures {
 		output.export(0, export).get().run();
 
 		WavFile f = WavFile.newWavFile(new File("results/mix-export-test.wav"), 1,
-				10 * OutputLine.sampleRate, 24, OutputLine.sampleRate);
+				10L * OutputLine.sampleRate, 24, OutputLine.sampleRate);
 
 		for (int i = 0; i < 10 * OutputLine.sampleRate; i++) {
 			f.writeFrames(new double[] { export.toDouble(i) }, 1);

@@ -37,5 +37,5 @@ public interface PotentialMap {
 	 *           system for this PotentialMap instance.
 	 * @return  The potential at the specified point (usually measured in volts).
 	 */
-	public double getPotential(double p[]);
+	double getPotential(double[] p);
 }

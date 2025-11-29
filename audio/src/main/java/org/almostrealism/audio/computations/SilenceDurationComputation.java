@@ -16,9 +16,9 @@
 
 package org.almostrealism.audio.computations;
 
-import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.compute.ParallelProcess;
 import io.almostrealism.compute.Process;
+import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.relation.Producer;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.scope.Scope;

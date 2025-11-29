@@ -1,14 +1,14 @@
 package com.almostrealism.network;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import io.almostrealism.resource.ResourceTranscoder;
 import io.almostrealism.resource.UnicodeResource;
 import org.almostrealism.space.DefaultVertexData;
 import org.almostrealism.space.Mesh;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class PlyResource extends UnicodeResource {
 	public static boolean enableVerbose = false;
@@ -49,7 +49,7 @@ public class PlyResource extends UnicodeResource {
 					if (line.indexOf("face") > 0)
 						triangleCount = Integer.parseInt(line.substring(line.lastIndexOf(" ") + 1));
 				} else if (line.startsWith("end_header")) {
-					break w;
+					break;
 				}
 			}
 
@@ -61,7 +61,7 @@ public class PlyResource extends UnicodeResource {
 				if (line == null) return null;
 				if (line.startsWith("#")) continue i;
 
-				double d[] = FileDecoder.parseDoubles(line);
+				double[] d = FileDecoder.parseDoubles(line);
 				data.getVertices().set(i, d[0], d[1], d[2]);
 
 				i++;
@@ -79,7 +79,7 @@ public class PlyResource extends UnicodeResource {
 				if (line == null) return null;
 				if (line.startsWith("#")) continue i;
 
-				double d[] = FileDecoder.parseDoubles(line);
+				double[] d = FileDecoder.parseDoubles(line);
 				data.setTriangle(i, (int) d[1], (int) d[2], (int) d[3]);
 
 				i++;

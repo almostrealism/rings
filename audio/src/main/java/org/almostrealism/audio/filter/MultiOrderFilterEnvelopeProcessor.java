@@ -87,13 +87,13 @@ public class MultiOrderFilterEnvelopeProcessor implements EnvelopeProcessor, Des
 	/** Width of each histogram bin in frames. */
 	private static final int HISTOGRAM_BIN_WIDTH = (HISTOGRAM_MAX_FRAMES - HISTOGRAM_MIN_FRAMES) / HISTOGRAM_BINS;
 
-	private PackedCollection cutoff;
+	private final PackedCollection cutoff;
 
-	private PackedCollection duration;
-	private PackedCollection attack;
-	private PackedCollection decay;
-	private PackedCollection sustain;
-	private PackedCollection release;
+	private final PackedCollection duration;
+	private final PackedCollection attack;
+	private final PackedCollection decay;
+	private final PackedCollection sustain;
+	private final PackedCollection release;
 
 	private Evaluable<PackedCollection> cutoffEnvelope;
 	private Evaluable<PackedCollection> multiOrderFilter;

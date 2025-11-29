@@ -16,17 +16,17 @@
 
 package org.almostrealism.remote.ops;
 
-import org.almostrealism.remote.api.Generation;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.remote.api.Generation;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class WaveDataAccumulator {
-	private Map<String, PackedCollection> data;
-	private BiConsumer<String, WaveData> output;
+	private final Map<String, PackedCollection> data;
+	private final BiConsumer<String, WaveData> output;
 
 	public WaveDataAccumulator(BiConsumer<String, WaveData> output) {
 		this.data = new HashMap<>();

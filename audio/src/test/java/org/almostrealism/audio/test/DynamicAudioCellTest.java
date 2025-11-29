@@ -16,28 +16,28 @@
 
 package org.almostrealism.audio.test;
 
-import org.almostrealism.audio.tone.DefaultKeyboardTuning;
-import org.almostrealism.audio.tone.WesternChromatic;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.DynamicAudioCell;
-import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.data.PolymorphicAudioData;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
-import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
+import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.filter.BasicDelayCell;
+import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.audio.sources.SineWaveCell;
+import org.almostrealism.audio.tone.DefaultKeyboardTuning;
+import org.almostrealism.audio.tone.WesternChromatic;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Cell;
-import org.almostrealism.graph.Receptor;
-import org.almostrealism.graph.ReceptorCell;
-import org.almostrealism.hardware.AcceleratedComputationOperation;
-import org.almostrealism.hardware.OperationList;
-import io.almostrealism.relation.Factor;
-import org.almostrealism.heredity.Gene;
-import org.almostrealism.heredity.IdentityFactor;
 import org.almostrealism.graph.CellPair;
 import org.almostrealism.graph.MultiCell;
+import org.almostrealism.graph.Receptor;
+import org.almostrealism.graph.ReceptorCell;
+import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
+import org.almostrealism.hardware.AcceleratedComputationOperation;
+import org.almostrealism.hardware.OperationList;
+import org.almostrealism.heredity.Gene;
+import org.almostrealism.heredity.IdentityFactor;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 

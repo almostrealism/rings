@@ -24,8 +24,8 @@ import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.GenomeBreeder;
 import org.almostrealism.io.SystemUtils;
 import org.almostrealism.optimize.HealthComputation;
-import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.optimize.Population;
+import org.almostrealism.optimize.PopulationOptimizer;
 import org.almostrealism.time.Temporal;
 import org.apache.commons.codec.digest.DigestUtils;
 

@@ -69,7 +69,7 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 						context.frameForPosition(actualPosition)));
 			} else if (this == CHORD) {
 				p: for (double p : element.getScalePositions()) {
-					if (keys.isEmpty()) break p;
+					if (keys.isEmpty()) break;
 					int keyIndex = (int) (p * keys.size());
 
 					ElementVoicingDetails details =

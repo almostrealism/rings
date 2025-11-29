@@ -17,5 +17,5 @@
 package org.almostrealism.audio.tone;
 
 public enum KeyNumbering {
-	STANDARD, MIDI;
+	STANDARD, MIDI
 }

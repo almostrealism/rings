@@ -35,10 +35,10 @@ import java.util.stream.IntStream;
 public class AnnotatedAudioRenderer implements CellFeatures {
 	private double sampleRate;
 	private PackedCollection wav;
-	private AcceleratedTimeSeries annotation;
-	private IntFunction<RGB[]> typeColors;
-	private double annotationFrequency;
-	private double ampGain;
+	private final AcceleratedTimeSeries annotation;
+	private final IntFunction<RGB[]> typeColors;
+	private final double annotationFrequency;
+	private final double ampGain;
 
 	public AnnotatedAudioRenderer(File wav, AcceleratedTimeSeries annotation, IntFunction<RGB[]> typeColors, double annotationFrequency) throws IOException {
 		this(wav, annotation, typeColors, annotationFrequency, 1.0);
@@ -77,7 +77,7 @@ public class AnnotatedAudioRenderer implements CellFeatures {
 	private void loadWav(File f) throws IOException {
 		try (WavFile in = WavFile.openWavFile(f)) {
 			sampleRate = in.getSampleRate();
-			double data[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
+			double[][] data = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
 			in.readFrames(data, (int) in.getFramesRemaining());
 
 			wav = new PackedCollection(data[0].length).traverse(1);

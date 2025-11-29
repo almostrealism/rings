@@ -58,7 +58,7 @@ public abstract class ProtonCloud implements Absorber, PotentialMap {
 	 *           system for this absorber.
 	 * @return  The potential at the specified point (usually measured in volts).
 	 */
-	public double getPotential(double p[]) {
+	public double getPotential(double[] p) {
 		return ProtonCloud.k * this.charge / VectorMath.length(p);
 	}
 }

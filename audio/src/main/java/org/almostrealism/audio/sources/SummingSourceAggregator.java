@@ -37,7 +37,7 @@ public class SummingSourceAggregator implements SourceAggregator, CellFeatures {
 			public Evaluable<PackedCollection> get() {
 				List<Evaluable<PackedCollection>> layerAudio =
 						Stream.of(sources).map(Producer::get).toList();
-				int frames[] = Stream.of(sources)
+				int[] frames = Stream.of(sources)
 						.map(SummingSourceAggregator.this::shape)
 						.map(shape -> shape.getCount() == 1 ? shape.traverse() : shape)
 						.mapToInt(TraversalPolicy::getCount)

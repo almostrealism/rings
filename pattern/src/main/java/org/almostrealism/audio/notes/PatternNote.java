@@ -19,8 +19,8 @@ package org.almostrealism.audio.notes;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.filter.AudioProcessingUtils;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.audio.tone.KeyboardTuning;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PatternNote extends PatternNoteAudioAdapter {
-	private static NoteAudioSourceAggregator layerAggregator;
+	private static final NoteAudioSourceAggregator layerAggregator;
 
 	static {
 		layerAggregator = new NoteAudioSourceAggregator();
@@ -158,7 +158,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 						layers.stream()
 								.map(l -> l.getAudio(target, channel, noteDuration, automationLevel, audioSelection).get())
 								.toList();
-				int frames[] = IntStream.range(0, layerAudio.size())
+				int[] frames = IntStream.range(0, layerAudio.size())
 						.map(i -> (int) (layers.get(i).getDuration(target, audioSelection) *
 								layers.get(i).getSampleRate(target, audioSelection)))
 						.toArray();
@@ -194,9 +194,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof PatternNote)) return false;
-
-		PatternNote n = (PatternNote) obj;
+		if (!(obj instanceof PatternNote n)) return false;
 
 		boolean eq;
 

@@ -17,7 +17,6 @@
 package org.almostrealism.audio.notes;
 
 import io.almostrealism.relation.Factor;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;

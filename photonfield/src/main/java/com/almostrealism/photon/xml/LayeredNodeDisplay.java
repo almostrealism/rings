@@ -16,13 +16,11 @@
 
 package com.almostrealism.photon.xml;
 
-import java.awt.Container;
-
-import javax.swing.JDesktopPane;
-import javax.swing.JScrollPane;
+import javax.swing.*;
+import java.awt.*;
 
 public class LayeredNodeDisplay extends JDesktopPane implements NodeDisplay {
-	private Node node;
+	private final Node node;
 	private int w = 8, h = 10;
 	public LayeredNodeDisplay(Node n) { this.node = n; }
 	public Container getContainer() { return new JScrollPane(this); }

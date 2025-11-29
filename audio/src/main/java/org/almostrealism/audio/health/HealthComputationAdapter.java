@@ -16,6 +16,13 @@
 
 package org.almostrealism.audio.health;
 
+import org.almostrealism.audio.AudioMeter;
+import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.data.ChannelInfo;
+import org.almostrealism.audio.data.WaveDetails;
+import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.heredity.TemporalCellular;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,26 +35,19 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.almostrealism.audio.AudioMeter;
-import org.almostrealism.audio.data.ChannelInfo;
-import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.audio.data.WaveDetails;
-import org.almostrealism.heredity.TemporalCellular;
-
 public abstract class HealthComputationAdapter implements AudioHealthComputation<TemporalCellular> {
 	public static final int MEASURE_COUNT = 2;
 	public static int standardDurationSeconds = 230;
 	public static int standardDurationFrames = standardDurationSeconds * OutputLine.sampleRate;
 
 	private TemporalCellular target;
-	private int channels;
+	private final int channels;
 
 	private WaveOutput out;
 	private Supplier<String> outputFileSupplier;
 	private IntFunction<String> stemFileSupplier;
 	private File outputFile;
-	private Map<Integer, File> stemFiles;
+	private final Map<Integer, File> stemFiles;
 	private Consumer<WaveDetails> detailsProcessor;
 
 	private Map<ChannelInfo, AudioMeter> measures;

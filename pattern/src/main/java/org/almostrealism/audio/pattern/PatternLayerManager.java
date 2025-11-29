@@ -59,8 +59,8 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 
 	private double seedBiasAdjustment;
 
-	private Supplier<List<NoteAudioChoice>> percChoices;
-	private Supplier<List<NoteAudioChoice>> melodicChoices;
+	private final Supplier<List<NoteAudioChoice>> percChoices;
+	private final Supplier<List<NoteAudioChoice>> melodicChoices;
 	private Chromosome<PackedCollection> layerChoiceChromosome;
 	private Chromosome<PackedCollection> envelopeAutomationChromosome;
 
@@ -68,8 +68,8 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 	private ParameterizedPositionFunction activeSelection;
 	private PatternElementFactory elementFactory;
 
-	private List<PatternLayer> roots;
-	private List<ParameterSet> layerParams;
+	private final List<PatternLayer> roots;
+	private final List<ParameterSet> layerParams;
 	private int layerCount;
 
 	private Map<ChannelInfo, PackedCollection> destination;

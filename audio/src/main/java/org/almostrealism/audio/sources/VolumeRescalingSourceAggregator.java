@@ -23,7 +23,7 @@ import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 
 public class VolumeRescalingSourceAggregator implements SourceAggregator, CellFeatures {
-	private VolumeEnvelopeExtraction envExtract;
+	private final VolumeEnvelopeExtraction envExtract;
 
 	public VolumeRescalingSourceAggregator() {
 		envExtract = new VolumeEnvelopeExtraction();

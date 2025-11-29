@@ -16,11 +16,11 @@
 
 package org.almostrealism.audio.line;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Source;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.time.Temporal;
 import org.almostrealism.hardware.OperationList;
+import org.almostrealism.time.Temporal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +39,9 @@ import java.util.function.Supplier;
  */
 @Deprecated
 public class SourceToLineWriter implements Temporal {
-	private Source<PackedCollection> source;
-	private OutputLine line;
-	private List<Temporal> dependencies;
+	private final Source<PackedCollection> source;
+	private final OutputLine line;
+	private final List<Temporal> dependencies;
 
 	public SourceToLineWriter(Source<PackedCollection> source, OutputLine line) {
 		this.source = source;

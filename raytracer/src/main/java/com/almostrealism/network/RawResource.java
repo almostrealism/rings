@@ -1,10 +1,10 @@
 package com.almostrealism.network;
 
+import io.almostrealism.resource.ResourceTranscoder;
+import io.almostrealism.resource.UnicodeResource;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.Shader;
-import io.almostrealism.resource.UnicodeResource;
-import io.almostrealism.resource.ResourceTranscoder;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.Triangle;
 
@@ -31,11 +31,11 @@ public class RawResource extends UnicodeResource {
 			int lineCount = 0;
 
 			t: while (line != null) {
-				if (line.startsWith("#") == true) {
+				if (line.startsWith("#")) {
 					line = in.readLine();
 					lineCount++;
 				} else {
-					break t;
+					break;
 				}
 			}
 
@@ -55,27 +55,27 @@ public class RawResource extends UnicodeResource {
 			l: while (line != null) {
 				int tCount = 0;
 
-				if (line.startsWith("#") == true) {
+				if (line.startsWith("#")) {
 					line = in.readLine();
 					lineCount++;
 
 					continue l;
 				}
 
-				if (polyData == true) {
-					Vector points[] = new Vector[pointCount];
+				if (polyData) {
+					Vector[] points = new Vector[pointCount];
 
 					for (int p = 0; p < points.length; p++) {
 						t: while (true) {
-							if (line.startsWith("#") == true) {
+							if (line.startsWith("#")) {
 								line = in.readLine();
 								lineCount++;
 							} else {
-								break t;
+								break;
 							}
 						}
 
-						double data[] = new double[3];
+						double[] data = new double[3];
 
 						boolean broken = false;
 
@@ -85,7 +85,7 @@ public class RawResource extends UnicodeResource {
 							if (i == data.length - 1) {
 								data[i] = Double.parseDouble(line);
 
-								break i;
+								break;
 							}
 
 							if (index > 0) {
@@ -96,11 +96,11 @@ public class RawResource extends UnicodeResource {
 										"or is not properly delimited");
 
 								broken = true;
-								break i;
+								break;
 							}
 						}
 
-						if (broken == false) {
+						if (!broken) {
 							points[p] = new Vector(data[0], data[1], data[2]);
 						}
 
@@ -110,15 +110,15 @@ public class RawResource extends UnicodeResource {
 
 					for (int p = 0; p < polyCount; p++) {
 						t: while (true) {
-							if (line.startsWith("#") == true) {
+							if (line.startsWith("#")) {
 								line = in.readLine();
 								lineCount++;
 							} else {
-								break t;
+								break;
 							}
 						}
 
-						int data[] = new int[3];
+						int[] data = new int[3];
 
 						boolean broken = false;
 
@@ -128,7 +128,7 @@ public class RawResource extends UnicodeResource {
 							if (i == data.length - 1) {
 								data[i] = Integer.parseInt(line.trim());
 
-								break i;
+								break;
 							}
 
 							if (index > 0) {
@@ -139,11 +139,11 @@ public class RawResource extends UnicodeResource {
 										"or is not properly delimited");
 
 								broken = true;
-								break i;
+								break;
 							}
 						}
 
-						if (broken == false) {
+						if (!broken) {
 							Triangle newSurface = new Triangle(points[data[0]], points[data[1]], points[data[2]]);
 							newSurface.setColor(new RGB(1.0, 1.0, 1.0));
 							newSurface.setShaders(new Shader[0]);
@@ -154,10 +154,10 @@ public class RawResource extends UnicodeResource {
 						lineCount++;
 					}
 
-					break l;
+					break;
 				} else {
 					try {
-						double data[] = new double[9];
+						double[] data = new double[9];
 
 						boolean broken = false;
 
@@ -167,7 +167,7 @@ public class RawResource extends UnicodeResource {
 							if (i == data.length - 1) {
 								data[i] = Double.parseDouble(line);
 
-								break i;
+								break;
 							}
 
 							if (index > 0) {
@@ -178,11 +178,11 @@ public class RawResource extends UnicodeResource {
 										"or is not properly delimited");
 
 								broken = true;
-								break i;
+								break;
 							}
 						}
 
-						if (broken == false) {
+						if (!broken) {
 							Vector p1 = new Vector(data[0], data[1], data[2]);
 							Vector p2 = new Vector(data[3], data[4], data[5]);
 							Vector p3 = new Vector(data[6], data[7], data[8]);

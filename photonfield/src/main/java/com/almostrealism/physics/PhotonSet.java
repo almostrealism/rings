@@ -19,9 +19,12 @@ package com.almostrealism.physics;
 import org.almostrealism.utils.PriorityQueue;
 
 public class PhotonSet {
-	private int max, last = -1;
-	private PriorityQueue queue;
-	private double x[][], p[][], e[];
+	private final int max;
+	private int last = -1;
+	private final PriorityQueue queue;
+	private final double[][] x;
+	private final double[][] p;
+	private final double[] e;
 	
 	public PhotonSet(int max) {
 		this.max = max;
@@ -31,8 +34,8 @@ public class PhotonSet {
 		this.e = new double[max];
 	}
 	
-	public int addPhoton(double x[], double p[], double e, double d) {
-		int index[] = {this.nextIndex()};
+	public int addPhoton(double[] x, double[] p, double e, double d) {
+		int[] index = {this.nextIndex()};
 		this.x[index[0]] = x;
 		this.p[index[0]] = p;
 		this.e[index[0]] = e;

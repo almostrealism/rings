@@ -17,21 +17,21 @@
 package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
-import org.almostrealism.audio.optimize.AudioSceneOptimizer;
-import org.almostrealism.audio.pattern.PatternElementFactory;
+import org.almostrealism.audio.health.StableDurationHealthComputation;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.notes.NoteAudioChoice;
+import org.almostrealism.audio.optimize.AudioSceneOptimizer;
+import org.almostrealism.audio.optimize.AudioScenePopulation;
+import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.mem.Heap;
+import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.io.SystemUtils;
 import org.almostrealism.time.TemporalRunner;
-import org.almostrealism.audio.health.StableDurationHealthComputation;
-import org.almostrealism.audio.optimize.AudioScenePopulation;
-import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.heredity.Genome;
 import org.almostrealism.util.KeyUtils;
 import org.junit.Test;
 

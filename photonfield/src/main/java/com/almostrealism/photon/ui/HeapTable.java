@@ -16,7 +16,7 @@
 
 package com.almostrealism.photon.ui;
 
-import javax.swing.JTable;
+import javax.swing.*;
 
 /**
  *  @author Samuel Tepper

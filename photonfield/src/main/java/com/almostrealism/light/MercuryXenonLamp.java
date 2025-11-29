@@ -16,9 +16,9 @@
 
 package com.almostrealism.light;
 
-import java.util.ArrayList;
-
 import org.almostrealism.physics.PhysicalConstants;
+
+import java.util.ArrayList;
 
 /**
  * A MercuryXenonLamp 

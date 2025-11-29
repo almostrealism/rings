@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 // TODO  I'm not sure how this should interact with the parent class
 //       To be honest, I'm not quite sure what the parent class does
 public class ElectronCloud extends HarmonicAbsorber {
-    private Queue<Photon> toEmit = new ConcurrentLinkedQueue<Photon>();
+    private final Queue<Photon> toEmit = new ConcurrentLinkedQueue<Photon>();
 
     private Valence valence;
 

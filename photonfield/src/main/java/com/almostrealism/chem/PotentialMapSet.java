@@ -40,7 +40,7 @@ public interface PotentialMapSet extends PotentialMap, Set {
 	 * @param x  {x, y, z} - The relative position of the potential map.
 	 * @return  The total number of potential maps stored by this set.
 	 */
-	public int addPotentialMap(PotentialMap m, double x[]);
+	int addPotentialMap(PotentialMap m, double[] x);
 	
 	/**
 	 * Removes all potential maps with origins within the specified spherical volume.
@@ -49,7 +49,7 @@ public interface PotentialMapSet extends PotentialMap, Set {
 	 * @param radius  Radius of spherical volume.
 	 * @return  The total number of potential maps removed.
 	 */
-	public int removePotentialMaps(double x[], double radius);
+	int removePotentialMaps(double[] x, double radius);
 	
 	/**
 	 * Removes the specified potential map from this set.
@@ -57,7 +57,7 @@ public interface PotentialMapSet extends PotentialMap, Set {
 	 * @param m  Potential map to remove.
 	 * @return  The total number of potential maps stored in the set.
 	 */
-	public int removePotentialMap(PotentialMap m);
+	int removePotentialMap(PotentialMap m);
 	
 	/**
 	 * @param radius  The farthest distance from the origin of a given potential map in the set
@@ -67,7 +67,7 @@ public interface PotentialMapSet extends PotentialMap, Set {
 	 *                completely ignored. If <= 0.0, all potential maps in the set will always
 	 *                be evaluated in all cases.
 	 */
-	public void setMaxProximity(double radius);
+	void setMaxProximity(double radius);
 	
 	/**
 	 * @return  The farthest distance from the origin of a given potential map in the set
@@ -77,5 +77,5 @@ public interface PotentialMapSet extends PotentialMap, Set {
 	 *          completely ignored. If <= 0.0, all potential maps in the set will always
 	 *          be evaluated in all cases.
 	 */
-	public double getMaxProximity();
+	double getMaxProximity();
 }

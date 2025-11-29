@@ -33,19 +33,20 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public class WaveDetailsOutputLine implements OutputLine, CodeFeatures, ConsoleFeatures {
-	private int sampleRate;
+	private final int sampleRate;
 	private boolean altBuffer;
 
 	private int cursor;
-	private int batchCount, framesPerBatch;
+	private final int batchCount;
+	private final int framesPerBatch;
 	private PackedCollection bufferA;
 	private PackedCollection bufferB;
 
-	private boolean silence[];
+	private final boolean[] silence;
 	private BooleanSupplier silenceDetector;
 
 	private ExecutorService executor;
-	private Consumer<Audio.WaveDetailData> consumer;
+	private final Consumer<Audio.WaveDetailData> consumer;
 	private boolean active;
 
 	public WaveDetailsOutputLine(AudioLibraryDataWriter writer) {

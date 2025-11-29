@@ -40,7 +40,7 @@ import javax.sound.sampled.SourceDataLine;
  */
 public class SourceDataOutputLine implements OutputLine {
 	private SourceDataLine line;
-	private int bufferSize;
+	private final int bufferSize;
 
 	/**
 	 * Creates a new SourceDataOutputLine wrapping the specified Java Sound API line.

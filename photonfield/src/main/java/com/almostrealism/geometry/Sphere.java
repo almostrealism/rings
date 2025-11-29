@@ -17,10 +17,10 @@
 package com.almostrealism.geometry;
 
 import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.space.Volume;
-import org.almostrealism.CodeFeatures;
 
 /**
  * A {@link Sphere} represents a spherical volume in 3D space.
@@ -61,7 +61,7 @@ public class Sphere implements Volume<Object>, CodeFeatures {
 	 */
 	@Override
 	public Producer<PackedCollection> getNormalAt(Producer<PackedCollection> x) {
-		return (Producer) normalize(x);
+		return normalize(x);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class Sphere implements Volume<Object>, CodeFeatures {
 	}
 
 	@Override
-	public double[] getSpatialCoords(double uv[]) {
+	public double[] getSpatialCoords(double[] uv) {
 		double y = uv[0] * 2.0 * Math.PI;
 		double z = uv[1] * 2.0 * Math.PI;
 		
@@ -105,10 +105,10 @@ public class Sphere implements Volume<Object>, CodeFeatures {
 
 	@Override
 	public double[] getSurfaceCoords(Producer<PackedCollection> v) {
-		double xyz[] = new Vector(v.get().evaluate(), 0).toArray();
+		double[] xyz = new Vector(v.get().evaluate(), 0).toArray();
 
 		double s = Math.sqrt(xyz[0] * xyz[0] + xyz[1] * xyz[1]);
-		double uv[] = {0.5 + Math.asin(xyz[2]) / Math.PI, 0};
+		double[] uv = {0.5 + Math.asin(xyz[2]) / Math.PI, 0};
 
 		if (xyz[0] < 0)
 			uv[1] = 0.5 - Math.asin(xyz[1] / s) / Math.PI;

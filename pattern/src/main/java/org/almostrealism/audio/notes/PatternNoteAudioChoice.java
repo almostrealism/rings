@@ -69,8 +69,7 @@ public class PatternNoteAudioChoice implements PatternNoteAudio {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof PatternNoteAudioChoice) {
-			PatternNoteAudioChoice other = (PatternNoteAudioChoice) obj;
+		if (obj instanceof PatternNoteAudioChoice other) {
 
 			long compA = (long) (other.getNoteAudioSelection() * selectionComparisonGranularity);
 			long compB = (long) (getNoteAudioSelection() * selectionComparisonGranularity);

@@ -29,9 +29,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class BufferedOutputControl implements HttpAudioHandler, ConsoleFeatures {
-	private ExecutorService executor;
-	private BufferedOutputScheduler scheduler;
-	private int sampleRate;
+	private final ExecutorService executor;
+	private final BufferedOutputScheduler scheduler;
+	private final int sampleRate;
 
 	public BufferedOutputControl(BufferedOutputScheduler scheduler) {
 		this.executor = Executors.newSingleThreadExecutor();

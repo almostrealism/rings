@@ -17,7 +17,9 @@
 package com.almostrealism.texture;
 
 public class CosineIntensityMap implements IntensityMap {
-	private double alpha, beta, tau;
+	private final double alpha;
+	private final double beta;
+	private final double tau;
 	private IntensityMap map;
 	
 	public CosineIntensityMap() {

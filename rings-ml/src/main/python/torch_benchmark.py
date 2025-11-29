@@ -1,6 +1,7 @@
+import time
 import torch
 import torch.nn as nn
-import time
+
 
 class ConvolutionTest(nn.Module):
     def __init__(self, input_dim, conv_size, conv_filters):

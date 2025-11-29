@@ -16,44 +16,44 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.code.ScopeInputManager;
+import io.almostrealism.compute.ParallelProcess;
+import io.almostrealism.compute.Process;
 import io.almostrealism.expression.Expression;
 import io.almostrealism.expression.Max;
 import io.almostrealism.expression.Min;
 import io.almostrealism.kernel.KernelStructureContext;
-import io.almostrealism.compute.ParallelProcess;
-import io.almostrealism.compute.Process;
-import io.almostrealism.scope.ArrayVariable;
-import io.almostrealism.code.ScopeInputManager;
 import io.almostrealism.relation.Producer;
+import io.almostrealism.scope.ArrayVariable;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.data.AudioFilterData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationComputationAdapter;
-import org.almostrealism.CodeFeatures;
 
 import java.util.List;
 
 public class AudioPassFilterComputation extends OperationComputationAdapter<PackedCollection> implements CodeFeatures {
 	public static double MAX_INPUT = 0.99;
 
-	private boolean high;
+	private final boolean high;
 
 	public AudioPassFilterComputation(AudioFilterData data, Producer<PackedCollection> frequency, Producer<PackedCollection> resonance, Producer<PackedCollection> input, boolean high) {
 		super(data.getOutput(),
 				frequency,
-				(Producer) resonance,
-				(Producer) data.getSampleRate(),
-				(Producer) data.getC(),
-				(Producer) data.getA1(),
-				(Producer) data.getA2(),
-				(Producer) data.getA3(),
-				(Producer) data.getB1(),
-				(Producer) data.getB2(),
-				(Producer) data.getInputHistory0(),
-				(Producer) data.getInputHistory1(),
-				(Producer) data.getOutputHistory0(),
-				(Producer) data.getOutputHistory1(),
-				(Producer) data.getOutputHistory2(),
-				(Producer) input);
+				resonance,
+				data.getSampleRate(),
+				data.getC(),
+				data.getA1(),
+				data.getA2(),
+				data.getA3(),
+				data.getB1(),
+				data.getB2(),
+				data.getInputHistory0(),
+				data.getInputHistory1(),
+				data.getOutputHistory0(),
+				data.getOutputHistory1(),
+				data.getOutputHistory2(),
+				input);
 		this.high = high;
 	}
 

@@ -16,13 +16,12 @@
 
 
 package com.almostrealism.light;
-import org.almostrealism.collect.PackedCollection;
 
 import com.almostrealism.texture.IntensityMap;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Vector;
 import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Evaluable;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
 
 public class CubeLight extends LightBulb implements CodeFeatures {
 	private IntensityMap map;
@@ -59,7 +58,7 @@ public class CubeLight extends LightBulb implements CodeFeatures {
 
 	@Override
 	public Producer<PackedCollection> getEmitPosition() {
-		if (this.pos != null) return (Producer) v(this.pos);
+		if (this.pos != null) return v(this.pos);
 		
 		double x = 0.0, y = 0.0, z = 0.0;
 		double r = 1.0;
@@ -77,6 +76,6 @@ public class CubeLight extends LightBulb implements CodeFeatures {
 								this.height * (y - 0.5),
 								this.depth * (z - 0.5));
 		
-		return (Producer) v(this.pos);
+		return v(this.pos);
 	}
 }

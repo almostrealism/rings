@@ -31,9 +31,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ValueSequenceCell extends CollectionTemporalCellAdapter implements SamplingFeatures {
-	private BaseAudioData data;
-	private List<Producer<PackedCollection>> values;
-	private Producer<PackedCollection> durationFrames;
+	private final BaseAudioData data;
+	private final List<Producer<PackedCollection>> values;
+	private final Producer<PackedCollection> durationFrames;
 
 	public ValueSequenceCell(IntFunction<Producer<PackedCollection>> values,
 							 Producer<PackedCollection> duration, int steps) {

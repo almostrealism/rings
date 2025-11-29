@@ -24,8 +24,8 @@ import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.ParameterFunction;
 import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.audio.notes.NoteAudioChoice;
-import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.CollectionProducer;
@@ -56,9 +56,9 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public static boolean enableVerbose = false;
 	public static boolean enableWarnings = true;
 
-	private List<NoteAudioChoice> choices;
-	private List<PatternLayerManager> patterns;
-	private List<ProjectedChromosome> chromosomes;
+	private final List<NoteAudioChoice> choices;
+	private final List<PatternLayerManager> patterns;
+	private final List<ProjectedChromosome> chromosomes;
 
 	private PackedCollection volume;
 	private PackedCollection destination;

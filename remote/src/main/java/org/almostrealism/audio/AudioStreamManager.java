@@ -16,12 +16,12 @@
 
 package org.almostrealism.audio;
 
-import org.almostrealism.audio.stream.AudioServer;
-import org.almostrealism.audio.stream.AudioLineDelegationHandler;
 import org.almostrealism.audio.line.AudioLine;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.audio.line.DelegatedAudioLine;
+import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.audio.stream.AudioLineDelegationHandler;
+import org.almostrealism.audio.stream.AudioServer;
 import org.almostrealism.io.Console;
 import org.almostrealism.io.ConsoleFeatures;
 
@@ -34,7 +34,7 @@ public class AudioStreamManager implements ConsoleFeatures {
 
 	public static double defaultLiveDuration = 180.0;
 
-	private Map<String, BufferedAudioPlayer> players;
+	private final Map<String, BufferedAudioPlayer> players;
 	public AudioServer server;
 
 	public AudioStreamManager() throws IOException {

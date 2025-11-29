@@ -16,18 +16,10 @@
 
 package org.almostrealism.audio.optimize;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import io.almostrealism.code.DataContext;
 import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.arrange.EfxManager;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
@@ -40,7 +32,6 @@ import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
 import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.audio.pattern.PatternLayerManager;
@@ -63,6 +54,15 @@ import org.almostrealism.io.OutputFeatures;
 import org.almostrealism.io.SystemUtils;
 import org.almostrealism.optimize.PopulationOptimizer;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellular> {
 	public static final String POPULATION_FILE = SystemUtils.getLocalDestination("population.json");
 
@@ -79,7 +79,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 
 	public static String LIBRARY = "Library";
 
-	private static ConsoleFeatures console = Console.root().features(AudioSceneOptimizer.class);
+	private static final ConsoleFeatures console = Console.root().features(AudioSceneOptimizer.class);
 
 	static {
 		String env = System.getenv("AR_RINGS_LIBRARY");
@@ -237,7 +237,7 @@ public class AudioSceneOptimizer extends AudioPopulationOptimizer<TemporalCellul
 	 * @see  AudioSceneOptimizer#init
 	 * @see  AudioSceneOptimizer#run()
 	 */
-	public static void main(String args[]) throws IOException {
+	public static void main(String[] args) throws IOException {
 		// Configure logging and profiling
 		Console.root().addListener(OutputFeatures.fileOutput("results/logs/audio-scene.out"));
 		OperationProfileNode profile = setVerbosity(verbosity, enableProfile);

@@ -16,23 +16,23 @@
 
 package org.almostrealism.remote.ops;
 
+import io.grpc.stub.StreamObserver;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.remote.RemoteAccessKey;
 import org.almostrealism.remote.api.Generation;
 import org.almostrealism.remote.api.GeneratorGrpc;
-import io.grpc.stub.StreamObserver;
-import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.util.KeyUtils;
 
 import java.util.List;
 
 public class RefreshRequestor implements StreamObserver<Generation.Status> {
-	private RemoteAccessKey key;
-	private GeneratorGrpc.GeneratorStub generator;
+	private final RemoteAccessKey key;
+	private final GeneratorGrpc.GeneratorStub generator;
 	private StreamObserver<Generation.RefreshRequest> requestStream;
-	private Runnable end;
+	private final Runnable end;
 
-	private WaveDataPublisher publisher;
-	private Receiver deliver;
+	private final WaveDataPublisher publisher;
+	private final Receiver deliver;
 
 	public RefreshRequestor(RemoteAccessKey key, GeneratorGrpc.GeneratorStub generator, Receiver deliver, Runnable end) {
 		this.key = key;

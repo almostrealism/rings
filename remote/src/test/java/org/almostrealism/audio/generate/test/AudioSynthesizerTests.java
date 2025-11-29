@@ -40,7 +40,7 @@ import org.junit.Test;
 import java.io.File;
 
 public class AudioSynthesizerTests implements TestFeatures {
-	private LibraryDestination library = new LibraryDestination("model");
+	private final LibraryDestination library = new LibraryDestination("model");
 
 	@Test
 	public void generate() {

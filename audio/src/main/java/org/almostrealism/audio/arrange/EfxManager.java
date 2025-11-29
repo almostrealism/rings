@@ -45,17 +45,17 @@ public class EfxManager implements CellFeatures {
 	public static double maxFeedback = 0.5;
 	public static int filterOrder = 40;
 
-	private AutomationManager automation;
+	private final AutomationManager automation;
 
-	private ProjectedChromosome chromosome;
+	private final ProjectedChromosome chromosome;
 	private Chromosome<PackedCollection> delayTimes;
 	private Chromosome<PackedCollection> delayLevels;
 	private Chromosome<PackedCollection> delayAutomation;
-	private int channels;
+	private final int channels;
 	private List<Integer> wetChannels;
 
-	private DoubleSupplier beatDuration;
-	private int sampleRate;
+	private final DoubleSupplier beatDuration;
+	private final int sampleRate;
 
 	public EfxManager(ProjectedChromosome chromosome, int channels,
 					  AutomationManager automation,
@@ -74,7 +74,7 @@ public class EfxManager implements CellFeatures {
 	}
 
 	protected void init() {
-		double choices[] = IntStream.range(0, 5)
+		double[] choices = IntStream.range(0, 5)
 				.mapToDouble(i -> Math.pow(2, i - 2))
 				.mapToObj(d -> List.of(d, 1.5 * d))
 				.flatMap(List::stream)

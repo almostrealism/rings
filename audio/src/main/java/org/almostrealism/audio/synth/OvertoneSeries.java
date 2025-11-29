@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OvertoneSeries implements RelativeFrequencySet {
-	private int subCount, superCount, inharmonicCount;
+	private final int subCount;
+	private final int superCount;
+	private final int inharmonicCount;
 
 	public OvertoneSeries(int subCount, int superCount, int inharmonicCount) {
 		this.subCount = subCount;

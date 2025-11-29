@@ -18,13 +18,14 @@ package org.almostrealism.audio.arrange;
 
 import io.almostrealism.cycle.Setup;
 import io.almostrealism.lifecycle.Destroyable;
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.data.ChannelInfo;
+import org.almostrealism.audio.filter.DelayNetwork;
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.filter.DelayNetwork;
 import org.almostrealism.audio.optimize.FixedFilterChromosome;
 import org.almostrealism.audio.optimize.OptimizeFactorFeatures;
 import org.almostrealism.collect.PackedCollection;
@@ -34,7 +35,6 @@ import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.hardware.OperationList;
-import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.ProjectedChromosome;
@@ -72,33 +72,33 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 
 	protected static double reverbLevel = 2.0;
 
-	private AutomationManager automation;
-	private TimeCell clock;
-	private int sampleRate;
+	private final AutomationManager automation;
+	private final TimeCell clock;
+	private final int sampleRate;
 
-	private PackedCollection volumeAdjustmentScale;
-	private PackedCollection mainFilterUpAdjustmentScale;
-	private PackedCollection mainFilterDownAdjustmentScale;
-	private PackedCollection reverbAdjustmentScale;
+	private final PackedCollection volumeAdjustmentScale;
+	private final PackedCollection mainFilterUpAdjustmentScale;
+	private final PackedCollection mainFilterDownAdjustmentScale;
+	private final PackedCollection reverbAdjustmentScale;
 
-	private Chromosome<PackedCollection> volumeSimple;
-	private Chromosome<PackedCollection> mainFilterUpSimple;
-	private Chromosome<PackedCollection> wetInSimple;
+	private final Chromosome<PackedCollection> volumeSimple;
+	private final Chromosome<PackedCollection> mainFilterUpSimple;
+	private final Chromosome<PackedCollection> wetInSimple;
 
-	private Chromosome<PackedCollection> transmission;
-	private Chromosome<PackedCollection> wetOut;
-	private Chromosome<PackedCollection> delay;
+	private final Chromosome<PackedCollection> transmission;
+	private final Chromosome<PackedCollection> wetOut;
+	private final Chromosome<PackedCollection> delay;
 
-	private Chromosome<PackedCollection> delayDynamicsSimple;
+	private final Chromosome<PackedCollection> delayDynamicsSimple;
 
-	private Chromosome<PackedCollection> reverb;
-	private Chromosome<PackedCollection> reverbAutomation;
-	private FixedFilterChromosome wetFilter;
-	private Chromosome<PackedCollection> mainFilterDownSimple;
+	private final Chromosome<PackedCollection> reverb;
+	private final Chromosome<PackedCollection> reverbAutomation;
+	private final FixedFilterChromosome wetFilter;
+	private final Chromosome<PackedCollection> mainFilterDownSimple;
 
 	private List<Integer> reverbChannels;
 
-	private List<Destroyable> dependencies;
+	private final List<Destroyable> dependencies;
 
 	public MixdownManager(ProjectedChromosome chromosome,
 						  int channels, int delayLayers,
@@ -323,14 +323,14 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 							automation.getAggregatedValue(
 									mainFilterUpSimple.valueAt(channelIndex.applyAsInt(i)),
 									p(mainFilterUpAdjustmentScale), -40.0);
-					return hp((Producer) scalar(20000).multiply(v), (Producer) scalar(FixedFilterChromosome.defaultResonance));
+					return hp(scalar(20000).multiply(v), scalar(FixedFilterChromosome.defaultResonance));
 				}));
 			} else {
 				cells = cells.map(fc(i -> {
 					Factor<PackedCollection> f = toAdjustmentGene(clock, sampleRate,
 							p(mainFilterUpAdjustmentScale), mainFilterUpSimple,
 							channelIndex.applyAsInt(i)).valueAt(0);
-					return hp((Producer) scalar(20000).multiply(f.getResultant(c(1.0))), (Producer) scalar(FixedFilterChromosome.defaultResonance));
+					return hp(scalar(20000).multiply(f.getResultant(c(1.0))), scalar(FixedFilterChromosome.defaultResonance));
 				}));
 			}
 		}
@@ -383,7 +383,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 			main = cells.map(fc(v));
 
 			// Branch from wet sources for efx and reverb
-			CellList branch[] = wetSources.branch(
+			CellList[] branch = wetSources.branch(
 					enableEfxFilters ?
 							fc(i -> v.apply(i).andThen(wetFilter.valueAt(channelIndex.applyAsInt(i), 0))) :
 							fc(v),
@@ -393,7 +393,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 			reverb = branch[1];
 		} else {
 			// Branch from main
-			CellList branch[] = cells.branch(
+			CellList[] branch = cells.branch(
 					fc(v),
 					enableEfxFilters ?
 							fc(i -> v.apply(i).andThen(wetFilter.valueAt(channelIndex.applyAsInt(i), 0))) :
@@ -475,7 +475,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		if (disableClean) {
 			List<Receptor<PackedCollection>> measures = output.getMeasures(audioChannel);
 
-			Receptor r[] = new Receptor[measures.size() + 1];
+			Receptor[] r = new Receptor[measures.size() + 1];
 			r[0] = output.getMaster(audioChannel);
 			for (int i = 0; i < measures.size(); i++) r[i + 1] = measures.get(i);
 
@@ -500,7 +500,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 				Factor<PackedCollection> f = toAdjustmentGene(clock, sampleRate,
 						p(mainFilterDownAdjustmentScale), mainFilterDownSimple,
 						channelIndex.applyAsInt(i)).valueAt(0);
-				return lp((Producer) scalar(20000).multiply(f.getResultant(c(1.0))), (Producer) scalar(FixedFilterChromosome.defaultResonance));
+				return lp(scalar(20000).multiply(f.getResultant(c(1.0))), scalar(FixedFilterChromosome.defaultResonance));
 			}));
 		}
 
@@ -547,7 +547,7 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 	 * delivers nothing to the others.
 	 */
 	private Gene<PackedCollection> delayGene(int delays, Gene<PackedCollection> wet) {
-		Factor<PackedCollection> gene[] = new Factor[delays];
+		Factor<PackedCollection>[] gene = new Factor[delays];
 
 		if (enableWetInAdjustment) {
 			gene[0] = factor(wet.valueAt(0));
@@ -608,8 +608,8 @@ public class MixdownManager implements Setup, Destroyable, CellFeatures, Optimiz
 		public double overallMasterFilterDownExponentMin, overallMasterFilterDownExponentMax;
 		public double overallMasterFilterDownOffsetMin, overallMasterFilterDownOffsetMax;
 
-		public double offsetChoices[];
-		public double repeatChoices[];
+		public double[] offsetChoices;
+		public double[] repeatChoices;
 
 		public Configuration() { this(1); }
 

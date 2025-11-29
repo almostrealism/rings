@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SceneSection implements Destroyable {
-	private int position, length;
+	private final int position;
+	private final int length;
 	private List<ChannelSection> channels;
 
 	protected SceneSection(int position, int length,

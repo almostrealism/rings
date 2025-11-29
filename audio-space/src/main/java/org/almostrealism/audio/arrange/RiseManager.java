@@ -16,9 +16,9 @@
 
 package org.almostrealism.audio.arrange;
 
+import io.almostrealism.cycle.Setup;
 import io.almostrealism.profile.OperationMetadata;
 import io.almostrealism.profile.OperationWithInfo;
-import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
@@ -44,12 +44,12 @@ import java.util.function.Supplier;
 public class RiseManager implements Setup, PatternFeatures, CellFeatures {
 	public static final double riseDuration = HealthComputationAdapter.standardDurationSeconds;
 
-	private ProjectedChromosome chromosome;
-	private int sampleRate;
+	private final ProjectedChromosome chromosome;
+	private final int sampleRate;
 
-	private AudioSynthesizer synth;
-	private NoiseGenerator noise;
-	private OperationList setup;
+	private final AudioSynthesizer synth;
+	private final NoiseGenerator noise;
+	private final OperationList setup;
 
 	private PackedCollection destination;
 

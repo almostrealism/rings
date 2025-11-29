@@ -24,8 +24,8 @@ import java.util.function.Supplier;
 
 @Deprecated
 public class WaveDataProviderList implements Setup {
-	private Supplier<Runnable> setup;
-	private List<WaveDataProvider> providers;
+	private final Supplier<Runnable> setup;
+	private final List<WaveDataProvider> providers;
 
 	public WaveDataProviderList(List<WaveDataProvider> providers) {
 		this(providers, new OperationList());

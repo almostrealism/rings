@@ -16,16 +16,16 @@
 
 package com.almostrealism.raytracer;
 
-import java.io.File;
-import java.io.IOException;
-
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.raytrace.FogParameters;
 import org.almostrealism.raytrace.RayIntersectionEngine;
 import org.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.render.RayTracedScene;
 import org.almostrealism.space.Scene;
-import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.texture.ImageCanvas;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author  Michael Murray
@@ -33,7 +33,7 @@ import org.almostrealism.texture.ImageCanvas;
 public class GenerateScene {
 	public static final RenderParameters p = new RenderParameters(0, 0, 300, 150, 300, 150, 4, 4);
 	
-	public static void main(String args[]) throws IOException {
+	public static void main(String[] args) throws IOException {
 		Scene<ShadableSurface> s = new SceneFactory().construct();
 		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine(s, new FogParameters()), s.getCamera(), p);
 		ImageCanvas.encodeImageFile(r.realize(p).get(),

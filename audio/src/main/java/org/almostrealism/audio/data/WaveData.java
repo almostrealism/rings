@@ -16,17 +16,17 @@
 
 package org.almostrealism.audio.data;
 
+import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.compute.ComputeRequirement;
 import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.Ops;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.collect.TraversalPolicy;
-import io.almostrealism.relation.Factor;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.graph.temporal.WaveCellData;
@@ -49,10 +49,10 @@ public class WaveData implements Destroyable, SamplingFeatures {
 
 	public static boolean enableWarnings = false;
 
-	private static Evaluable<PackedCollection> magnitude;
-	private static Evaluable<PackedCollection> fft;
-	private static Evaluable<PackedCollection> pool2d;
-	private static Evaluable<PackedCollection> scaledAdd;
+	private static final Evaluable<PackedCollection> magnitude;
+	private static final Evaluable<PackedCollection> fft;
+	private static final Evaluable<PackedCollection> pool2d;
+	private static final Evaluable<PackedCollection> scaledAdd;
 
 	static {
 		fft = Ops.op(o ->
@@ -301,8 +301,8 @@ public class WaveData implements Destroyable, SamplingFeatures {
 		int frameCount = getFrameCount();
 
 		try (WavFile wav = WavFile.newWavFile(file, 2, frameCount, 24, getSampleRate())) {
-			double leftFrames[] = getChannelData(0).toArray(0, frameCount);
-			double rightFrames[] = getChannelData(1).toArray(0, frameCount);
+			double[] leftFrames = getChannelData(0).toArray(0, frameCount);
+			double[] rightFrames = getChannelData(1).toArray(0, frameCount);
 
 			for (int i = 0; i < frameCount; i++) {
 				double l = leftFrames[i];

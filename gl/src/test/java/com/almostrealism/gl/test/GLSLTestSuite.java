@@ -17,9 +17,9 @@
 package com.almostrealism.gl.test;
 
 import com.almostrealism.gl.GLSLPrintWriter;
+import io.almostrealism.code.Computation;
 import io.almostrealism.code.Precision;
 import org.almostrealism.algebra.Pair;
-import io.almostrealism.code.Computation;
 import org.almostrealism.c.CLanguageOperations;
 import org.junit.Test;
 
@@ -37,7 +37,7 @@ public class GLSLTestSuite {
 	}
 
 	public void encodePairFunction(Computation<Pair> f) {
-		if (f instanceof Computation == false) {
+		if (!(f instanceof Computation)) {
 			throw new IllegalArgumentException(f + " is not a Computation, a requirement for encoding to GLSL");
 		}
 
@@ -45,7 +45,7 @@ public class GLSLTestSuite {
 		p.println(f.getScope(null));
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		new GLSLTestSuite().encodeComputations();
 //		System.exit(0); TODO
 	}

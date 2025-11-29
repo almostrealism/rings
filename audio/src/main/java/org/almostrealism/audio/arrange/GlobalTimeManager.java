@@ -33,9 +33,9 @@ import java.util.stream.IntStream;
 public class GlobalTimeManager implements Setup, Temporal, ConsoleFeatures {
 	public static final int MAX_RESETS = 32;
 
-	private TimeCell clock;
-	private List<Integer> resets;
-	private IntUnaryOperator frameForMeasure;
+	private final TimeCell clock;
+	private final List<Integer> resets;
+	private final IntUnaryOperator frameForMeasure;
 
 	public GlobalTimeManager(IntUnaryOperator frameForMeasure) {
 		this.clock = new TimeCell(MAX_RESETS);

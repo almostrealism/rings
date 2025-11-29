@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class KeyFramer {
-	private double salientRatio;
-	private long collapseWindow;
+	private final double salientRatio;
+	private final long collapseWindow;
 
 	public KeyFramer(double salientRatio, long collapseWindow) {
 		this.salientRatio = salientRatio;
@@ -54,8 +54,8 @@ public class KeyFramer {
 
 	protected void sequentialDeltas(List<VideoImage> vectors) {
 		for (int i = 1; i < vectors.size(); i++) {
-			double a[] = vectors.get(i - 1).getHistogram();
-			double b[] = vectors.get(i).getHistogram();
+			double[] a = vectors.get(i - 1).getHistogram();
+			double[] b = vectors.get(i).getHistogram();
 			vectors.get(i).setHistogramDelta(length(IntStream.range(0, a.length).mapToDouble(x -> b[x] - a[x]).toArray()));
 		}
 	}
@@ -98,7 +98,7 @@ public class KeyFramer {
 		return a.stream().filter(v -> !fb.contains(v)).count() + b.stream().filter(v -> !fa.contains(v)).count();
 	}
 
-	private double length(double a[]) {
+	private double length(double[] a) {
 		return IntStream.range(0, a.length).mapToDouble(i -> a[i] * a[i]).sum();
 	}
 }

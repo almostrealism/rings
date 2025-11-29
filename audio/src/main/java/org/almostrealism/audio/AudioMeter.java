@@ -18,6 +18,8 @@
 package org.almostrealism.audio;
 
 import io.almostrealism.lifecycle.Lifecycle;
+import io.almostrealism.relation.Producer;
+import io.almostrealism.relation.Provider;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.algebra.PairFeatures;
 import org.almostrealism.algebra.ScalarFeatures;
@@ -25,8 +27,6 @@ import org.almostrealism.audio.computations.ClipCounter;
 import org.almostrealism.audio.computations.SilenceDurationComputation;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.Receptor;
-import io.almostrealism.relation.Producer;
-import io.almostrealism.relation.Provider;
 import org.almostrealism.hardware.OperationList;
 
 import java.util.ArrayList;
@@ -37,13 +37,13 @@ import java.util.function.Supplier;
 public class AudioMeter implements Receptor<PackedCollection>, Lifecycle, ScalarFeatures, PairFeatures {
 	private Receptor<PackedCollection> forwarding;
 	
-	private PackedCollection clipCount = new PackedCollection(1);
-	private Pair clipSettings = new Pair(-1.0, 1.0);
+	private final PackedCollection clipCount = new PackedCollection(1);
+	private final Pair clipSettings = new Pair(-1.0, 1.0);
 	
-	private PackedCollection silenceValue = new PackedCollection(1);
-	private PackedCollection silenceDuration = new PackedCollection(1);
+	private final PackedCollection silenceValue = new PackedCollection(1);
+	private final PackedCollection silenceDuration = new PackedCollection(1);
 
-	private List<Consumer<PackedCollection>> listeners;
+	private final List<Consumer<PackedCollection>> listeners;
 	
 	public AudioMeter() {
 		listeners = new ArrayList<>();

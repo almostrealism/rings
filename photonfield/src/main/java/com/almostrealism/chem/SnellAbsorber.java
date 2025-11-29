@@ -17,16 +17,15 @@
 
 package com.almostrealism.chem;
 
+import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.Clock;
+import org.almostrealism.space.Volume;
 
 import java.util.ArrayList;
-
-import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.physics.Absorber;
-import org.almostrealism.space.Volume;
-import org.almostrealism.physics.Clock;
-import org.almostrealism.CodeFeatures;
 
 /**
  * A {@link SnellAbsorber} is an Absorber implementation that absorbs and emits photons
@@ -38,15 +37,15 @@ import org.almostrealism.CodeFeatures;
 public class SnellAbsorber implements Absorber, CodeFeatures {
 	private Volume<?> volume;
 	private Clock clock;
-	private ArrayList<Object[]> queue = new ArrayList<>();
-	private double[] n = {0, 0}; // Refraction values for mediums 
+	private final ArrayList<Object[]> queue = new ArrayList<>();
+	private final double[] n = {0, 0}; // Refraction values for mediums
 		
 	// Upon absorption energy of incoming rays is added to the Queue as an array
 	// with important information, like angle and energy, so that conservation is correct.
 	public boolean absorb(Vector Position, Vector Direction, double Energy) {
 		if (!this.volume.inside(v(Position))) return false;
 		
-		Object data[] = {Position, Direction, new double[] { Energy }};
+		Object[] data = {Position, Direction, new double[] { Energy }};
 		queue.add(data);
 		return true;
 	}
@@ -67,7 +66,7 @@ public class SnellAbsorber implements Absorber, CodeFeatures {
 	public Producer<PackedCollection> emit() {
 		if (queue.isEmpty()) return null;
 		
-		double d[];
+		double[] d;
 		Vector normal;
 		double alpha;
 		// Creating n values for refractive surfaces

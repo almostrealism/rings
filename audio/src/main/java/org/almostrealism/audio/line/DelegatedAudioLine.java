@@ -22,7 +22,7 @@ import org.almostrealism.collect.PackedCollection;
 public class DelegatedAudioLine implements AudioLine, Delegated<AudioLine> {
 	private InputLine inputDelegate;
 	private OutputLine outputDelegate;
-	private int bufferSize;
+	private final int bufferSize;
 
 	private double passthrough;
 

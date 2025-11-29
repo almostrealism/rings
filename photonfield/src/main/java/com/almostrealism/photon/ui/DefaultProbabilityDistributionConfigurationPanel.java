@@ -16,31 +16,31 @@
 
 package com.almostrealism.photon.ui;
 
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-
 import org.almostrealism.color.OverlayDistribution;
 import org.almostrealism.color.ProbabilityDistribution;
 import org.almostrealism.obj.ObjectFactory;
+
+import javax.swing.*;
 
 /**
  * @author  Mike Murray
  */
 public class DefaultProbabilityDistributionConfigurationPanel extends JPanel
 															implements ObjectFactory {
-	private double e = Math.pow(10.0, -15.0);
-	private Integer divOpt[] = { new Integer(2),
-								new Integer(3),
-								new Integer(4),
-								new Integer(5),
-								new Integer(6),
-								new Integer(7),
-								new Integer(8),
-								new Integer(9),
-								new Integer(10),
-								new Integer(15)};
-	private JComboBox divBox;
-	private double start = 0.350, end = 0.780;
+	private final double e = Math.pow(10.0, -15.0);
+	private final Integer[] divOpt = {Integer.valueOf(2),
+			Integer.valueOf(3),
+			Integer.valueOf(4),
+			Integer.valueOf(5),
+			Integer.valueOf(6),
+			Integer.valueOf(7),
+			Integer.valueOf(8),
+			Integer.valueOf(9),
+			Integer.valueOf(10),
+			Integer.valueOf(15)};
+	private final JComboBox divBox;
+	private final double start = 0.350;
+	private final double end = 0.780;
 	
 	public DefaultProbabilityDistributionConfigurationPanel() {
 		this.divBox = new JComboBox(this.divOpt);
@@ -71,8 +71,8 @@ public class DefaultProbabilityDistributionConfigurationPanel extends JPanel
 		return pdf;
 	}
 	
-	public Object overlay(Object values[]) {
-		ProbabilityDistribution d[] = new ProbabilityDistribution[values.length];
+	public Object overlay(Object[] values) {
+		ProbabilityDistribution[] d = new ProbabilityDistribution[values.length];
 		for (int i = 0; i < d.length; i++) d[i] = (ProbabilityDistribution) values[i];
 		return OverlayDistribution.createOverlayDistribution(d);
 	}

@@ -18,9 +18,6 @@ package org.almostrealism.audio.filter.test;
 
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.filter.DelayNetwork;
-import org.almostrealism.hardware.jni.NativeCompiler;
-import org.almostrealism.hardware.metal.MetalProgram;
-import org.almostrealism.util.TestSettings;
 import org.junit.Test;
 
 import java.io.File;

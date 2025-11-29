@@ -18,6 +18,7 @@ package org.almostrealism.audio;
 
 import io.almostrealism.cycle.Setup;
 import io.almostrealism.lifecycle.Destroyable;
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.line.AudioLineOperation;
 import org.almostrealism.audio.line.BufferedAudio;
@@ -27,12 +28,11 @@ import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.line.SharedMemoryAudioLine;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.graph.temporal.DefaultWaveCellData;
-import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.Receptor;
+import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
+import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.hardware.OperationList;
-import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalList;
@@ -53,11 +53,11 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class CellList extends ArrayList<Cell<PackedCollection>> implements Cells, Destroyable {
-	private List<CellList> parents;
-	private List<Receptor<PackedCollection>> roots;
-	private List<Setup> setups;
-	private TemporalList requirements;
-	private List<Runnable> finals;
+	private final List<CellList> parents;
+	private final List<Receptor<PackedCollection>> roots;
+	private final List<Setup> setups;
+	private final TemporalList requirements;
+	private final List<Runnable> finals;
 
 	private List<PackedCollection> data;
 

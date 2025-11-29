@@ -16,23 +16,22 @@
 
 package com.almostrealism.network.test;
 
-import org.almostrealism.color.PointLight;
 import io.almostrealism.code.ComputableBase;
-import org.almostrealism.collect.CollectionProducer;
-import org.almostrealism.primitives.Sphere;
-import org.almostrealism.color.DiffuseShader;
-import org.almostrealism.raytrace.IntersectionalLightingEngine;
 import io.almostrealism.code.OperationAdapter;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.color.DiffuseShader;
 import org.almostrealism.color.Light;
+import org.almostrealism.color.PointLight;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.color.computations.GeneratedColorProducer;
 import org.almostrealism.geometry.Curve;
 import org.almostrealism.geometry.Intersectable;
-import org.almostrealism.geometry.Ray;
+import org.almostrealism.primitives.Sphere;
+import org.almostrealism.raytrace.IntersectionalLightingEngine;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
@@ -46,7 +45,7 @@ public class IntersectionalLightingEngineTest implements TestFeatures {
 		Curve<PackedCollection> s = new Sphere();
 		((AbstractSurface) s).addShader(DiffuseShader.defaultDiffuseShader);
 
-		ShaderContext c = new ShaderContext((Curve) s, l);
+		ShaderContext c = new ShaderContext(s, l);
 
 		return new IntersectionalLightingEngine(r, (Intersectable) s,
 				new ArrayList<>(), l, new ArrayList<>(), c);

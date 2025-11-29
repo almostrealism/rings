@@ -16,10 +16,10 @@
 
 package org.almostrealism.swing.panels;
 
-import javax.swing.JTable;
-
-import org.almostrealism.swing.EditablePropertiesTableModel;
 import io.almostrealism.relation.Editable;
+import org.almostrealism.swing.EditablePropertiesTableModel;
+
+import javax.swing.*;
 
 /**
   An EditPanel object can be used to allow a user to set the properties
@@ -28,7 +28,7 @@ import io.almostrealism.relation.Editable;
 
 public class EditPanel extends JTable {
   private Editable editing;
-  private EditablePropertiesTableModel tableModel;
+  private final EditablePropertiesTableModel tableModel;
 
 	/**
 	  Constructs a new EditPanel object that can be used to modify

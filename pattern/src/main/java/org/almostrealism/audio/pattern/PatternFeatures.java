@@ -6,7 +6,6 @@ import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.audio.notes.NoteAudioContext;
-import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.mem.Heap;
 import org.almostrealism.io.DistributionMetric;

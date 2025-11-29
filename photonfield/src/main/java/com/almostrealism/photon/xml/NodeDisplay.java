@@ -16,12 +16,12 @@
 
 package com.almostrealism.photon.xml;
 
-import java.awt.Container;
+import java.awt.*;
 
 public interface NodeDisplay {
-	public Node getNode();
-	public Container getContainer();
-	public Container getFrame();
-	public int getGridWidth();
-	public int getGridHeight();
+	Node getNode();
+	Container getContainer();
+	Container getFrame();
+	int getGridWidth();
+	int getGridHeight();
 }

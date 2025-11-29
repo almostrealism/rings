@@ -16,6 +16,28 @@
 
 package com.almostrealism.network;
 
+import com.almostrealism.raytracer.Settings;
+import io.almostrealism.relation.Producer;
+import io.flowtree.job.Job;
+import io.flowtree.job.JobFactory;
+import io.flowtree.job.Output;
+import org.almostrealism.CodeFeatures;
+import org.almostrealism.color.DiffuseShader;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.geometry.Camera;
+import org.almostrealism.io.FilePrintWriter;
+import org.almostrealism.io.JobOutput;
+import org.almostrealism.projection.PinholeCamera;
+import org.almostrealism.raytrace.FogParameters;
+import org.almostrealism.raytrace.RayIntersectionEngine;
+import org.almostrealism.raytrace.RenderParameters;
+import org.almostrealism.render.RayTracedScene;
+import org.almostrealism.render.RayTracer;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.SceneLoader;
+import org.almostrealism.texture.ImageCanvas;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,30 +52,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
-
-import org.almostrealism.render.RayTracer;
-import org.almostrealism.space.SceneLoader;
-import org.almostrealism.raytrace.FogParameters;
-import org.almostrealism.raytrace.RayIntersectionEngine;
-import org.almostrealism.raytrace.RenderParameters;
-import org.almostrealism.render.RayTracedScene;
-import io.flowtree.job.JobFactory;
-import io.flowtree.job.Output;
-import org.almostrealism.geometry.Camera;
-import org.almostrealism.color.RGB;
-import org.almostrealism.io.JobOutput;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.space.Scene;
-import org.almostrealism.color.ShadableSurface;
-
-import org.almostrealism.io.FilePrintWriter;
-import org.almostrealism.projection.PinholeCamera;
-import org.almostrealism.color.DiffuseShader;
-import com.almostrealism.raytracer.Settings;
-
-import io.flowtree.job.Job;
-import org.almostrealism.texture.ImageCanvas;
-import org.almostrealism.CodeFeatures;
 
 /**
  * A {@link RayTracingJob} provides an implementation of {@link Job} that renders a rectangular
@@ -110,7 +108,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 	private double cdx, cdy, cdz;
 
 	private ExecutorService pool;
-	private CompletableFuture<Void> future = new CompletableFuture<>();
+	private final CompletableFuture<Void> future = new CompletableFuture<>();
 	private Consumer<JobOutput> outputConsumer;
 
 	/**
@@ -189,30 +187,30 @@ public class RayTracingJob implements Job, CodeFeatures {
 	 * @return The updated image array
 	 * @throws IllegalArgumentException if the panel coordinates exceed the image bounds
 	 */
-	public static RGB[][] processOutput(RayTracingJobOutput data, RGB image[][], int x, int y, int dx, int dy) {
+	public static RGB[][] processOutput(RayTracingJobOutput data, RGB[][] image, int x, int y, int dx, int dy) {
 		Iterator itr = data.iterator();
 
 		if (x + dx > image.length || y + dy > image[x].length) {
 			throw new IllegalArgumentException(x + "," + y + JobFactory.ENTRY_SEPARATOR + dx + "x" + dy + " is not contained in the image");
 		}
-		
-		j: for (int j = 0; itr.hasNext() ; j++) {
+
+		for (int j = 0; itr.hasNext(); j++) {
 			int ax = x + j % dx;
 			int ay = y + j / dx;
-			
+
 			try {
 				RGB rgb = (RGB) itr.next();
-				
+
 				if (image[ax][ay] != null)
 					System.out.println("RayTracingJob.processOutput (" + j + "): " +
 							"Duplicate pixel data at " + ax + ", " + ay + " = " +
 							image[ax][ay] + " -- " + rgb);
-				
+
 				image[ax][ay] = rgb;
 			} catch (ArrayIndexOutOfBoundsException obe) {
 				System.out.println("RayTracingJob.processOutput (" +
-									image.length + ", " + image[0].length +
-									"  " + ax + ", " + ay + "): " + obe);
+						image.length + ", " + image[0].length +
+						"  " + ax + ", " + ay + "): " + obe);
 			}
 		}
 		
@@ -271,7 +269,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 				} catch (InterruptedException ie) {}
 			} else if (s == null) {
 				try {
-					this.loading.add(this.sceneUri);
+					loading.add(this.sceneUri);
 
 					SceneLoader loader = (uri) -> {
 						try {
@@ -317,10 +315,10 @@ public class RayTracingJob implements Job, CodeFeatures {
 										") not found.");
 				}
 				
-				this.loading.remove(this.sceneUri);
-				break i;
+				loading.remove(this.sceneUri);
+				break;
 			} else {
-				this.loading.remove(this.sceneUri);
+				loading.remove(this.sceneUri);
 				return s;
 			}
 		}
@@ -498,8 +496,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 			this.cdy = Double.parseDouble(value);
 		else if (key.equals("cdz"))
 			this.cdz = Double.parseDouble(value);
-		else
-			return;
+		else {}
 	}
 	
 	/**
@@ -572,8 +569,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 			double nfl = ((PinholeCamera)camera).getFocalLength();
 			if (this.fl != -1) nfl = this.fl;
 			
-			org.almostrealism.algebra.Vector cd = (org.almostrealism.algebra.Vector)
-								((PinholeCamera)camera).getViewDirection().clone();
+			org.almostrealism.algebra.Vector cd = ((PinholeCamera)camera).getViewDirection().clone();
 			
 			if (this.cdz != 0 ||
 				this.cdy != 0 ||
@@ -581,8 +577,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 				cd = new org.almostrealism.algebra.Vector(this.cdx, this.cdy, this.cdz);
 			}
 			
-			org.almostrealism.algebra.Vector cl = (org.almostrealism.algebra.Vector)
-								((PinholeCamera)camera).getLocation().clone();
+			org.almostrealism.algebra.Vector cl = ((PinholeCamera)camera).getLocation().clone();
 			
 			if (this.clz != 0 ||
 					this.cly != 0 ||
@@ -597,11 +592,11 @@ public class RayTracingJob implements Job, CodeFeatures {
 		long start = System.currentTimeMillis();
 		
 		RenderParameters p = new RenderParameters(x, y, dx, dy, w, h, ssw, ssh);
-		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine((Scene<ShadableSurface>) s,
+		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine(s,
 												new FogParameters()), s.getCamera(), p, getExecutorService());
 		Producer<RGB[][]> renderedImageData = r.realize(p);
 
-		RGB rgb[][] = renderedImageData.get().evaluate(x, y);
+		RGB[][] rgb = renderedImageData.get().evaluate(x, y);
 		
 		long time = System.currentTimeMillis() - start;
 		
@@ -697,7 +692,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof RayTracingJob == false) return false;
+		if (!(o instanceof RayTracingJob)) return false;
 		
 		RayTracingJob j = (RayTracingJob) o;
 		
@@ -710,26 +705,23 @@ public class RayTracingJob implements Job, CodeFeatures {
 		if (this.w != j.w) return false;
 		if (this.h != j.h) return false;
 		if (this.ssw != j.ssw) return false;
-		if (this.ssh != j.ssh) return false;
-		
-		return true;
+		return this.ssh == j.ssh;
 	}
 	
 	public String toString() {
-	    StringBuffer s = new StringBuffer();
 
-	    s.append("[task ");
-	    s.append(this.jobId);
-	    s.append(" (");
-	    s.append(this.x);
-	    s.append(", ");
-	    s.append(this.y);
-	    s.append(") ");
-	    s.append(this.dx);
-	    s.append("x");
-	    s.append(this.dy);
-	    s.append("]");
+		String s = "[task " +
+				this.jobId +
+				" (" +
+				this.x +
+				", " +
+				this.y +
+				") " +
+				this.dx +
+				"x" +
+				this.dy +
+				"]";
 	    
-	    return s.toString();
+	    return s;
 	}
 }

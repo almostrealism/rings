@@ -16,25 +16,21 @@
 
 package com.almostrealism.photon.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import org.almostrealism.color.RGB;
-import org.almostrealism.texture.ImageCanvas;
-
 import com.almostrealism.texture.CosineIntensityMap;
 import com.almostrealism.texture.IntensityMap;
 import com.almostrealism.texture.Turbulence;
+import org.almostrealism.color.RGB;
+import org.almostrealism.texture.ImageCanvas;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class IntensityMapPanel extends JPanel {
-	private IntensityMap map;
-	private ImageCanvas display;
+	private final IntensityMap map;
+	private final ImageCanvas display;
 	
-	public static void main(String args[]) throws InstantiationException,
+	public static void main(String[] args) throws InstantiationException,
 											IllegalAccessException,
 											ClassNotFoundException {
 		IntensityMap map;
@@ -79,7 +75,7 @@ public class IntensityMapPanel extends JPanel {
 	public void updateDisplay() {
 		int w = this.display.getWidth();
 		int h = this.display.getHeight();
-		RGB image[][] = new RGB[w][h];
+		RGB[][] image = new RGB[w][h];
 		
 		for (int i = 0; i < w; i++) {
 			double u = ((double)i)/((double)w);

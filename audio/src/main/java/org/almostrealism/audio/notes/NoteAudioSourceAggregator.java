@@ -16,8 +16,8 @@
 
 package org.almostrealism.audio.notes;
 
-import io.almostrealism.relation.Evaluable;
 import io.almostrealism.compute.Process;
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.sources.ModularSourceAggregator;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public class NoteAudioSourceAggregator implements CodeFeatures {
 	public static boolean enableAdvancedAggregation = true;
 
-	private List<AggregatorChoice> aggregators;
+	private final List<AggregatorChoice> aggregators;
 
 	public NoteAudioSourceAggregator() {
 		aggregators = new ArrayList<>();
@@ -89,8 +89,8 @@ public class NoteAudioSourceAggregator implements CodeFeatures {
 	}
 
 	protected static class AggregatorChoice {
-		private SourceAggregator aggregator;
-		private double weight;
+		private final SourceAggregator aggregator;
+		private final double weight;
 
 		public AggregatorChoice(SourceAggregator aggregator, double weight) {
 			this.aggregator = aggregator;

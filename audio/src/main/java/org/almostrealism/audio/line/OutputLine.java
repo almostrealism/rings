@@ -20,7 +20,6 @@ import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.io.SystemUtils;
 
 import java.util.function.Supplier;
 

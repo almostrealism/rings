@@ -35,11 +35,11 @@ public class BufferedOutputScheduler implements CellFeatures {
 	public static boolean enableVerbose = false;
 	public static int logRate = 1024;
 
-	private Consumer<Runnable> executor;
-	private TemporalRunner process;
-	private InputLine input;
-	private OutputLine output;
-	private AudioBuffer buffer;
+	private final Consumer<Runnable> executor;
+	private final TemporalRunner process;
+	private final InputLine input;
+	private final OutputLine output;
+	private final AudioBuffer buffer;
 
 	private TimingRegularizer regularizer;
 	private Runnable next;
@@ -48,8 +48,8 @@ public class BufferedOutputScheduler implements CellFeatures {
 	private boolean stopped;
 	private long count;
 
-	private double rate;
-	private int groupSize;
+	private final double rate;
+	private final int groupSize;
 	private int lastReadPosition;
 	private long groupStart;
 

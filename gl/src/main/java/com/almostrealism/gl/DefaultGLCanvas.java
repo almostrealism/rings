@@ -16,7 +16,36 @@
 
 package com.almostrealism.gl;
 
-import java.awt.Component;
+import com.almostrealism.renderable.GroundPlane;
+import com.almostrealism.renderable.Quad3;
+import com.almostrealism.renderable.Renderable;
+import com.jogamp.common.util.IOUtil;
+import com.jogamp.newt.Window;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES1;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLContext;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.GLException;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.GLBuffers;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
+import io.almostrealism.code.Precision;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.c.CLanguageOperations;
+import org.almostrealism.color.RGBA;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.geometry.BasicGeometry;
+import org.almostrealism.projection.OrthographicCamera;
+import org.almostrealism.projection.PinholeCamera;
+import org.almostrealism.space.Scene;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -28,30 +57,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.List;
-
-import io.almostrealism.code.Precision;
-import org.almostrealism.c.CLanguageOperations;
-import org.almostrealism.projection.OrthographicCamera;
-import com.almostrealism.renderable.GroundPlane;
-import com.almostrealism.renderable.Quad3;
-import com.jogamp.common.util.IOUtil;
-import com.jogamp.opengl.*;
-import com.jogamp.opengl.awt.GLJPanel;
-
-import com.jogamp.opengl.util.GLBuffers;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureData;
-import com.jogamp.opengl.util.texture.TextureIO;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.RGBA;
-import org.almostrealism.geometry.BasicGeometry;
-
-import org.almostrealism.projection.PinholeCamera;
-import com.almostrealism.renderable.Renderable;
-import com.jogamp.newt.Window;
-import com.jogamp.opengl.util.FPSAnimator;
-import org.almostrealism.space.Scene;
-import org.almostrealism.color.ShadableSurface;
 
 public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListener, MouseListener,
 																MouseMotionListener, KeyListener {
@@ -70,7 +75,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 
 	private static long sRandomSeed = 0;
 
-	private FPSAnimator animator;
+	private final FPSAnimator animator;
 	public static int frames;
 	public int x, y;
 	public int width, height;
@@ -100,7 +105,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	private String skydomeSuffix;
 	private boolean skydomeMipmapped;
 
-	private GLLightingConfiguration lighting;
+	private final GLLightingConfiguration lighting;
 
 	private boolean toReset;
 
@@ -111,7 +116,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	private int prevMouseX, prevMouseY;
 
 	public DefaultGLCanvas() {
-		this(new GLScene(new Scene()), (Texture) null);
+		this(new GLScene(new Scene()), null);
 	}
 
 	public DefaultGLCanvas(GLScene s, Texture skydome) {
@@ -178,7 +183,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	public PinholeCamera getCamera() { return (PinholeCamera) renderables.getCamera(); }
 
 	public void lookAt(BasicGeometry g) {
-		float f[] = g.getPosition();
+		float[] f = g.getPosition();
 		getCamera().setViewingDirection(new Vector(f[0], f[1], f[2]));
 	}
 
@@ -386,7 +391,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 	}
 
 	public static void camTrack(GLDriver gl) {
-		float lerp[] = new float[5];
+		float[] lerp = new float[5];
 		float eX, eY, eZ, cX, cY, cZ;
 		float trackPos;
 		AnimationTrack cam;
@@ -401,7 +406,7 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		}
 
 		sNextCamTrackStartTick = sCurrentCamTrackStartTick +
-				AnimationTrack.tracks[sCurrentCamTrack].len * AnimationTrack.LEN;
+				(long) AnimationTrack.tracks[sCurrentCamTrack].len * AnimationTrack.LEN;
 
 		cam = AnimationTrack.tracks[sCurrentCamTrack];
 		currentCamTick = sTick - sCurrentCamTrackStartTick;
@@ -554,16 +559,13 @@ public abstract class DefaultGLCanvas extends GLJPanel implements GLEventListene
 		float width, height;
 		Object source = e.getSource();
 
-		if (source instanceof Window) {
-			Window window = (Window) source;
+		if (source instanceof Window window) {
 			width = window.getWidth();
 			height = window.getHeight();
-		} else if (source instanceof GLAutoDrawable) {
-			GLAutoDrawable glad = (GLAutoDrawable) source;
+		} else if (source instanceof GLAutoDrawable glad) {
 			width = glad.getSurfaceWidth();
 			height = glad.getSurfaceHeight();
-		} else if (GLProfile.isAWTAvailable() && source instanceof java.awt.Component) {
-			Component comp = (Component) source;
+		} else if (GLProfile.isAWTAvailable() && source instanceof Component comp) {
 			width = comp.getWidth();
 			height = comp.getHeight();
 		} else {

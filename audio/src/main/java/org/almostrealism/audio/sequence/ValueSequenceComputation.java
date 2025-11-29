@@ -17,20 +17,18 @@
 package org.almostrealism.audio.sequence;
 
 import io.almostrealism.kernel.KernelStructureContext;
+import io.almostrealism.relation.Producer;
+import io.almostrealism.relation.Provider;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.scope.Scope;
-import io.almostrealism.relation.Evaluable;
-import io.almostrealism.relation.Producer;
-import io.almostrealism.relation.Provider;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.BaseAudioData;
 import org.almostrealism.hardware.OperationComputationAdapter;
-import org.almostrealism.CodeFeatures;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -51,13 +49,13 @@ public abstract class ValueSequenceComputation extends OperationComputationAdapt
 	public ArrayVariable getWaveLength() { return getArgument(2); }
 	public ArrayVariable getDurationFrames() { return getArgument(3); }
 
-	public Producer<PackedCollection> output() { return (Producer) getInputs().get(0); }
-	public Producer<PackedCollection> wavePosition() { return (Producer) getInputs().get(1); }
-	public Producer<PackedCollection> durationFrames() { return (Producer) getInputs().get(3); }
+	public Producer<PackedCollection> output() { return getInputs().get(0); }
+	public Producer<PackedCollection> wavePosition() { return getInputs().get(1); }
+	public Producer<PackedCollection> durationFrames() { return getInputs().get(3); }
 
 	public <T> List<T> choices(Function<Producer<PackedCollection>, T> processor) {
 		return IntStream.range(4, getInputs().size())
-				.mapToObj(i -> (T) processor.apply((Producer) getInputs().get(i)))
+				.mapToObj(i -> (T) processor.apply(getInputs().get(i)))
 				.collect(Collectors.toList());
 	}
 
@@ -66,7 +64,7 @@ public abstract class ValueSequenceComputation extends OperationComputationAdapt
 
 	private static Producer[] inputArgs(BaseAudioData data, Producer<PackedCollection> durationFrames,
 										PackedCollection output, Producer<PackedCollection>... choices) {
-		Producer args[] = new Producer[4 + choices.length];
+		Producer[] args = new Producer[4 + choices.length];
 		args[0] = () -> new Provider<>(output);
 		args[1] = data.getWavePosition();
 		args[2] = data.getWaveLength();

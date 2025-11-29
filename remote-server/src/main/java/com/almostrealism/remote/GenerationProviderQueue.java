@@ -25,9 +25,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GenerationProviderQueue {
-	private ExecutorService executor;
-	private GenerationProvider provider;
-	private List<String> currentRequests;
+	private final ExecutorService executor;
+	private final GenerationProvider provider;
+	private final List<String> currentRequests;
 
 	public GenerationProviderQueue(GenerationProvider provider) {
 		this.executor = Executors.newSingleThreadExecutor();

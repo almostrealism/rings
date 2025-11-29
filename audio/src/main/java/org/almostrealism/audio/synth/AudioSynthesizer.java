@@ -40,10 +40,10 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class AudioSynthesizer implements Temporal, StatelessSource, SamplingFeatures {
-	private RelativeFrequencySet tones;
+	private final RelativeFrequencySet tones;
 
-	private List<SineWaveCell> cells;
-	private SummationCell output;
+	private final List<SineWaveCell> cells;
+	private final SummationCell output;
 	private KeyboardTuning tuning;
 	private AudioSynthesisModel model;
 

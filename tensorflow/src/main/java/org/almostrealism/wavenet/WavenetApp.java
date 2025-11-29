@@ -7,7 +7,7 @@ import org.tensorflow.types.TInt32;
 public class WavenetApp {
 	public static boolean fastGeneration = true;
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		WavenetModel net = new WavenetModel();
 
 	}

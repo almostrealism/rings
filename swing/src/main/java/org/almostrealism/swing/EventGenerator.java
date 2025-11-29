@@ -25,12 +25,12 @@ public interface EventGenerator {
 	/**
 	  Sets the EventHandler that is used by this EventGenerator.
 	*/
-	
-	public void setEventHandler(EventHandler handler);
+
+	void setEventHandler(EventHandler handler);
 	
 	/**
 	  Returns the EventHandler that is being used by this EventGenerator.
 	*/
-	
-	public EventHandler getEventHandler();
+
+	EventHandler getEventHandler();
 }

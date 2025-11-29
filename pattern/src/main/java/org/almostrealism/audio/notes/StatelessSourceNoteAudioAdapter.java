@@ -37,10 +37,10 @@ import java.util.function.DoubleFunction;
  * @author  Michael Murray
  */
 public abstract class StatelessSourceNoteAudioAdapter implements PatternNoteAudio, CodeFeatures {
-	private StatelessSource source;
+	private final StatelessSource source;
 
-	private BufferDetails buffer;
-	private Factor<PackedCollection> params;
+	private final BufferDetails buffer;
+	private final Factor<PackedCollection> params;
 
 	/**
 	 * Constructs a {@link StatelessSourceNoteAudioAdapter} using the

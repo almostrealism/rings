@@ -17,20 +17,19 @@
 package org.almostrealism.swing;
 
 
-import java.awt.*;
-import java.util.Enumeration;
-import java.util.Vector;
-
 import org.almostrealism.swing.dialogs.DialogCloseEvent;
 
 import javax.swing.*;
+import java.awt.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
   An EventHandler object provides an interface for comunication between EventGenerators and EventListeners.
 */
 
 public class EventHandler {
-  private Vector listeners;
+  private final Vector listeners;
 
 	/**
 	  Constructs a new EventHandler object with no listeners.
@@ -84,7 +83,7 @@ public class EventHandler {
 			i: while (en.hasMoreElements()) {
 				if (en.nextElement() == dialog) {
 					index = i;
-					break i;
+					break;
 				}
 				
 				i++;

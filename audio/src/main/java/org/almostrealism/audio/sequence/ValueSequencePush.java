@@ -16,18 +16,17 @@
 
 package org.almostrealism.audio.sequence;
 
-import io.almostrealism.kernel.KernelStructureContext;
-import io.almostrealism.scope.HybridScope;
 import io.almostrealism.code.ScopeInputManager;
+import io.almostrealism.kernel.KernelStructureContext;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.computations.Switch;
+import io.almostrealism.scope.HybridScope;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.collect.CollectionProducer;
+import org.almostrealism.algebra.computations.Switch;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.temporal.BaseAudioData;
 
 public class ValueSequencePush extends ValueSequenceComputation implements CodeFeatures {
-	private Switch choice;
+	private final Switch choice;
 
 	public ValueSequencePush(BaseAudioData data,
 							 Producer<PackedCollection> durationFrames,
@@ -41,7 +40,7 @@ public class ValueSequencePush extends ValueSequenceComputation implements CodeF
 							 PackedCollection output, boolean repeat,
 							 Producer<PackedCollection>... choices) {
 		super(data, durationFrames, output, repeat, choices);
-		choice = new Switch((CollectionProducer) divide(wavePosition(), durationFrames()),
+		choice = new Switch(divide(wavePosition(), durationFrames()),
 						choices(in -> a(1, output(), in)));
 	}
 

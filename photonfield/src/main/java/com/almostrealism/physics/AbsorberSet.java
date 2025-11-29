@@ -16,13 +16,13 @@
 
 package com.almostrealism.physics;
 
-import java.util.Iterator;
-import java.util.Set;
-
 import com.almostrealism.chem.PotentialMap;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.physics.Absorber;
-import io.almostrealism.relation.Producer;
+
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * An AbsorberSet instance represents a set of absorbers. An absorber set must keep
@@ -55,7 +55,7 @@ public interface AbsorberSet<T> extends Absorber, Set<T> {
 	 * @param radius  The radius of the spherical volume.
 	 * @return  The total number of absorbers removed.
 	 */
-	int removeAbsorbers(double x[], double radius);
+	int removeAbsorbers(double[] x, double radius);
 	
 	/**
 	 * Removes the specified absorber from this set.

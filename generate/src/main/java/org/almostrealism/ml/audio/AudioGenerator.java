@@ -37,7 +37,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	private double audioDurationSeconds;
 	private DoubleConsumer progressMonitor;
 
-	private AudioComposer composer;
+	private final AudioComposer composer;
 	private double strength;
 
 	public AudioGenerator(String modelsPath) throws OrtException, IOException {
@@ -384,7 +384,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	private double[][] decodeAudio(PackedCollection latent) {
 		PackedCollection result = getAutoencoder().decode(cp(latent)).evaluate();
 
-		double data[] = result.toArray();
+		double[] data = result.toArray();
 		int totalSamples = data.length;
 		int channelSamples = totalSamples / 2; // Stereo audio, 2 channels
 		int finalSamples = (int) (getAudioDuration() * SAMPLE_RATE);

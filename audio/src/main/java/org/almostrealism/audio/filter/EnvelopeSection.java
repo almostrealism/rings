@@ -16,9 +16,9 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.relation.Factor;
 
 import java.util.function.Supplier;
 
@@ -26,9 +26,9 @@ public class EnvelopeSection implements Supplier<Factor<PackedCollection>>, Enve
 	public static boolean enableRepeat = false;
 
 	private Supplier<Producer<PackedCollection>> time;
-	private Producer<PackedCollection> start;
-	private Supplier<Factor<PackedCollection>> lastEnvelope;
-	private Factor<PackedCollection> envelope;
+	private final Producer<PackedCollection> start;
+	private final Supplier<Factor<PackedCollection>> lastEnvelope;
+	private final Factor<PackedCollection> envelope;
 
 	public EnvelopeSection(Supplier<Producer<PackedCollection>> time,
 						   Factor<PackedCollection> envelope) {

@@ -1,13 +1,13 @@
 package com.almostrealism.replicator.transform;
 
-import org.almostrealism.geometry.TransformMatrix;
-import org.almostrealism.geometry.BasicGeometry;
 import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.geometry.BasicGeometry;
+import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.space.SurfaceGroup;
 
 // TODO  Move to Common
 public class TransformedSurfaceGroup<T extends ShadableSurface> extends SurfaceGroup<T> {
-	private BasicGeometry geo;
+	private final BasicGeometry geo;
 
 	public TransformedSurfaceGroup(BasicGeometry g) { geo = g; }
 

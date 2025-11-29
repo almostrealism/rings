@@ -21,7 +21,7 @@ import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 public class ParameterFunctionSequence implements IntFunction<ParameterFunction> {
-	private ParameterFunction steps[];
+	private ParameterFunction[] steps;
 
 	public ParameterFunctionSequence() { }
 

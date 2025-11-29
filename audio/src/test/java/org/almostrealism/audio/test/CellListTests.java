@@ -3,8 +3,8 @@ package org.almostrealism.audio.test;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
 import org.almostrealism.graph.temporal.WaveCell;
@@ -39,7 +39,7 @@ public class CellListTests implements CellFeatures {
 
 		process.get().run();
 		log("Exported " + result.getMemLength() + " frames");
-		Assert.assertFalse(result.toDouble(30) == 0.0);
+		Assert.assertNotEquals(0.0, result.toDouble(30), 0.0);
 	}
 
 	@Test

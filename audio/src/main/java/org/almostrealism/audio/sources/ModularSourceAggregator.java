@@ -27,12 +27,12 @@ import java.util.stream.IntStream;
 public class ModularSourceAggregator implements SourceAggregator, CodeFeatures {
 	private static long count = 0;
 
-	private InputType[] inputs;
+	private final InputType[] inputs;
 
-	private SummingSourceAggregator sum;
-	private FrequencyRescalingSourceAggregator eqAdjust;
-	private VolumeRescalingSourceAggregator volumeAdjust;
-	private long index;
+	private final SummingSourceAggregator sum;
+	private final FrequencyRescalingSourceAggregator eqAdjust;
+	private final VolumeRescalingSourceAggregator volumeAdjust;
+	private final long index;
 
 	public ModularSourceAggregator(InputType... inputs) {
 		this.inputs = inputs;
@@ -49,14 +49,10 @@ public class ModularSourceAggregator implements SourceAggregator, CodeFeatures {
 												   Producer<PackedCollection>... sources) {
 		Producer[] producers = new Producer[sources.length + 1];
 		producers[0] = frequency;
-		for (int i = 0; i < sources.length; i++) {
-			producers[i + 1] = sources[i];
-		}
+		System.arraycopy(sources, 0, producers, 1, sources.length);
 
 		Producer<PackedCollection>[] src = new Producer[sources.length];
-		for (int i = 0; i < sources.length; i++) {
-			src[i] = producers[i + 1];
-		}
+		System.arraycopy(producers, 1, src, 0, sources.length);
 
 		Producer<PackedCollection>[] eq = extractInputs(InputType.FREQUENCY, src);
 		Producer<PackedCollection>[] volume = extractInputs(InputType.VOLUME_ENVELOPE, src);

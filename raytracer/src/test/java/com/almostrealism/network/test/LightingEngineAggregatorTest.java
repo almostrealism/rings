@@ -17,21 +17,21 @@
 package com.almostrealism.network.test;
 
 import com.almostrealism.network.TestScene;
-import org.almostrealism.raytrace.FogParameters;
-import org.almostrealism.raytrace.RayIntersectionEngine;
-import org.almostrealism.raytrace.RenderParameters;
-import org.almostrealism.render.RayTracedScene;
+import io.almostrealism.code.ProducerArgumentReference;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;
-import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.AcceleratedComputationEvaluable;
+import org.almostrealism.hardware.AcceleratedComputationOperation;
 import org.almostrealism.hardware.MemoryBank;
-import io.almostrealism.relation.Producer;
+import org.almostrealism.raytrace.FogParameters;
+import org.almostrealism.raytrace.RayIntersectionEngine;
+import org.almostrealism.raytrace.RenderParameters;
+import org.almostrealism.render.RayTracedScene;
 import org.almostrealism.swing.displays.ImageDisplay;
-import io.almostrealism.code.ProducerArgumentReference;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -53,13 +53,13 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 	@Test
 	public void aggregate() throws IOException {
 		AcceleratedComputationEvaluable p = (AcceleratedComputationEvaluable) getScene().getProducer();
-		System.out.println("result = " + p.evaluate(new Object[] { new Pair(50, 50) }));
+		System.out.println("result = " + p.evaluate(new Pair(50, 50)));
 	}
 
 	@Test
 	public void aggregateCompact() throws IOException {
 		AcceleratedComputationEvaluable p = (AcceleratedComputationEvaluable) getScene().getProducer();
-		System.out.println("result = " + p.evaluate(new Object[] { new Pair(50, 50) }));
+		System.out.println("result = " + p.evaluate(new Pair(50, 50)));
 	}
 
 	@Test
@@ -88,7 +88,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 
 		System.out.println("LightingEngineAggregatorTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {
-			RGB value = new RGB(p.evaluate(new Object[] { input.get(i), dim.get(i) }), 0);
+			RGB value = new RGB(p.evaluate(input.get(i), dim.get(i)), 0);
 			RGB outputRGB = new RGB(output.get(i), 0);
 			Assert.assertEquals(value.getRed(), outputRGB.getRed(), Math.pow(10, -10));
 			Assert.assertEquals(value.getGreen(), outputRGB.getGreen(), Math.pow(10, -10));
@@ -113,7 +113,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 
 		System.out.println("LightingEngineAggregatorTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {
-			PackedCollection result = agg.get().evaluate(new Object[] { input.get(i), dim.get(i) });
+			PackedCollection result = agg.get().evaluate(input.get(i), dim.get(i));
 			RGB value = result == null ? new RGB(black().get().evaluate(), 0) : new RGB(result, 0);
 			RGB outputRGB = new RGB(output.get(i), 0);
 			Assert.assertEquals(value.getRed(), outputRGB.getRed(), Math.pow(10, -10));
@@ -148,7 +148,7 @@ public class LightingEngineAggregatorTest extends KernelizedIntersectionTest imp
 		}
 	}
 
-	public void displayImage(RGB image[][]) {
+	public void displayImage(RGB[][] image) {
 		JFrame frame = new JFrame();
 		frame.getContentPane().add(new ImageDisplay(image));
 		frame.setSize(image.length, image[0].length);

@@ -21,7 +21,6 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.DynamicWaveDataProvider;
 import org.almostrealism.audio.data.FileWaveDataProvider;
@@ -29,11 +28,11 @@ import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDataProviderList;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.Input;
-import org.almostrealism.hardware.MemoryBank;
 import org.almostrealism.time.Frequency;
 
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class GranularSynthesizer implements StatelessSource, CellFeatures {
 	private double gain;
 	private List<GrainSet> grains;
 
-	private GrainProcessor processor;
+	private final GrainProcessor processor;
 
 	public GranularSynthesizer(int sampleRate) {
 		gain = 1.0;
@@ -144,7 +143,7 @@ public class GranularSynthesizer implements StatelessSource, CellFeatures {
 					}
 				}
 
-				Producer args[] = Input.generateArguments(processor.getFrames(), 0, results.size());
+				Producer[] args = Input.generateArguments(processor.getFrames(), 0, results.size());
 				Producer sum = args[0];
 
 				for (int j = 1; j < args.length; j++) {

@@ -27,18 +27,18 @@ import org.almostrealism.hardware.mem.MemoryDataCopy;
 public class FilterEnvelopeProcessor implements EnvelopeProcessor, CellFeatures, EnvelopeFeatures {
 	public static double filterPeak = 20000;
 
-	private TimeCell clock;
+	private final TimeCell clock;
 
-	private PackedCollection input;
-	private PackedCollection output;
+	private final PackedCollection input;
+	private final PackedCollection output;
 
-	private PackedCollection duration;
-	private PackedCollection attack;
-	private PackedCollection decay;
-	private PackedCollection sustain;
-	private PackedCollection release;
+	private final PackedCollection duration;
+	private final PackedCollection attack;
+	private final PackedCollection decay;
+	private final PackedCollection sustain;
+	private final PackedCollection release;
 
-	private Runnable process;
+	private final Runnable process;
 
 	public FilterEnvelopeProcessor(int sampleRate, double maxSeconds) {
 		input = new PackedCollection((int) (sampleRate * maxSeconds));

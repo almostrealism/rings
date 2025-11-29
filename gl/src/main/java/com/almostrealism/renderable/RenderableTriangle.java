@@ -24,7 +24,7 @@ public class RenderableTriangle extends RenderableGeometry<Triangle> {
 
 	@Override
 	public void render(GLDriver gl) {
-		Vector v[] = getGeometry().getVertices();
+		Vector[] v = getGeometry().getVertices();
 
 		gl.glBegin(GL2.GL_TRIANGLES);
 		gl.glColor(a);

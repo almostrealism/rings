@@ -16,28 +16,30 @@
 
 package com.almostrealism.buffers;
 
-import java.io.IOException;
-
-import org.almostrealism.color.computations.AverageColor;
-import org.almostrealism.color.RGB;
-import org.almostrealism.physics.Absorber;
-import org.almostrealism.space.Scene;
-import org.almostrealism.color.ShadableSurface;
 import io.almostrealism.relation.Factory;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.color.computations.AverageColor;
+import org.almostrealism.physics.Absorber;
+import org.almostrealism.space.Scene;
+
+import java.io.IOException;
 
 /**
  * @author  Michael Murray
  */
 public class ArrayColorBuffer implements ColorBuffer {
 	public Absorber absorber;
-	public double position[];
+	public double[] position;
 	boolean first;
 	
 	public int colorDepth = 48;
-	private RGB front[][], back[][];
-	private double m = 1.0, k = 1.0;
-	private boolean invertV = false, direct = false;
+	private RGB[][] front, back;
+	private double m = 1.0;
+	private final double k = 1.0;
+	private final boolean invertV = false;
+	private final boolean direct = false;
 	
 	public void setColorBufferSize(int w, int h, double m) {
 		this.front = new RGB[w][h];
@@ -80,7 +82,7 @@ public class ArrayColorBuffer implements ColorBuffer {
 		
 		if (direct && this.invertV) v = 1.0 - v;
 		
-		RGB rgb[][] = null;
+		RGB[][] rgb = null;
 		
 		if (front)
 			rgb = this.front;
@@ -190,7 +192,7 @@ public class ArrayColorBuffer implements ColorBuffer {
 		if (front && this.front == null) return;
 		if (!front && this.back == null) return;
 		
-		RGB rgb[][] = null;
+		RGB[][] rgb = null;
 		
 		if (front)
 			rgb = this.front;

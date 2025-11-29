@@ -16,35 +16,31 @@
 
 
 package com.almostrealism.physics;
-import org.almostrealism.collect.PackedCollection;
 
-import java.io.IOException;
-
-import javax.swing.JFrame;
-
-import org.almostrealism.primitives.AbsorptionPlane;
-import org.almostrealism.primitives.Pinhole;
-import org.almostrealism.primitives.Plane;
+import com.almostrealism.geometry.Sphere;
+import com.almostrealism.light.PlanarLight;
+import com.almostrealism.stats.UniformHemisphericalDistribution;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.ProbabilityDistribution;
 import org.almostrealism.color.Spectrum;
 import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.Clock;
 import org.almostrealism.physics.Fast;
 import org.almostrealism.physics.PhotonField;
 import org.almostrealism.physics.PhysicalConstants;
+import org.almostrealism.primitives.AbsorptionPlane;
+import org.almostrealism.primitives.Pinhole;
+import org.almostrealism.primitives.Plane;
 import org.almostrealism.stats.BRDF;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
-import org.almostrealism.physics.Clock;
-
-import com.almostrealism.stats.UniformHemisphericalDistribution;
-import com.almostrealism.geometry.Sphere;
-import com.almostrealism.light.PlanarLight;
-import org.almostrealism.CodeFeatures;
 import org.almostrealism.utils.PriorityQueue;
 
-import java.lang.Math;
+import javax.swing.*;
+import java.io.IOException;
 
 /**
  * A {@link SpecularAbsorber} is an {@link Absorber} implementation that absorbs photons
@@ -59,7 +55,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 	public static double verbose = Math.pow(10.0, -7.0);
 	
 	private Clock clock;
-	private PriorityQueue Queue = new PriorityQueue();
+	private final PriorityQueue Queue = new PriorityQueue();
 	private Vector P, N, L, resultant;
 	
 	private SphericalProbabilityDistribution brdf;
@@ -67,9 +63,9 @@ public class SpecularAbsorber extends VolumeAbsorber
 	private double reflectDepth, absorbDepth;
 	private double startwave, range;
 	private double delay;
-	private double origPosition[];
+	private double[] origPosition;
 	
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		double x = 50.0;
 		
 		
@@ -77,7 +73,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 		SpecularAbsorber b = new SpecularAbsorber();
 		//b.setVolume(new Sphere(x / 10.0));
 		Plane p = new Plane();
-		p.setSurfaceNormal((Producer) Ops.o().vector(0.0, -1.0, 0.0));
+		p.setSurfaceNormal(Ops.o().vector(0.0, -1.0, 0.0));
 		p.setOrientation(new double[] {0.0, 0.0, 1.0});
 		p.setWidth(x / 2.0);
 		p.setHeight(x / 2.0);
@@ -93,13 +89,13 @@ public class SpecularAbsorber extends VolumeAbsorber
 		plane.setWidth(300);
 		plane.setHeight(300);
 		plane.setThickness(0.05);
-		plane.setSurfaceNormal((Producer) Ops.o().vector(0.0, 0.0, -1.0));
+		plane.setSurfaceNormal(Ops.o().vector(0.0, 0.0, -1.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
 
 		Pinhole pinhole = new Pinhole();
 		pinhole.setRadius(x / 8.0);
 		pinhole.setThickness(0.05);
-		pinhole.setSurfaceNormal((Producer) Ops.o().vector(0.0, 0.0, -1.0));
+		pinhole.setSurfaceNormal(Ops.o().vector(0.0, 0.0, -1.0));
 		pinhole.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		// Create a light bulb
@@ -114,11 +110,11 @@ public class SpecularAbsorber extends VolumeAbsorber
 		// Add SpecularAbsorber and light bulb to absorber set
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(2.0 * x);
-		a.addAbsorber(b, (Producer) Ops.o().vector(0.0, -x, 0.0));
+		a.addAbsorber(b, Ops.o().vector(0.0, -x, 0.0));
 		// a.addAbsorber(bl, new double[] {0.0, 0.0, 0.0});
-		a.addAbsorber(l, (Producer) Ops.o().vector(0.0, 0.0, -x));
-		a.addAbsorber(plane, (Producer) Ops.o().vector(0.0, 0.0, x + 10.0));
-		a.addAbsorber(pinhole, (Producer) Ops.o().vector(0.0, 0.0, x));
+		a.addAbsorber(l, Ops.o().vector(0.0, 0.0, -x));
+		a.addAbsorber(plane, Ops.o().vector(0.0, 0.0, x + 10.0));
+		a.addAbsorber(pinhole, Ops.o().vector(0.0, 0.0, x));
 		
 		// Create photon field and set absorber to the absorber set
 		// containing the stuff we want to look at...
@@ -167,7 +163,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 	public void setAbsorbDelay(double t) { this.delay = t + this.clock.getTime(); }
 	
 	public boolean absorb(Vector Position, Vector Incoming, double Energy) {
-		if (this.volume != null && !this.volume.inside((Producer) v(Position))) return false;
+		if (this.volume != null && !this.volume.inside(v(Position))) return false;
 		
 		if (this.volume != null && this.absorbDepth != 0.0) {
 			double in = this.volume.intersect(Position, Incoming.minus());
@@ -203,7 +199,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 			System.out.println("SpecularAbsorber: Absorbing " +
 								Incoming.length() + " " + Energy);
 		
-		Object data[] = { Position, Incoming, new double[] { Energy }};
+		Object[] data = { Position, Incoming, new double[] { Energy }};
 		Queue.put(data, this.delay);
 		
 		return true;
@@ -220,10 +216,10 @@ public class SpecularAbsorber extends VolumeAbsorber
 			
 			if (this.reflectDepth > 0.0 && in > this.reflectDepth) {
 				if (this.volume.intersect(P, L) >= this.reflectDepth)
-					return (Producer) v(L);
+					return v(L);
 			} else if (this.reflectDepth < 0.0 && in < this.reflectDepth) {
 				if (this.volume.intersect(P, L) <= this.reflectDepth)
-					return (Producer) v(L);
+					return v(L);
 			}
 			
 			L = minusL;
@@ -231,7 +227,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 			L = L.minus();
 		}
 		
-		N = (Vector) volume.getNormalAt((Producer) v(P)).get().evaluate();
+		N = (Vector) volume.getNormalAt(v(P)).get().evaluate();
 		if (N.dotProduct(L) < 0) N = N.minus();
 		return this.brdf.getSample(L.toArray(), N.toArray());
 	}
@@ -254,7 +250,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 	public Producer<PackedCollection> getEmitPosition() {
 		// return position of next queue item
 		if (Queue.size() > 0)
-			return (Producer) v((Vector) ((Object[]) Queue.peekNext())[0]);
+			return v((Vector) ((Object[]) Queue.peekNext())[0]);
 		else
 			return null;
 	}

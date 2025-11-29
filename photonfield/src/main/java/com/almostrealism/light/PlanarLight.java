@@ -16,25 +16,24 @@
 
 package com.almostrealism.light;
 
+import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.Light;
-import org.almostrealism.color.RGB;
-
 import org.almostrealism.color.PointLight;
+import org.almostrealism.color.RGB;
 import org.almostrealism.color.SurfaceLight;
 import org.almostrealism.geometry.Locatable;
 import org.almostrealism.geometry.UniformSphericalRandom;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.CodeFeatures;
 
 public class PlanarLight extends LightBulb implements SurfaceLight, Locatable, CodeFeatures {
 	private double w, h;
 	private Vector normal;
 	private Vector up, across;
 	private boolean lightProp = false;
-	private double align = 0.0;
+	private final double align = 0.0;
 	
 	private Vector location;
 	
@@ -92,7 +91,7 @@ public class PlanarLight extends LightBulb implements SurfaceLight, Locatable, C
 
 	@Override
 	public Producer<PackedCollection> getColorAt(Producer<PackedCollection> point) {
-		return (Producer) v(getColor());
+		return v(getColor());
 	}
 
 	@Override
@@ -100,13 +99,13 @@ public class PlanarLight extends LightBulb implements SurfaceLight, Locatable, C
 		super.last += super.delta;
 
 		if (!this.lightProp)
-			return (Producer) v(this.normal);
+			return v(this.normal);
 
 		Vector v = UniformSphericalRandom.getInstance().evaluate(new Object[0]);
 		if (v.dotProduct(this.normal) < 0)
 			v.multiplyBy(-1.0);
 
-		return (Producer) normalize(vector(VectorMath.addMultiple(v.toArray(), this.normal.toArray(), this.align)));
+		return normalize(vector(VectorMath.addMultiple(v.toArray(), this.normal.toArray(), this.align)));
 	}
 
 	@Override
@@ -117,7 +116,7 @@ public class PlanarLight extends LightBulb implements SurfaceLight, Locatable, C
 		// TODO  Put random computation into vector producer evaluate method
 		Vector x = across.multiply((Math.random() - 0.5) * this.w);
 		x.addTo(up.multiply((Math.random() - 0.5) * this.h));
-		return (Producer) v(x);
+		return v(x);
 	}
 
 	@Override
@@ -137,12 +136,12 @@ public class PlanarLight extends LightBulb implements SurfaceLight, Locatable, C
 
 	@Override
 	public Light[] getSamples(int total) {
-		Light l[] = new Light[total];
+		Light[] l = new Light[total];
 		
 		double in = 1.0 / total;
 		
 		for (int i = 0; i < total; i++) {
-			double x[] = this.getSpatialCoords(new double[] {Math.random(), Math.random()});
+			double[] x = this.getSpatialCoords(new double[] {Math.random(), Math.random()});
 			Vector p = new Vector(x[0], x[1], x[2]);
 			p.addTo(this.location);
 			l[i] = new PointLight(p, in, new RGB(1.0, 1.0, 1.0));

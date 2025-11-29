@@ -16,23 +16,20 @@
 
 package com.almostrealism.network;
 
+import io.almostrealism.code.Operator;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.geometry.BoundingSolid;
+import org.almostrealism.geometry.ContinuousField;
+import org.almostrealism.space.Mesh;
+import org.almostrealism.space.MeshSource;
+import org.almostrealism.space.ShadableSurfaceWrapper;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.color.RGB;
-import org.almostrealism.color.ShaderContext;
-import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.ContinuousField;
-import io.almostrealism.relation.Producer;
-import io.almostrealism.code.Operator;
-import org.almostrealism.geometry.BoundingSolid;
-import org.almostrealism.space.Mesh;
-import org.almostrealism.space.MeshSource;
-import org.almostrealism.color.ShadableSurface;
-import org.almostrealism.space.ShadableSurfaceWrapper;
 
 public class MeshFile implements MeshSource, ShadableSurfaceWrapper, ShadableSurface {
 	private String name;

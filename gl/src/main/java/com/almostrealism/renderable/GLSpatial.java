@@ -38,8 +38,10 @@ public class GLSpatial extends RenderableGeometry<BasicGeometry> {
 		 * components per color with GL.GL_UNSIGNED_BYTE datatype and stride 0.
 		 * Normal array is supposed to use GL.GL_FLOAT datatype and stride 0.
 		 */
-	private int vboName, count;
-	private int vComps, nComps;
+	private final int vboName;
+	private int count;
+	private final int vComps;
+	private final int nComps;
 	private ByteBuffer pBuffer = null;
 	public FloatBuffer vertexArray = null;
 	public FloatBuffer colorArray = null;

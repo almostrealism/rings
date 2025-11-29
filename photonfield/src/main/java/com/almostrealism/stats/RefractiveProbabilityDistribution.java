@@ -17,12 +17,11 @@
 package com.almostrealism.stats;
 
 import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
-import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Evaluable;
 
 public class RefractiveProbabilityDistribution implements SphericalProbabilityDistribution, CodeFeatures {
 	private double rIndex = 1.0, n2 = 1.0, m = 1.0;
@@ -31,15 +30,15 @@ public class RefractiveProbabilityDistribution implements SphericalProbabilityDi
 	public Producer<PackedCollection> getSample(double[] in, double[] orient) {
 		double alpha = Math.sqrt(1 - (1.0  / (this.n2)) *
 								(1 - Math.pow(new Vector(in).dotProduct(new Vector(orient)), 2)));
-		double c[] = new Vector(orient).crossProduct(new Vector(orient).crossProduct(new Vector(in))).toArray();
+		double[] c = new Vector(orient).crossProduct(new Vector(orient).crossProduct(new Vector(in))).toArray();
 		c = VectorMath.multiply(c, Math.sqrt(1 - ((alpha * alpha))));
 		orient = VectorMath.multiply(orient, alpha, true);
-		double r[] = VectorMath.multiply(VectorMath.add(orient, c), -1);
+		double[] r = VectorMath.multiply(VectorMath.add(orient, c), -1);
 		Vector rr = new Vector(r);
 		rr.normalize();
 		r = rr.toArray();
 		if (this.m != 1.0) VectorMath.multiply(r, this.m);
-		return (Producer) vector(r[0], r[1], r[2]);
+		return vector(r[0], r[1], r[2]);
 	}
 	
 	public double getMultiplier() { return this.m; }

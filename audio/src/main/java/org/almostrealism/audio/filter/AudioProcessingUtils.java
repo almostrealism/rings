@@ -31,11 +31,11 @@ public class AudioProcessingUtils {
 
 	public static boolean enableMultiOrderFilter = true;
 
-	private static AudioSumProvider sum;
-	private static Evaluable<PackedCollection> reverse;
-	private static Evaluable<PackedCollection> layerEnv;
-	private static EnvelopeProcessor filterEnv;
-	private static Evaluable<PackedCollection> volumeEnv;
+	private static final AudioSumProvider sum;
+	private static final Evaluable<PackedCollection> reverse;
+	private static final Evaluable<PackedCollection> layerEnv;
+	private static final EnvelopeProcessor filterEnv;
+	private static final Evaluable<PackedCollection> volumeEnv;
 
 	static {
 		sum = new AudioSumProvider();

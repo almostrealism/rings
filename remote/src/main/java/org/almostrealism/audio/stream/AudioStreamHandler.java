@@ -32,11 +32,11 @@ public class AudioStreamHandler implements HttpAudioHandler, CodeFeatures {
 	public static boolean enableByteCache = false;
 	public static double bufferDuration = 1.0;
 
-	private PackedCollection buffer;
-	private int totalFrames;
-	private int sampleRate;
+	private final PackedCollection buffer;
+	private final int totalFrames;
+	private final int sampleRate;
 
-	private AudioProcessor processor;
+	private final AudioProcessor processor;
 	private Runnable update;
 
 	private byte[] data;

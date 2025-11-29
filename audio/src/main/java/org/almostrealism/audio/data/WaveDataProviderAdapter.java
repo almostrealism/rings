@@ -22,8 +22,8 @@ import io.almostrealism.expression.Product;
 import io.almostrealism.relation.Evaluable;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.PassThroughProducer;
 import org.almostrealism.hardware.ctx.ContextSpecific;
@@ -35,8 +35,8 @@ import java.util.Map;
 
 public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 								Comparable<WaveDataProvider>, CodeFeatures {
-	private static Map<String, ContextSpecific<WaveData>> loaded;
-	private static ContextSpecific<Evaluable<PackedCollection>> interpolate;
+	private static final Map<String, ContextSpecific<WaveData>> loaded;
+	private static final ContextSpecific<Evaluable<PackedCollection>> interpolate;
 
 	static {
 		loaded = new HashMap<>();

@@ -28,6 +28,7 @@ import org.almostrealism.persistence.AssetGroup;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,7 +59,7 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		return computeScore(tokens, audio);
 	}
 
-	public double computeScore(long promptTokenIds[], WaveData audio) {
+	public double computeScore(long[] promptTokenIds, WaveData audio) {
 		// return computeScore(promptTokenIds, audio.getData(), audio.getDuration());
 		// return computeDenoisingScore(promptTokenIds, audio.getData(), audio.getDuration());
 		return computeReconstructionScore(promptTokenIds, audio.getData(), audio.getDuration());
@@ -136,7 +137,7 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		return dotProduct / (normA * normB + 1e-6);
 	}
 
-	public double computeScore(long promptTokenIds[], PackedCollection audio, double duration) {
+	public double computeScore(long[] promptTokenIds, PackedCollection audio, double duration) {
 		// 1. Process tokens through conditioners
 		Map<String, PackedCollection> conditionerOutputs = runConditioners(promptTokenIds, duration);
 
@@ -253,7 +254,7 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		return validPositions > 0 ? totalScore / validPositions : 0.0;
 	}
 
-	public static void main(String args[]) throws IOException, OrtException {
+	public static void main(String[] args) throws IOException, OrtException {
 		if (args.length < 3) {
 			System.out.println("Usage: java AudioGenerator <models_path> <prompt> <input_file> [additional_inputs...]");
 			return;
@@ -263,9 +264,7 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		String prompt = args[1];
 
 		List<String> inputs = new ArrayList<>();
-		for (int i = 2; i < args.length; i++) {
-			inputs.add(args[i]);
-		}
+		inputs.addAll(Arrays.asList(args).subList(2, args.length));
 
 		try (ConditionalAudioScoring scoring = new ConditionalAudioScoring(modelsPath)) {
 			for (String in : inputs) {

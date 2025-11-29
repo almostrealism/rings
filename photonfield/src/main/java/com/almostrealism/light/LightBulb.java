@@ -16,21 +16,19 @@
 
 
 package com.almostrealism.light;
-import org.almostrealism.collect.PackedCollection;
 
+import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.ProbabilityDistribution;
+import org.almostrealism.color.Transparent;
 import org.almostrealism.geometry.UniformSphericalRandom;
-import io.almostrealism.relation.Producer;
+import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.Clock;
+import org.almostrealism.physics.PhysicalConstants;
 import org.almostrealism.space.Volume;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
-import org.almostrealism.physics.Clock;
-
-import org.almostrealism.color.Transparent;
-import org.almostrealism.physics.Absorber;
-import org.almostrealism.physics.PhysicalConstants;
-import io.almostrealism.relation.Evaluable;
 
 /**
  * A {@link LightBulb} emits photons with wavelengths between 380 nanometers
@@ -45,8 +43,8 @@ public class LightBulb implements Volume<Object>, Absorber, Transparent, Physica
 	protected ProbabilityDistribution spectra;
 	protected SphericalProbabilityDistribution brdf;
 	
-	private double specEnd = H * C / 0.380;
-	private double specStart = H * C / 0.780;
+	private final double specEnd = H * C / 0.380;
+	private final double specStart = H * C / 0.780;
 	protected double specAvg = (specStart + specEnd) / 2.0;
 	
 	/**
@@ -125,7 +123,7 @@ public class LightBulb implements Volume<Object>, Absorber, Transparent, Physica
 	public double intersect(Vector p, Vector d) { return Double.MAX_VALUE - 1.0; }
 
 	@Override
-	public double[] getSpatialCoords(double uv[]) { return new double[3]; }
+	public double[] getSpatialCoords(double[] uv) { return new double[3]; }
 
 	@Override
 	public double[] getSurfaceCoords(Producer<PackedCollection> xyz) { return new double[2]; }

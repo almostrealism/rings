@@ -16,11 +16,11 @@
 
 
 package com.almostrealism.chem;
-import org.almostrealism.collect.PackedCollection;
 
 import com.almostrealism.physics.SphericalAbsorber;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.physics.Atom;
 import org.almostrealism.physics.Clock;
 
@@ -31,7 +31,7 @@ import org.almostrealism.physics.Clock;
  */
 // TODO  Compute charge based on atomic number
 public class AtomicProtonCloud extends ProtonCloud implements SphericalAbsorber {
-	private Atom atom;
+	private final Atom atom;
 
 	public AtomicProtonCloud(Atom a) { this.atom = a; }
 

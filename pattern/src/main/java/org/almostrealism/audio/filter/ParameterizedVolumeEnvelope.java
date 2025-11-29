@@ -63,8 +63,8 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 	}
 
 	public class Filter implements NoteAudioFilter {
-		private ParameterSet params;
-		private ChannelInfo.Voicing voicing;
+		private final ParameterSet params;
+		private final ChannelInfo.Voicing voicing;
 
 		public Filter(ParameterSet params, ChannelInfo.Voicing voicing) {
 			this.params = params;
@@ -162,8 +162,7 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 			if (filter.getAttack(10.0) != getAttack(10.0)) return false;
 			if (filter.getDecay() != getDecay()) return false;
 			if (filter.getSustain() != getSustain()) return false;
-			if (filter.getRelease(10.0) != getRelease(10.0)) return false;
-			return true;
+			return filter.getRelease(10.0) == getRelease(10.0);
 		}
 
 		@Override

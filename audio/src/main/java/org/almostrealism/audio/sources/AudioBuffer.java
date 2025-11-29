@@ -19,9 +19,9 @@ package org.almostrealism.audio.sources;
 import org.almostrealism.collect.PackedCollection;
 
 public class AudioBuffer {
-	private BufferDetails details;
-	private PackedCollection input;
-	private PackedCollection output;
+	private final BufferDetails details;
+	private final PackedCollection input;
+	private final PackedCollection output;
 
 	public AudioBuffer(BufferDetails details,
 					   PackedCollection input,

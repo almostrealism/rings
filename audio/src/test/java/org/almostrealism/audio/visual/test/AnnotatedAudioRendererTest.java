@@ -16,13 +16,11 @@
 
 package org.almostrealism.audio.visual.test;
 
-import org.almostrealism.audio.visual.AnnotatedAudioRenderer;
 import org.almostrealism.color.RGB;
 import org.almostrealism.time.AcceleratedTimeSeries;
 import org.almostrealism.time.TemporalScalar;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,8 +47,8 @@ public class AnnotatedAudioRendererTest {
 			annotation.read(in);
 		}
 
-		RGB blue[] = new RGB[] { new RGB(0.0, 0.0, 1.0), new RGB(0.0, 0.0, 0.5) };
-		RGB white[] = new RGB[] { new RGB(1.0, 1.0, 1.0), new RGB(0.0, 0.0, 0.0) };
+		RGB[] blue = new RGB[] { new RGB(0.0, 0.0, 1.0), new RGB(0.0, 0.0, 0.5) };
+		RGB[] white = new RGB[] { new RGB(1.0, 1.0, 1.0), new RGB(0.0, 0.0, 0.0) };
 
 		IntFunction<RGB[]> types = i -> {
 			if (i == 1) {

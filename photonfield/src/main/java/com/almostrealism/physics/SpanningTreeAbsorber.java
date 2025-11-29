@@ -16,16 +16,16 @@
 
 
 package com.almostrealism.physics;
+
+import com.almostrealism.chem.PotentialMap;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.Clock;
 
 import java.util.Collection;
 import java.util.Iterator;
-
-import com.almostrealism.chem.PotentialMap;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.physics.Absorber;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.physics.Clock;
 
 /**
  * A {@link SpanningTreeAbsorber} is an implementation of AbsorberSet that uses

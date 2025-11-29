@@ -16,19 +16,19 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.SummationCell;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.time.Updatable;
-import org.almostrealism.CodeFeatures;
 
 import java.util.function.Supplier;
 
 public class BasicDelayCell extends SummationCell implements CodeFeatures {
 	public static int bufferDuration = 10;
 	
-	private double buffer[] = new double[bufferDuration * OutputLine.sampleRate];
+	private final double[] buffer = new double[bufferDuration * OutputLine.sampleRate];
 	private int cursor;
 	private int delay;
 	
@@ -72,7 +72,7 @@ public class BasicDelayCell extends SummationCell implements CodeFeatures {
 
 			this.buffer[dPos] = buffer[dPos] + protein.get().evaluate().toDouble(0);
 
-			value.setMem(new double[] { buffer[cursor], 1.0 });
+			value.setMem(buffer[cursor], 1.0);
 
 			if (updatable != null && cursor % updatable.getResolution() == 0) updatable.update();
 

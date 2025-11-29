@@ -16,10 +16,10 @@
 
 package org.almostrealism.audio.filter;
 
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.relation.Factor;
 
 public interface EnvelopeFeatures extends SamplingFeatures {
 	default Factor<PackedCollection> volume(Producer<PackedCollection> volume) {

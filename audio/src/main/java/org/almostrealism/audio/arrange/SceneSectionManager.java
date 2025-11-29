@@ -21,7 +21,6 @@ import io.almostrealism.lifecycle.Destroyable;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ProjectedChromosome;
-import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.time.Frequency;
 
 import java.util.ArrayList;
@@ -35,15 +34,15 @@ import java.util.stream.Collectors;
 public class SceneSectionManager implements Setup, Destroyable {
 	public static final IntPredicate DEFAULT_REPEAT_CHANNELS = c -> c != 5;
 
-	private List<SceneSection> sections;
-	private OperationList setup;
+	private final List<SceneSection> sections;
+	private final OperationList setup;
 
-	private List<ProjectedChromosome> chromosomes;
-	private int channels;
+	private final List<ProjectedChromosome> chromosomes;
+	private final int channels;
 
-	private Supplier<Frequency> tempo;
-	private DoubleSupplier measureDuration;
-	private int sampleRate;
+	private final Supplier<Frequency> tempo;
+	private final DoubleSupplier measureDuration;
+	private final int sampleRate;
 
 	private List<Integer> wetChannels;
 

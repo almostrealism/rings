@@ -10,8 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SpectralLineDiagram extends BlackBody {
-    private long absorbed[];
-    private RGB image[][];
+    private long[] absorbed;
+    private RGB[][] image;
 
 	private boolean noDisplay;
 	private int displayTicks, displaySleep = 1000;

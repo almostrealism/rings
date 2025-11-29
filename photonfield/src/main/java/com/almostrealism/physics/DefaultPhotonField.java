@@ -16,23 +16,22 @@
 
 package com.almostrealism.physics;
 
+import io.almostrealism.relation.Evaluable;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.algebra.VectorMath;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.Clock;
+import org.almostrealism.physics.PhotonField;
+import org.almostrealism.physics.PhysicalConstants;
+import org.almostrealism.util.Chart;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.VectorMath;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.physics.Absorber;
-import org.almostrealism.physics.PhotonField;
-import org.almostrealism.physics.PhysicalConstants;
-import org.almostrealism.physics.Clock;
-import org.almostrealism.util.Chart;
-import io.almostrealism.relation.Evaluable;
 
 // TODO  Consider creating a custom list for photon set (tick creates many many double[][]).
 public class DefaultPhotonField implements PhotonField {
@@ -41,13 +40,15 @@ public class DefaultPhotonField implements PhotonField {
 	public static double ep = Math.pow(10.0, -10.0);
 	
 	private Clock clock;
-	private Set<Object[]> photons;
+	private final Set<Object[]> photons;
 	private Absorber absorber;
 	private long delta = 1;
 	private double lifetime = Double.MAX_VALUE - 1.0;
 	private boolean trace = true;
 	
-	private Chart sizeChart, timeChart, costChart;
+	private final Chart sizeChart;
+	private final Chart timeChart;
+	private final Chart costChart;
 	private long tot = 0, log = 500;
 	private boolean first;
 	private long start;
@@ -100,12 +101,12 @@ public class DefaultPhotonField implements PhotonField {
 	public boolean getRayTracing() { return this.trace; }
 
 	@Override
-	public double getEnergy(double x[], double radius) {
+	public double getEnergy(double[] x, double radius) {
 		Iterator itr = this.photons.iterator();
 		double e = 0.0;
 		
 		while (itr.hasNext()) {
-			double p[][] = (double[][]) itr.next();
+			double[][] p = (double[][]) itr.next();
 			
 			if (VectorMath.length(VectorMath.subtract(p[0], x)) < radius)
 				e += p[2][0];
@@ -146,9 +147,9 @@ public class DefaultPhotonField implements PhotonField {
 		}
 		
 		double r = 1.0;
-		if (this.verbose > 0.0) r = Math.random();
+		if (verbose > 0.0) r = Math.random();
 
-		if (r < this.verbose)
+		if (r < verbose)
 			System.out.println("Photons: " + this.photons.size());
 		
 		Iterator<Object[]> itr = this.photons.iterator();
@@ -158,7 +159,7 @@ public class DefaultPhotonField implements PhotonField {
 		double delta = PhysicalConstants.C * s;
 
 		i: while (itr.hasNext()) {
-			Object p[] = itr.next();
+			Object[] p = itr.next();
 			
 			((Vector) p[0]).addTo(((Vector) p[1]).multiply(delta));
 			
@@ -169,7 +170,7 @@ public class DefaultPhotonField implements PhotonField {
 				continue i;
 			}
 			
-			if (o && r < this.verbose) {
+			if (o && r < verbose) {
 				System.out.println("PhotonMoved: " + ((Vector) p[1]).length() * delta);
 				o = false;
 			}
@@ -179,7 +180,7 @@ public class DefaultPhotonField implements PhotonField {
 			if (this.trace && ((double[]) p[3])[0] < 0.0 && this.absorber instanceof AbsorberSet)
 				dist = ((AbsorberSet) this.absorber).getDistance((Vector) p[0], (Vector) p[1]);
 			
-			if (r < this.verbose)
+			if (r < verbose)
 				System.out.println("DefaultPhotonField: Distance = " + dist);
 			
 			((double[]) p[3])[0] = dist;
@@ -197,7 +198,7 @@ public class DefaultPhotonField implements PhotonField {
 		double next;
 
 		w: while ((next = this.absorber.getNextEmit()) < s) {
-			if (r < this.verbose)
+			if (r < verbose)
 				System.out.println("Next Emit: " + next);
 
 			double d = this.absorber.getEmitEnergy();
@@ -216,9 +217,9 @@ public class DefaultPhotonField implements PhotonField {
 				continue w;
 			}
 			
-			if (this.checkLength) {
+			if (checkLength) {
 				double l = y.length();
-				if (l > 1.0 + this.ep || l < 1.0 - this.ep)
+				if (l > 1.0 + ep || l < 1.0 - ep)
 					System.out.println("DefaultPhotonField: Length was " + l);
 			}
 			

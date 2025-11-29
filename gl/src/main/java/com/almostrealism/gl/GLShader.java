@@ -28,7 +28,7 @@ import java.util.function.Function;
  * specified as a {@link Pair} {@link Function} taking screen coordinates to {@link RGB}s.
  */
 public class GLShader extends Scope<Variable> {
-	private Function<Pair, RGB> pipeline;
+	private final Function<Pair, RGB> pipeline;
 
 	/**
 	 * Create a {@link GLShader} for the specified {@link Pair} @link Function} color pipeline.

@@ -16,27 +16,24 @@
 
 package com.almostrealism.photon.test;
 
-import java.io.IOException;
-import java.lang.Math;
-
-import javax.swing.JFrame;
-
-import com.almostrealism.physics.DefaultPhotonField;
+import com.almostrealism.geometry.Box;
+import com.almostrealism.light.PlanarLight;
 import com.almostrealism.physics.AbsorberHashSet;
+import com.almostrealism.physics.DefaultPhotonField;
 import com.almostrealism.physics.SpecularAbsorber;
+import org.almostrealism.Ops;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.physics.Clock;
+import org.almostrealism.physics.PhotonField;
+import org.almostrealism.physics.PhysicalConstants;
 import org.almostrealism.primitives.AbsorptionPlane;
 import org.almostrealism.primitives.Pinhole;
 import org.almostrealism.primitives.Plane;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.Ops;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.physics.PhotonField;
-import org.almostrealism.physics.PhysicalConstants;
-import org.almostrealism.physics.Clock;
 
-import com.almostrealism.geometry.Box;
-import com.almostrealism.light.PlanarLight;
-import static org.almostrealism.Ops.*;
+import javax.swing.*;
+import java.io.IOException;
+
+import static org.almostrealism.Ops.o;
 
 /**
  * The TestRoom is a room which is based off the Cornell Box.
@@ -50,7 +47,7 @@ public class TestRoom implements PhysicalConstants {
 	/**z
 	 * @param args
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		double scale = 150.0;
 		
 		PlanarLight l = new PlanarLight();
@@ -67,7 +64,7 @@ public class TestRoom implements PhysicalConstants {
 		plane.setWidth(700);
 		plane.setHeight(700);
 		plane.setThickness(0.05);
-		plane.setSurfaceNormal((Producer) Ops.o().vector(0.0, 0.0, -1.0));
+		plane.setSurfaceNormal(Ops.o().vector(0.0, 0.0, -1.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		//The focal length of the Cornell Box's lense is .035
@@ -77,7 +74,7 @@ public class TestRoom implements PhysicalConstants {
 		Pinhole pinhole = new Pinhole();
 		pinhole.setRadius(.5*1.9 * Math.sqrt(.035 * .580));
 		pinhole.setThickness(0.05);
-		pinhole.setSurfaceNormal((Producer) Ops.o().vector(0.0, 0.0, -1.0));
+		pinhole.setSurfaceNormal(Ops.o().vector(0.0, 0.0, -1.0));
 		pinhole.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		Plane LeftWall = new Plane();
@@ -85,7 +82,7 @@ public class TestRoom implements PhysicalConstants {
 		LeftWall.setHeight(550.0);
 		LeftWall.setWidth(550.0);
 		LeftWall.setOrientation(new double[] {0.0, 1.0, 0.0});
-		LeftWall.setSurfaceNormal((Producer) Ops.o().vector(0.0, 0.0, 0.0));
+		LeftWall.setSurfaceNormal(Ops.o().vector(0.0, 0.0, 0.0));
 		LW.setVolume(LeftWall);
 		LW.setColorRange(620.0, 130.0);
 		
@@ -94,7 +91,7 @@ public class TestRoom implements PhysicalConstants {
 		RightWall.setHeight(550.0);
 		RightWall.setWidth(550.0);
 		RightWall.setOrientation(new double[] {0.0, 1.0, 0.0});
-		RightWall.setSurfaceNormal((Producer) Ops.o().vector(1.0, 0.0, 0.0));
+		RightWall.setSurfaceNormal(Ops.o().vector(1.0, 0.0, 0.0));
 		RW.setVolume(RightWall);
 		RW.setColorRange(495, 75);
 		
@@ -103,7 +100,7 @@ public class TestRoom implements PhysicalConstants {
 		BackWall.setHeight(550.0);
 		BackWall.setWidth(550.0);
 		BackWall.setOrientation(new double[] {0.0, 1.0, 0.0});
-		BackWall.setSurfaceNormal((Producer) Ops.o().vector(0.0, 0.0, 1.0));
+		BackWall.setSurfaceNormal(Ops.o().vector(0.0, 0.0, 1.0));
 		BW.setVolume(BackWall);
 		BW.setColorRange(570, 50);
 		
@@ -112,7 +109,7 @@ public class TestRoom implements PhysicalConstants {
 		Ceiling.setHeight(550.0);
 		Ceiling.setWidth(550.0);
 		Ceiling.setOrientation(new double[] {1.0, 0.0, 0.0});
-		Ceiling.setSurfaceNormal((Producer) Ops.o().vector(0.0, -1.0, 0.0));
+		Ceiling.setSurfaceNormal(Ops.o().vector(0.0, -1.0, 0.0));
 		CL.setVolume(Ceiling);
 		CL.setColorRange(570, 50);
 		
@@ -121,7 +118,7 @@ public class TestRoom implements PhysicalConstants {
 		Floor.setHeight(550.0);
 		Floor.setWidth(550.0);
 		Floor.setOrientation(new double[] {1.0, 0.0, 0.0});
-		Floor.setSurfaceNormal((Producer) Ops.o().vector(0.0, 1.0, 0.0));
+		Floor.setSurfaceNormal(Ops.o().vector(0.0, 1.0, 0.0));
 		FL.setVolume(Floor);
 		FL.setColorRange(570, 50);
 		
@@ -148,14 +145,14 @@ public class TestRoom implements PhysicalConstants {
 		
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(1000.0);
-		a.addAbsorber(l, (Producer) o().vector(275.0, 550.0, 275.0));
-		a.addAbsorber(plane, (Producer) o().vector(275.0, 275.0, 800.0));
-		a.addAbsorber(pinhole, (Producer) o().vector(275.0, 275.0, 799.65));
-		a.addAbsorber(LW, (Producer) o().vector(0.0, 275.0, 275.0));
-		a.addAbsorber(RW, (Producer) o().vector(550.0, 275.0, 275.0));
-		a.addAbsorber(CL, (Producer) o().vector(275.0, 550.0, 275.0));
-		a.addAbsorber(FL, (Producer) o().vector(275.0, 0.0, 275.0));
-		a.addAbsorber(BW, (Producer) o().vector(275.0, 275.0, 0.0));
+		a.addAbsorber(l, o().vector(275.0, 550.0, 275.0));
+		a.addAbsorber(plane, o().vector(275.0, 275.0, 800.0));
+		a.addAbsorber(pinhole, o().vector(275.0, 275.0, 799.65));
+		a.addAbsorber(LW, o().vector(0.0, 275.0, 275.0));
+		a.addAbsorber(RW, o().vector(550.0, 275.0, 275.0));
+		a.addAbsorber(CL, o().vector(275.0, 550.0, 275.0));
+		a.addAbsorber(FL, o().vector(275.0, 0.0, 275.0));
+		a.addAbsorber(BW, o().vector(275.0, 275.0, 0.0));
 
 		
 		

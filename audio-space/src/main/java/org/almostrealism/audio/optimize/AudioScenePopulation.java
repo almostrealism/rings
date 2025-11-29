@@ -16,22 +16,11 @@
 
 package org.almostrealism.audio.optimize;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.profile.OperationProfile;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
@@ -43,11 +32,21 @@ import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.optimize.HealthCallable;
 import org.almostrealism.optimize.Population;
-import org.almostrealism.CodeFeatures;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class AudioScenePopulation implements Population<PackedCollection, TemporalCellular>, Destroyable, CodeFeatures {
 
-	private AudioScene<?> scene;
+	private final AudioScene<?> scene;
 
 	private List<Genome<PackedCollection>> pop;
 	private Genome currentGenome;
@@ -197,9 +196,9 @@ public class AudioScenePopulation implements Population<PackedCollection, Tempor
 	public Console console() { return HealthCallable.console; }
 
 	public static class GenerationResult {
-		private String outputPath;
-		private Genome<PackedCollection> genome;
-		private long generationTime;
+		private final String outputPath;
+		private final Genome<PackedCollection> genome;
+		private final long generationTime;
 
 		public GenerationResult(String outputPath, Genome<PackedCollection> genome, long generationTime) {
 			this.outputPath = outputPath;

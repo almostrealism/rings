@@ -16,23 +16,21 @@
 
 
 package com.almostrealism.physics;
-import org.almostrealism.collect.PackedCollection;
-
-import java.io.IOException;
-
-import javax.swing.JFrame;
 
 import com.almostrealism.chem.PotentialMap;
-import org.almostrealism.primitives.AbsorptionPlane;
+import com.almostrealism.light.LightBulb;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
-import org.almostrealism.physics.PhotonField;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.physics.Clock;
+import org.almostrealism.physics.PhotonField;
+import org.almostrealism.primitives.AbsorptionPlane;
 
-import com.almostrealism.light.LightBulb;
-import org.almostrealism.CodeFeatures;
+import javax.swing.*;
+import java.io.IOException;
 
 /**
  * A HarmonicAbsorber object represents a spherical absorber that stores
@@ -48,7 +46,7 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 	private Producer<PackedCollection> dp;
 	private Vector place;
 	
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		// Create a harmonic absorber and confine it to a sphere
 		// with a radius of one micrometer.
 		HarmonicAbsorber b = new HarmonicAbsorber();
@@ -66,7 +64,7 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 		
 		// Facing the negative X direction and oriented so
 		// that the positive Y axis is "upward".
-		plane.setSurfaceNormal((Producer) Ops.o().vector(-1.0, 0.0, 0.0));
+		plane.setSurfaceNormal(Ops.o().vector(-1.0, 0.0, 0.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
 		
 		// Create a light bulb
@@ -76,9 +74,9 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 		// Add black body and light bulb to absorber set
 		AbsorberHashSet a = new AbsorberHashSet();
 		a.setBound(3.0 * Math.pow(10.0, 1.0));
-		a.addAbsorber(b, (Producer) Ops.o().vector(0.5, 0.0, 0.0));
-		a.addAbsorber(l, (Producer) Ops.o().vector(-1.0, 0.0, 0.0));
-		a.addAbsorber(plane, (Producer) Ops.o().vector(2.5, 0.0, 0.0));
+		a.addAbsorber(b, Ops.o().vector(0.5, 0.0, 0.0));
+		a.addAbsorber(l, Ops.o().vector(-1.0, 0.0, 0.0));
+		a.addAbsorber(plane, Ops.o().vector(2.5, 0.0, 0.0));
 		
 		// Create photon field and set absorber to the absorber set
 		// containing the black body and the light bulb
@@ -142,13 +140,13 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 
 	@Override
 	public Producer<PackedCollection> getDisplacement() {
-		return (Producer) multiply(p(place), dp);
+		return multiply(p(place), dp);
 	}
 	
 	protected void updateDisplacement() {
 		this.d = radius * Math.sqrt(energy / k);
 		double off = d / place.length();
-		this.dp = (Producer) Ops.o().vector(off, off, off);
+		this.dp = Ops.o().vector(off, off, off);
 	}
 	
 	public boolean absorb(Vector x, Vector p, double energy) {
@@ -177,7 +175,7 @@ public class HarmonicAbsorber implements SphericalAbsorber, CodeFeatures {
 		
 		this.updateDisplacement();
 		
-		return (Producer) v(p);
+		return v(p);
 	}
 
 	@Override

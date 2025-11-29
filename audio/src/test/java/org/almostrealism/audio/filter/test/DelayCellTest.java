@@ -16,16 +16,15 @@
 
 package org.almostrealism.audio.filter.test;
 
-import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.compute.Process;
+import io.almostrealism.profile.OperationProfile;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.filter.DelayNetwork;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.AcceleratedOperation;
 import org.almostrealism.hardware.HardwareOperator;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.CellularTemporalFactor;
@@ -145,7 +144,7 @@ public class DelayCellTest implements CellFeatures, TestFeatures {
 		cells.addRequirement(adjustment);
 
 		cells = cells
-				.d(i -> c(2.6), i -> c(2.0).add((Producer) adjustment.getResultant(c(1.0))))
+				.d(i -> c(2.6), i -> c(2.0).add(adjustment.getResultant(c(1.0))))
 				.o(i -> new File("results/adjust-delay-cell-test.wav"));
 
 		Supplier<Runnable> r = cells.sec(7.5);

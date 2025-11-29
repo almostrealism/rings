@@ -20,21 +20,21 @@
 
 package com.almostrealism.raytracer;
 
-import java.util.Collection;
-
-import org.almostrealism.raytrace.FogParameters;
-import org.almostrealism.raytrace.IntersectionalLightingEngine;
-import org.almostrealism.raytrace.RenderParameters;
-import org.almostrealism.geometry.Camera;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.geometry.Camera;
+import org.almostrealism.raytrace.FogParameters;
+import org.almostrealism.raytrace.IntersectionalLightingEngine;
+import org.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.render.RayTracedScene;
 import org.almostrealism.space.Scene;
-import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.swing.ProgressMonitor;
 import org.almostrealism.swing.displays.ProgressDisplay;
+
+import java.util.Collection;
 
 /**
  * The {@link LegacyRayTracingEngine} class provides static methods for rendering scenes.
@@ -122,7 +122,7 @@ public class LegacyRayTracingEngine {
 		LegacyRayTracingEngine.inProgressCount++;
 		LegacyRayTracingEngine.inProgress = true;
 		
-		RGB image[][] = new RGB[p.dx][p.dy];
+		RGB[][] image = new RGB[p.dx][p.dy];
 		
 		for (int i = p.x; i < (p.x + p.dx); i++) {
 			for (int j = p.y; j < (p.y + p.dy); j++) {

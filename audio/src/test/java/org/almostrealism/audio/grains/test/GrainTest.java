@@ -16,10 +16,10 @@
 
 package org.almostrealism.audio.grains.test;
 
+import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.data.WaveDataProviderList;
@@ -28,9 +28,9 @@ import org.almostrealism.audio.filter.EnvelopeSection;
 import org.almostrealism.audio.grains.Grain;
 import org.almostrealism.audio.grains.GrainSet;
 import org.almostrealism.audio.grains.GranularSynthesizer;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.time.Frequency;
 import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
@@ -210,7 +210,7 @@ public class GrainTest implements CellFeatures, EnvelopeFeatures, TestFeatures {
 		GrainSet set = synth.addFile("Library/organ.wav");
 		set.addGrain(new Grain(0.2, 0.015, 2.0));
 
-		WaveDataProviderList providers = synth.create((Producer) scalar(0.0), (Producer) scalar(0.0), (Producer) scalar(0.0), List.of(new Frequency(1.0)));
+		WaveDataProviderList providers = synth.create(scalar(0.0), scalar(0.0), scalar(0.0), List.of(new Frequency(1.0)));
 		providers.setup().get().run();
 		providers.getProviders().get(0).get().save(new File("results/granular-synth-test.wav"));
 	}

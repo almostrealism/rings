@@ -19,10 +19,10 @@ package org.almostrealism.audio.computations;
 import io.almostrealism.code.ProducerComputation;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.kernel.KernelStructureContext;
+import io.almostrealism.relation.Producer;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.scope.HybridScope;
 import io.almostrealism.scope.Scope;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.CollectionProducerComputationBase;
 
@@ -32,7 +32,7 @@ import java.util.function.Consumer;
 public class DefaultEnvelopeComputation extends CollectionProducerComputationBase implements ProducerComputation<PackedCollection> {
 
 	public DefaultEnvelopeComputation(Producer<PackedCollection> notePosition) {
-		super(null, new TraversalPolicy(1), (Producer) notePosition);
+		super(null, new TraversalPolicy(1), notePosition);
 	}
 
 	@Override

@@ -16,9 +16,9 @@
 
 package org.almostrealism.audio.data;
 
+import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.audio.sources.SineWaveCellData;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.graph.temporal.DefaultWaveCellData;
 import org.almostrealism.hardware.MemoryData;
 import org.almostrealism.hardware.mem.Heap;

@@ -28,13 +28,13 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class MultiChannelAudioOutput {
-	private Map<ChannelInfo.StereoChannel, Receptor<PackedCollection>> master;
-	private Map<ChannelInfo, Receptor<PackedCollection>> stems;
-	private Map<ChannelInfo, Receptor<PackedCollection>> measures;
+	private final Map<ChannelInfo.StereoChannel, Receptor<PackedCollection>> master;
+	private final Map<ChannelInfo, Receptor<PackedCollection>> stems;
+	private final Map<ChannelInfo, Receptor<PackedCollection>> measures;
 
-	private Function<ChannelInfo.StereoChannel, Receptor<PackedCollection>> masterFactory;
-	private Function<ChannelInfo, Receptor<PackedCollection>> stemsFactory;
-	private Function<ChannelInfo, Receptor<PackedCollection>> measuresFactory;
+	private final Function<ChannelInfo.StereoChannel, Receptor<PackedCollection>> masterFactory;
+	private final Function<ChannelInfo, Receptor<PackedCollection>> stemsFactory;
+	private final Function<ChannelInfo, Receptor<PackedCollection>> measuresFactory;
 
 	public MultiChannelAudioOutput() {
 		this((Function) null, null, null);

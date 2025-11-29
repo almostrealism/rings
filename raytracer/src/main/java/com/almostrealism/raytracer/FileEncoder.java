@@ -16,13 +16,13 @@
 
 package com.almostrealism.raytracer;
 
+import org.almostrealism.space.Scene;
+
 import java.beans.XMLEncoder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import org.almostrealism.space.Scene;
 
 // TODO  Add RAW encoding.
 
@@ -45,7 +45,7 @@ public class FileEncoder {
 	 * returns.
 	 */
 	public static void encodeSceneFile(Scene scene, File file, int encoding) throws IOException {
-		if (file.exists() != true) {
+		if (!file.exists()) {
 			if (!file.createNewFile()) {
 				System.out.println("FileEncoder: Unable to create " + file);
 				return;

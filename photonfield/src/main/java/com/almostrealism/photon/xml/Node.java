@@ -16,6 +16,12 @@
 
 package com.almostrealism.photon.xml;
 
+import io.almostrealism.uml.Nameable;
+import org.almostrealism.color.ProbabilityDistribution;
+import org.almostrealism.physics.Absorber;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -24,19 +30,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.almostrealism.uml.Nameable;
-import org.almostrealism.color.ProbabilityDistribution;
-import org.almostrealism.physics.Absorber;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 public class Node {
 	protected String name;
 	protected Object obj;
 	
-	private PropertyDescriptor desc[];
-	private Node nodes[];
-	private boolean display[];
+	private PropertyDescriptor[] desc;
+	private Node[] nodes;
+	private boolean[] display;
 	
 	private AbsorberSetNode parent;
 	
@@ -65,7 +65,7 @@ public class Node {
 			this.display[i] = true;
 			
 			Class c = m.getReturnType();
-			Object o = m.invoke(this.obj, new Object[0]);
+			Object o = m.invoke(this.obj);
 			
 			if (new double[0].getClass().isAssignableFrom(c)) {
 				this.nodes[i] = new VectorNode();

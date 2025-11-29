@@ -22,12 +22,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class WaveDetailsJob implements Runnable, ConsoleFeatures {
-	private Function<WaveDetailsJob, WaveDetails> runner;
-	private WaveDataProvider target;
-	private boolean persistent;
+	private final Function<WaveDetailsJob, WaveDetails> runner;
+	private final WaveDataProvider target;
+	private final boolean persistent;
 	private double priority;
 
-	private CompletableFuture<WaveDetails> future;
+	private final CompletableFuture<WaveDetails> future;
 
 	public WaveDetailsJob(Function<WaveDetailsJob, WaveDetails> runner,
 						  WaveDataProvider target, boolean persistent,

@@ -43,8 +43,8 @@ public class AudioCellTest implements CellFeatures {
 		PackedCollection result = out.getChannelData(0).evaluate();
 		System.out.println(result.toArrayString(0, 5));
 
-		Assert.assertTrue(result.toDouble(2) == 0.0);
-		Assert.assertFalse(result.toDouble(3) == 0.0);
+		Assert.assertEquals(0.0, result.toDouble(2), 0.0);
+		Assert.assertNotEquals(0.0, result.toDouble(3), 0.0);
 	}
 
 	@Test

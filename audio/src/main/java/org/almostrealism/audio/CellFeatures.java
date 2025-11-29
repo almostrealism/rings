@@ -17,20 +17,20 @@
 package org.almostrealism.audio;
 
 import io.almostrealism.collect.TraversalPolicy;
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
 import org.almostrealism.audio.computations.DefaultEnvelopeComputation;
 import org.almostrealism.audio.data.PolymorphicAudioData;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.filter.AudioPassFilter;
 import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.audio.sequence.ValueSequenceCell;
+import org.almostrealism.audio.sources.SineWaveCell;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.AdjustableDelayCell;
-import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
-import org.almostrealism.audio.filter.AudioPassFilter;
-import org.almostrealism.audio.sources.SineWaveCell;
-import org.almostrealism.audio.sequence.ValueSequenceCell;
-import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.graph.Cell;
 import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.graph.FilteredCell;
@@ -38,8 +38,9 @@ import org.almostrealism.graph.MultiCell;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.graph.SummationCell;
+import org.almostrealism.graph.temporal.CollectionTemporalCellAdapter;
+import org.almostrealism.graph.temporal.WaveCell;
 import org.almostrealism.hardware.OperationList;
-import io.almostrealism.relation.Factor;
 import org.almostrealism.heredity.Gene;
 import org.almostrealism.heredity.HeredityFeatures;
 import org.almostrealism.heredity.IdentityFactor;
@@ -48,7 +49,6 @@ import org.almostrealism.io.Console;
 import org.almostrealism.time.Frequency;
 import org.almostrealism.time.Temporal;
 import org.almostrealism.time.TemporalFeatures;
-import org.almostrealism.CodeFeatures;
 import org.almostrealism.time.TemporalRunner;
 
 import java.io.File;
@@ -104,7 +104,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	}
 
 	default CellList all(int count, IntFunction<CellList> cells) {
-		CellList all[] = new CellList[count];
+		CellList[] all = new CellList[count];
 		IntStream.range(0, count).forEach(i -> all[i] = cells.apply(i));
 
 		CellList result = new CellList(all);
@@ -125,10 +125,10 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	}
 
 	default CellList[] branch(CellList cells, IntFunction<Cell<PackedCollection>>... dest) {
-		CellList c[] = IntStream.range(0, dest.length).mapToObj(i -> new CellList(cells)).toArray(CellList[]::new);
+		CellList[] c = IntStream.range(0, dest.length).mapToObj(i -> new CellList(cells)).toArray(CellList[]::new);
 
 		IntStream.range(0, cells.size()).forEach(i -> {
-			Cell<PackedCollection> d[] = new Cell[dest.length];
+			Cell<PackedCollection>[] d = new Cell[dest.length];
 
 			IntStream.range(0, dest.length).forEach(j -> {
 				d[j] = dest[j].apply(i);
@@ -589,8 +589,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 
 		OperationList export = new OperationList("Mixdown Export");
 
-		PackedCollection wavs = (PackedCollection)
-				new PackedCollection(shape(cells.size(), WaveOutput.defaultTimelineFrames)).traverse(1);
+		PackedCollection wavs = new PackedCollection(shape(cells.size(), WaveOutput.defaultTimelineFrames)).traverse(1);
 		for (int i = 0; i < cells.size(); i++) {
 			export.add(outputs.get(i).export(0, wavs.get(i)));
 		}
@@ -633,7 +632,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	}
 
 	default AudioPassFilter hp(int sampleRate, double frequency, double resonance) {
-		return hp(sampleRate, (Producer) c(frequency), (Producer) scalar(resonance));
+		return hp(sampleRate, c(frequency), scalar(resonance));
 	}
 
 	default <T extends PackedCollection> AudioPassFilter hp(Producer<T> frequency, Producer<T> resonance) {
@@ -649,7 +648,7 @@ public interface CellFeatures extends HeredityFeatures, TemporalFeatures, CodeFe
 	}
 
 	default AudioPassFilter lp(int sampleRate, double frequency, double resonance) {
-		return lp(sampleRate, (Producer) c(frequency), (Producer) scalar(resonance));
+		return lp(sampleRate, c(frequency), scalar(resonance));
 	}
 
 	default <T extends PackedCollection> AudioPassFilter lp(Producer<T> frequency, Producer<T> resonance) {

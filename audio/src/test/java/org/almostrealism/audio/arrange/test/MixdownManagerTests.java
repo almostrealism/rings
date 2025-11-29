@@ -18,14 +18,14 @@ package org.almostrealism.audio.arrange.test;
 
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
-import org.almostrealism.audio.data.ChannelInfo;
-import org.almostrealism.audio.health.MultiChannelAudioOutput;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.GlobalTimeManager;
 import org.almostrealism.audio.arrange.MixdownManager;
+import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ProjectedGenome;
@@ -39,8 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MixdownManagerTests implements CellFeatures {
-	private double duration = 180;
-	private int sampleRate = OutputLine.sampleRate;
+	private final double duration = 180;
+	private final int sampleRate = OutputLine.sampleRate;
 
 	protected void run(String name, GlobalTimeManager time, MixdownManager mixdown, CellList cells) {
 		OperationList setup = new OperationList("MixdownManagerTests Setup");

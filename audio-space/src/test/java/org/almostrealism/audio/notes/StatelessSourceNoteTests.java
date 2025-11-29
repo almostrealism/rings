@@ -18,10 +18,10 @@ package org.almostrealism.audio.notes;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.SamplingFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.pattern.PatternElement;
 import org.almostrealism.audio.pattern.PatternFeatures;
 import org.almostrealism.audio.sources.StatelessSource;

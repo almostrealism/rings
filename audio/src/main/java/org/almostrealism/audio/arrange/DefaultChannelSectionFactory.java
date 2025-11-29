@@ -51,26 +51,27 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 
 	public static double MAX_FILTER_RISE = 18000;
 
-	public static final double repeatChoices[] = new double[] { 8, 16, 32 };
+	public static final double[] repeatChoices = new double[] { 8, 16, 32 };
 
 	private TimeCell clock;
 	private PackedCollection duration;
 
-	private Chromosome<PackedCollection> volume;
-	private Chromosome<PackedCollection> volumeExp;
-	private Chromosome<PackedCollection> lowPassFilter;
-	private Chromosome<PackedCollection> lowPassFilterExp;
-	private Chromosome<PackedCollection> simpleDuration;
-	private Chromosome<PackedCollection> simpleDurationSpeedUp;
+	private final Chromosome<PackedCollection> volume;
+	private final Chromosome<PackedCollection> volumeExp;
+	private final Chromosome<PackedCollection> lowPassFilter;
+	private final Chromosome<PackedCollection> lowPassFilterExp;
+	private final Chromosome<PackedCollection> simpleDuration;
+	private final Chromosome<PackedCollection> simpleDurationSpeedUp;
 
-	private int channel, channels;
-	private IntPredicate wetChannels;
-	private IntPredicate repeatChannels;
+	private int channel;
+	private final int channels;
+	private final IntPredicate wetChannels;
+	private final IntPredicate repeatChannels;
 
-	private Supplier<Frequency> tempo;
-	private DoubleSupplier measureDuration;
-	private int length;
-	private int sampleRate;
+	private final Supplier<Frequency> tempo;
+	private final DoubleSupplier measureDuration;
+	private final int length;
+	private final int sampleRate;
 
 	public DefaultChannelSectionFactory(ProjectedChromosome chromosome, int channels,
 										IntPredicate wetChannels, IntPredicate repeatChannels,
@@ -186,7 +187,7 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 		@Override
 		public Supplier<Runnable> process(Producer<PackedCollection> destination, Producer<PackedCollection> source) {
 			PackedCollection input = new PackedCollection(samples);
-			PackedCollection output = (PackedCollection) new PackedCollection(shape(1, samples)).traverse(1);
+			PackedCollection output = new PackedCollection(shape(1, samples)).traverse(1);
 			dependencies.add(input);
 			dependencies.add(output);
 
@@ -223,7 +224,7 @@ public class DefaultChannelSectionFactory implements Setup, Destroyable,
 
 				Producer<PackedCollection> lpFreq = riseFall(0, MAX_FILTER_RISE, 0.0,
 															d, m, p, e, clock.time(sampleRate), p(duration));
-				Producer<PackedCollection> resonance = (Producer) scalar(FixedFilterChromosome.defaultResonance);
+				Producer<PackedCollection> resonance = scalar(FixedFilterChromosome.defaultResonance);
 				cells = cells.map(fc(i -> lp(lpFreq, resonance)));
 			}
 

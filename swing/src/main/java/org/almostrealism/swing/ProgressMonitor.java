@@ -24,24 +24,24 @@ public interface ProgressMonitor {
 	/**
 	  Returns the increment size used by this ProgressMonitor object.
 	*/
-	
-	public int getIncrementSize();
+
+	int getIncrementSize();
 	
 	/**
 	  Returns the total size of this ProgressMonitor object.
 	*/
-	
-	public int getTotalSize();
+
+	int getTotalSize();
 	
 	/**
 	  Returns the increment of this ProgressMonitor object.
 	*/
-	
-	public int getIncrement();
+
+	int getIncrement();
 	
 	/**
 	  Increments this ProgressMonitor object.
 	*/
-	
-	public void increment();
+
+	void increment();
 }

@@ -16,27 +16,26 @@
 
 package com.almostrealism.photon.xml;
 
-import java.awt.Container;
-import java.util.List;
-
-import javax.swing.JCheckBox;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+
 public class BooleanNode extends Node {
-	private JCheckBox box;
+	private final JCheckBox box;
 	
 	public BooleanNode() {
 		this.box = new JCheckBox();
 	}
 	
 	public void setObject(Object o) {
-		if (o instanceof Boolean == false) return;
+		if (!(o instanceof Boolean)) return;
 		this.box.setSelected(((Boolean)o).booleanValue());
 	}
 	
-	public Object getObject() { return new Boolean(this.box.isSelected()); }
+	public Object getObject() { return Boolean.valueOf(this.box.isSelected()); }
 	
 	public void listElements(Document doc, Element node, List l) {
 		Element el = doc.createElement("boolean");

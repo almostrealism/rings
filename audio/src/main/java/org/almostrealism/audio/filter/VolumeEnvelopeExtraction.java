@@ -22,7 +22,7 @@ import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.collect.PackedCollection;
 
 public class VolumeEnvelopeExtraction implements StatelessFilter, CodeFeatures {
-	private PackedCollection coefficients;
+	private final PackedCollection coefficients;
 
 	public VolumeEnvelopeExtraction() {
 		this(281);

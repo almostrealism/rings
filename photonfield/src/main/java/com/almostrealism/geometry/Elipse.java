@@ -20,12 +20,12 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
 
 public class Elipse {
-	private static double center[], major[], minor[];
+	private static double[] center, major, minor;
 	
-	public static void loadConicSection(double x[], double p[], double n[], double theta) {
-		double l[] = VectorMath.subtract(x, p);
+	public static void loadConicSection(double[] x, double[] p, double[] n, double theta) {
+		double[] l = VectorMath.subtract(x, p);
 		double nl = new Vector(n).dotProduct(new Vector(l));
-		double m[] = VectorMath.addMultiple(l, n, -nl);
+		double[] m = VectorMath.addMultiple(l, n, -nl);
 		VectorMath.multiply(m, 1.0 / VectorMath.length(m));
 		
 		double ll = VectorMath.length(l);
@@ -39,7 +39,7 @@ public class Elipse {
 		Elipse.center = VectorMath.addMultiple(VectorMath.clone(p), m, c1 - c2);
 		Elipse.major = VectorMath.multiply(m, 0.5 * (c1 + c2));
 		
-		double nm[] = new Vector(n).crossProduct(new Vector(Elipse.major)).toArray();
+		double[] nm = new Vector(n).crossProduct(new Vector(Elipse.major)).toArray();
 		VectorMath.multiply(nm, 1.0 / VectorMath.length(nm));
 		double nml = new Vector(nm).dotProduct(new Vector(l)) / ll;
 		double cnml = Math.acos(nml);
@@ -56,7 +56,7 @@ public class Elipse {
 			y = Math.random();
 		}
 		
-		double a[] = VectorMath.multiply(Elipse.major, x, true);
+		double[] a = VectorMath.multiply(Elipse.major, x, true);
 		VectorMath.addMultiple(a, Elipse.minor, y);
 		
 		return a;

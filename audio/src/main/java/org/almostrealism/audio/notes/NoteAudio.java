@@ -20,7 +20,6 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuned;
-import org.almostrealism.collect.CollectionFeatures;
 import org.almostrealism.collect.PackedCollection;
 
 public interface NoteAudio extends KeyboardTuned {

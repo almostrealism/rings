@@ -98,8 +98,8 @@ public class OnnxAutoEncoder implements AutoEncoder, OnnxFeatures {
 	public PackedCollection encode(PackedCollection audio) {
 		Map<String, OnnxTensor> inputs = new HashMap<>();
 
-		float leftData[];
-		float rightData[];
+		float[] leftData;
+		float[] rightData;
 
 		if (audio.getShape().getDimensions() == 1 || audio.getShape().length(0) == 1) {
 			leftData = audio.toFloatArray(0, Math.min(audio.getMemLength(), FRAME_COUNT));

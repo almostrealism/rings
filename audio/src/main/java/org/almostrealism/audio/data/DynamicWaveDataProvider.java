@@ -22,9 +22,9 @@ import org.almostrealism.hardware.OperationList;
 import java.util.function.Supplier;
 
 public class DynamicWaveDataProvider extends WaveDataProviderAdapter implements Setup {
-	private String key;
-	private WaveData destination;
-	private Supplier<Runnable> setup;
+	private final String key;
+	private final WaveData destination;
+	private final Supplier<Runnable> setup;
 
 	public DynamicWaveDataProvider(String key, WaveData destination) {
 		this(key, destination, new OperationList());

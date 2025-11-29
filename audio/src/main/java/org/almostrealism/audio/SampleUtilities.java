@@ -25,7 +25,7 @@ public class SampleUtilities {
 	
 	public static int windowStart, windowLen;
 	
-	protected static float correlationBuffer[];
+	protected static float[] correlationBuffer;
 
 	/**
 	 * low-pass operate & decimate to about 500 Hz. return number of samples output.
@@ -36,7 +36,7 @@ public class SampleUtilities {
 	 *
 	 * Anti-alias filtering is done simply by averaging the samples.
 	 */
-	public static int decimate(int src[], int dest[], int numsamples) {
+	public static int decimate(int[] src, int[] dest, int numsamples) {
 		int outcount = 0;
 		int decimateSum = 0;
 		int decimateCount = 0;
@@ -71,7 +71,7 @@ public class SampleUtilities {
 	// Calculates autocorrelation function of the sample history buffer
 	public static void updateCorrelation(int process_samples) {
 	    int offs;
-	    int pBuffer[] = new int[0]; // Fix
+	    int[] pBuffer = new int[0]; // Fix
 	    
 //	    assert(buffer->numSamples() >= (uint)(process_samples + windowLen));
 //

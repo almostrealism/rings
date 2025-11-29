@@ -17,12 +17,12 @@
 package org.almostrealism.audio.optimize;
 
 import io.almostrealism.code.ProducerComputation;
+import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.CollectionProducerComputation;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.relation.Factor;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;

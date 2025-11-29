@@ -18,9 +18,9 @@ package org.almostrealism.audio.sources.test;
 
 import io.almostrealism.compute.Process;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.WaveData;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.notes.NoteAudioContext;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNote;
@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RescalingAggregationTests implements PatternFeatures, TestFeatures {
-	private int sampleRate = OutputLine.sampleRate;
+	private final int sampleRate = OutputLine.sampleRate;
 
 	@Test
 	public void loadAggregated() throws IOException {
