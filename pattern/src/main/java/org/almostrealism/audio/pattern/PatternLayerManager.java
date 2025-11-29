@@ -19,7 +19,6 @@ package org.almostrealism.audio.pattern;
 import io.almostrealism.profile.OperationMetadata;
 import io.almostrealism.profile.OperationWithInfo;
 import org.almostrealism.audio.arrange.AudioSceneContext;
-import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterFunction;
@@ -43,6 +42,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
+	public static int AUTOMATION_GENE_LENGTH = 6;
 	public static int MAX_LAYERS = 32;
 
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
@@ -110,7 +110,7 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 				.mapToObj(i -> chromosome.addGene(3))
 				.collect(Collectors.toList()));
 		envelopeAutomationChromosome = chromosome(IntStream.range(0, MAX_LAYERS)
-				.mapToObj(i -> chromosome.addGene(AutomationManager.GENE_LENGTH))
+				.mapToObj(i -> chromosome.addGene(AUTOMATION_GENE_LENGTH))
 				.collect(Collectors.toList()));
 	}
 
@@ -279,7 +279,7 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 	protected void layer(ParameterSet params) {
 		Gene<PackedCollection> automationGene = envelopeAutomationChromosome.valueAt(depth());
 		PackedCollection automationParams =
-				PackedCollection.factory().apply(AutomationManager.GENE_LENGTH).fill(pos ->
+				PackedCollection.factory().apply(AUTOMATION_GENE_LENGTH).fill(pos ->
 						automationGene.valueAt(pos[0]).getResultant(null).evaluate().toDouble());
 
 		if (rootCount() <= 0) {

@@ -97,25 +97,6 @@ public abstract class AudioCellChoiceAdapter extends CollectionTemporalCellAdapt
 
 	@Override
 	public Supplier<Runnable> setup() {
-//		TODO  Remove
-//		Evaluable<Scalar> d = decision.get();
-//
-//		return () -> () -> {
-//			if (parallel) {
-//				getCellSet().forEach(c -> c.setup().get().run());
-//			} else {
-//				double v = d.evaluate().getValue();
-//				double in = 1.0 / cells.size();
-//
-//				for (int i = 0; i < cells.size(); i++) {
-//					if (v <= (i + 1) * in) {
-//						cells.get(i).setup().get().run();
-//						return;
-//					}
-//				}
-//			}
-//		};
-
 		if (parallel) {
 			return getCellSet().stream().map(Cell::setup).collect(OperationList.collector());
 		} else {
