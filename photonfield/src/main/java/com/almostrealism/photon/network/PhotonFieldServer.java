@@ -1,5 +1,6 @@
 package com.almostrealism.photon.network;
 
+import com.almostrealism.physics.BlackBodyExperiment;
 import org.almostrealism.physics.BlackBody;
 import io.flowtree.cli.FlowTreeCliServer;
 import io.flowtree.fs.OutputServer;
@@ -19,7 +20,7 @@ public class PhotonFieldServer {
 	public static void main(String[] args) throws FileNotFoundException {
 		FlowTreeCliServer.start(args);
 
-		final String sceneFile = BlackBody.createScene();
+		final String sceneFile = BlackBodyExperiment.createScene();
 
 		OutputServer.getCurrentServer().getNodeServer().addTask(new JobFactory() {
 			@Override
