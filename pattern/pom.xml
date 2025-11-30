@@ -13,9 +13,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.almostrealism</groupId>
+			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-audio</artifactId>
-			<version>0.43</version>
 		</dependency>
 
 		<dependency>
