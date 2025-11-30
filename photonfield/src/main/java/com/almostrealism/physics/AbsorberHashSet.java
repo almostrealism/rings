@@ -22,7 +22,7 @@ import com.almostrealism.buffers.AveragedVectorMap2D96Bit;
 import com.almostrealism.buffers.BufferListener;
 import com.almostrealism.buffers.ColorBuffer;
 import com.almostrealism.buffers.TriangularMeshColorBuffer;
-import com.almostrealism.chem.PotentialMap;
+import org.almostrealism.electrostatic.PotentialMap;
 import com.almostrealism.geometry.Elipse;
 import io.almostrealism.code.Operator;
 import io.almostrealism.relation.Evaluable;

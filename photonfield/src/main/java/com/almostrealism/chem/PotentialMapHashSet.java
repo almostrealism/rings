@@ -24,6 +24,9 @@
 
 package com.almostrealism.chem;
 
+import org.almostrealism.electrostatic.PotentialMap;
+import org.almostrealism.electrostatic.PotentialMapSet;
+
 import java.util.HashSet;
 
 /**

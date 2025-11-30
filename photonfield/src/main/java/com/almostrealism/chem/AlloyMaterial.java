@@ -2,6 +2,7 @@ package com.almostrealism.chem;
 
 import org.almostrealism.chem.Alloy;
 import org.almostrealism.chem.Material;
+import org.almostrealism.electrostatic.ProtonCloud;
 
 public class AlloyMaterial extends Material {
 	public static final int defaultSamples = 10;

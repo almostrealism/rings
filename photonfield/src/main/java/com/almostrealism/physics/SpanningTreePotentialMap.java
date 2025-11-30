@@ -24,8 +24,8 @@
 
 package com.almostrealism.physics;
 
-import com.almostrealism.chem.PotentialMap;
-import com.almostrealism.chem.PotentialMapSet;
+import org.almostrealism.electrostatic.PotentialMap;
+import org.almostrealism.electrostatic.PotentialMapSet;
 
 import java.util.Collection;
 import java.util.Iterator;

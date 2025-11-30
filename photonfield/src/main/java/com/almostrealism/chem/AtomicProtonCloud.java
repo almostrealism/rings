@@ -17,10 +17,12 @@
 
 package com.almostrealism.chem;
 
-import com.almostrealism.physics.SphericalAbsorber;
+import org.almostrealism.physics.SphericalAbsorber;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.electrostatic.PotentialMap;
+import org.almostrealism.electrostatic.ProtonCloud;
 import org.almostrealism.physics.Atom;
 import org.almostrealism.physics.Clock;
 

@@ -16,7 +16,7 @@
 
 package com.almostrealism.chem;
 
-import com.almostrealism.physics.HarmonicAbsorber;
+import org.almostrealism.physics.HarmonicAbsorber;
 import com.almostrealism.physics.Valence;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.chem.Alloy;

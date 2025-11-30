@@ -17,7 +17,7 @@
 
 package com.almostrealism.physics;
 
-import com.almostrealism.chem.PotentialMap;
+import org.almostrealism.electrostatic.PotentialMap;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.collect.PackedCollection;
