@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.code.ExpressionFeatures;
 import io.almostrealism.expression.Product;
 import io.almostrealism.relation.Evaluable;
@@ -89,7 +88,6 @@ public abstract class WaveDataProviderAdapter implements WaveDataProvider,
 		return dest.traverse(1);
 	}
 
-	@JsonIgnore
 	@Override
 	public WaveData get() {
 		if (loaded.get(getKey()) == null) {

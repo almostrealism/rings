@@ -16,12 +16,10 @@
 
 package org.almostrealism.audio.tone;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.almostrealism.uml.Plural;
 
 import java.util.function.Consumer;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public interface Scale<T extends KeyPosition> extends Plural<T> {
 	int length();
 

@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.audio.WaveOutput;
@@ -60,7 +59,6 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter implements Pat
 		setResourcePath(resourcePath);
 	}
 
-	@JsonIgnore
 	@Override
 	public String getKey() { return getResourcePath(); }
 
@@ -85,7 +83,6 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter implements Pat
 		});
 	}
 
-	@JsonIgnore
 	@Override
 	public int getSampleRate() {
 		if (corruptFiles.contains(getResourcePath())) return 0;
@@ -105,7 +102,6 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter implements Pat
 		return sampleRate;
 	}
 
-	@JsonIgnore
 	@Override
 	public long getCountLong() {
 		if (corruptFiles.contains(getResourcePath())) return 0;
@@ -123,7 +119,6 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter implements Pat
 		return count;
 	}
 
-	@JsonIgnore
 	@Override
 	public double getDuration() {
 		if (corruptFiles.contains(getResourcePath())) return 0.0;
@@ -140,7 +135,6 @@ public class FileWaveDataProvider extends WaveDataProviderAdapter implements Pat
 		return duration;
 	}
 
-	@JsonIgnore
 	@Override
 	public int getChannelCount() {
 		if (corruptFiles.contains(getResourcePath())) return 0;

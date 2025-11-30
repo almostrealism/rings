@@ -16,14 +16,12 @@
 
 package org.almostrealism.audio.tone;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.almostrealism.time.Frequency;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 public interface KeyboardTuning {
 	default Frequency getTone(KeyPosition pos) {
 		if (pos.position() < 0) {

@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio.notes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.code.CacheManager;
 import io.almostrealism.code.CachedValue;
 import io.almostrealism.collect.TraversalPolicy;
@@ -114,7 +113,6 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 	public Double getBpm() { return bpm; }
 	public void setBpm(Double bpm) { this.bpm = bpm; }
 
-	@JsonIgnore
 	@Override
 	public void setTuning(KeyboardTuning tuning) {
 		if (tuning != this.tuning) {
@@ -123,14 +121,11 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 		}
 	}
 
-	@JsonIgnore
 	public KeyboardTuning getTuning() { return tuning; }
 
-	@JsonIgnore
 	@Override
 	public int getSampleRate() { return sampleRate; }
 
-	@JsonIgnore
 	@Override
 	public double getDuration(KeyPosition<?> target) {
 		if (target == null) return provider.getDuration();
@@ -167,7 +162,6 @@ public class NoteAudioProvider implements NoteAudio, Validity, Comparable<NoteAu
 		};
 	}
 
-	@JsonIgnore
 	public WaveData getWaveData() {
 		return provider == null ? null : provider.get();
 	}
