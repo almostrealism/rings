@@ -18,7 +18,6 @@ package org.almostrealism.audio;
 
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.audio.grains.Grain;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
@@ -87,7 +86,7 @@ public interface SamplingFeatures extends CodeFeatures {
 	}
 
 	default CollectionProducer grains(Producer<PackedCollection> input,
-									  Producer<Grain> grain,
+									  Producer<PackedCollection> grain,
 									  Producer<PackedCollection> wavelength,
 									  Producer<PackedCollection> phase,
 									  Producer<PackedCollection> amp) {
