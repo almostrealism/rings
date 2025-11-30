@@ -1,11 +1,13 @@
 package com.almostrealism.physics;
 
-import com.almostrealism.light.LightBulb;
+import org.almostrealism.light.LightBulb;
 import org.almostrealism.algebra.VectorFeatures;
 import org.almostrealism.physics.Clock;
 import org.almostrealism.physics.HarmonicAbsorber;
 import org.almostrealism.physics.PhotonField;
 import org.almostrealism.primitives.AbsorptionPlane;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
 
 import javax.swing.*;
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package com.almostrealism.photon.network;
 
-import com.almostrealism.physics.BlackBody;
+import org.almostrealism.physics.BlackBody;
 import io.flowtree.cli.FlowTreeCliServer;
 import io.flowtree.fs.OutputServer;
 import io.flowtree.job.Job;

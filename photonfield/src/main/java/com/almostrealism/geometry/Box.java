@@ -16,9 +16,9 @@
 
 package com.almostrealism.geometry;
 
-import com.almostrealism.light.PlanarLight;
-import com.almostrealism.physics.AbsorberHashSet;
-import com.almostrealism.physics.DefaultPhotonField;
+import org.almostrealism.light.PlanarLight;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
 import com.almostrealism.physics.SpecularAbsorber;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
@@ -31,7 +31,7 @@ import org.almostrealism.physics.PhotonField;
 import org.almostrealism.primitives.AbsorptionPlane;
 import org.almostrealism.primitives.Pinhole;
 import org.almostrealism.primitives.Plane;
-import org.almostrealism.space.Volume;
+import org.almostrealism.physics.Volume;
 
 import javax.swing.*;
 import java.io.IOException;

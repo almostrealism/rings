@@ -18,7 +18,7 @@
 package com.almostrealism.physics;
 
 import com.almostrealism.geometry.Sphere;
-import com.almostrealism.light.PlanarLight;
+import org.almostrealism.light.PlanarLight;
 import com.almostrealism.stats.UniformHemisphericalDistribution;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
@@ -28,13 +28,17 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.ProbabilityDistribution;
 import org.almostrealism.color.Spectrum;
 import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.BlackBody;
 import org.almostrealism.physics.Clock;
 import org.almostrealism.physics.Fast;
 import org.almostrealism.physics.PhotonField;
 import org.almostrealism.physics.PhysicalConstants;
+import org.almostrealism.physics.VolumeAbsorber;
 import org.almostrealism.primitives.AbsorptionPlane;
 import org.almostrealism.primitives.Pinhole;
 import org.almostrealism.primitives.Plane;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
 import org.almostrealism.stats.BRDF;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
 import org.almostrealism.utils.PriorityQueue;

@@ -16,9 +16,9 @@
 
 package com.almostrealism.util;
 
-import com.almostrealism.physics.AbsorberHashSet;
-import com.almostrealism.physics.AbsorberSet;
-import com.almostrealism.physics.DefaultPhotonField;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.physics.AbsorberSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
 import io.almostrealism.relation.Factory;
 import io.almostrealism.uml.Nameable;
 import org.almostrealism.CodeFeatures;
@@ -36,7 +36,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.swing.*;
+import javax.swing.JFrame;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.beans.IntrospectionException;

@@ -20,7 +20,7 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.space.Volume;
+import org.almostrealism.physics.Volume;
 
 /**
  * A {@link Sphere} represents a spherical volume in 3D space.

@@ -16,8 +16,8 @@
 
 package com.almostrealism.photon.network;
 
-import com.almostrealism.physics.AbsorberSet;
-import com.almostrealism.physics.DefaultPhotonField;
+import org.almostrealism.physics.AbsorberSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
 import com.almostrealism.util.FileLoader;
 import io.almostrealism.resource.Resource;
 import io.flowtree.job.Job;

@@ -16,9 +16,9 @@
 
 package com.almostrealism.photon.ui;
 
-import com.almostrealism.texture.CosineIntensityMap;
-import com.almostrealism.texture.IntensityMap;
-import com.almostrealism.texture.Turbulence;
+import org.almostrealism.texture.CosineIntensityMap;
+import org.almostrealism.texture.IntensityMap;
+import org.almostrealism.texture.Turbulence;
 import org.almostrealism.color.RGB;
 import org.almostrealism.texture.ImageCanvas;
 

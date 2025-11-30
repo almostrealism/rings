@@ -5,6 +5,8 @@ import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.physics.Absorber;
 import org.almostrealism.physics.PhotonField;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
 
 import java.util.Collection;
 import java.util.Iterator;

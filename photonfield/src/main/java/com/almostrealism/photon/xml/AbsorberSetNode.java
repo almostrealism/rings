@@ -16,24 +16,31 @@
 
 package com.almostrealism.photon.xml;
 
-import com.almostrealism.buffers.AveragedVectorMap2D;
-import com.almostrealism.buffers.BufferListener;
-import com.almostrealism.buffers.ColorBuffer;
-import com.almostrealism.physics.AbsorberHashSet;
-import com.almostrealism.physics.AbsorberSet;
+import org.almostrealism.color.buffer.AveragedVectorMap2D;
+import org.almostrealism.physics.BufferListener;
+import org.almostrealism.color.buffer.ColorBuffer;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.physics.AbsorberSet;
 import com.almostrealism.raytracer.Settings;
 import io.almostrealism.uml.Nameable;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.physics.Absorber;
-import org.almostrealism.space.Volume;
+import org.almostrealism.physics.Volume;
 import org.almostrealism.texture.ImageCanvas;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFormattedTextField;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.IntrospectionException;
@@ -80,9 +87,9 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 			this.yField.addFocusListener(listener);
 			this.zField.addFocusListener(listener);
 			
-			this.xField.setValue(new Double(value[0]));
-			this.yField.setValue(new Double(value[1]));
-			this.zField.setValue(new Double(value[2]));
+			this.xField.setValue(Double.valueOf(value[0]));
+			this.yField.setValue(Double.valueOf(value[1]));
+			this.zField.setValue(Double.valueOf(value[2]));
 			
 			super.add(new JLabel("X: "));
 			super.add(this.xField);
@@ -116,7 +123,7 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 			
 			this.wField.setValue(Integer.valueOf(w));
 			this.hField.setValue(Integer.valueOf(h));
-			this.mField.setValue(new Double(m));
+			this.mField.setValue(Double.valueOf(m));
 			
 			super.add(new JLabel("W: "));
 			super.add(this.wField);

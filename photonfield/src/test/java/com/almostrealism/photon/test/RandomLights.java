@@ -17,11 +17,11 @@
 package com.almostrealism.photon.test;
 
 import com.almostrealism.geometry.Sphere;
-import com.almostrealism.light.LightBulb;
-import com.almostrealism.physics.AbsorberHashSet;
-import com.almostrealism.physics.BlackBody;
-import com.almostrealism.physics.DefaultPhotonField;
-import com.almostrealism.physics.VolumeAbsorber;
+import org.almostrealism.light.LightBulb;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.physics.BlackBody;
+import org.almostrealism.raytrace.DefaultPhotonField;
+import org.almostrealism.physics.VolumeAbsorber;
 import org.almostrealism.Ops;
 import org.almostrealism.physics.Clock;
 import org.almostrealism.physics.PhotonField;

@@ -1,36 +1,20 @@
-/*
- * Copyright 2018 Michael Murray
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
 package com.almostrealism.physics;
 
-import com.almostrealism.chem.ElectronCloud;
 import com.almostrealism.geometry.Sphere;
-import com.almostrealism.light.LightBulb;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.chem.Alloy;
+import org.almostrealism.chem.ElectronCloud;
 import org.almostrealism.chem.PeriodicTable;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.physics.Absorber;
+import org.almostrealism.chem.SpectralLineDiagram;
+import org.almostrealism.light.LightBulb;
+import org.almostrealism.physics.BlackBody;
 import org.almostrealism.physics.Clock;
 import org.almostrealism.physics.PhotonField;
-import org.almostrealism.physics.PhysicalConstants;
+import org.almostrealism.physics.VolumeAbsorber;
 import org.almostrealism.primitives.PinholeCameraAbsorber;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -38,26 +22,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.List;
 
 import static org.almostrealism.Ops.o;
 
-/**
- * A {@link BlackBody} absorbs all photons it detects and keeps track of
- * a running total average flux.
- * 
- * @author  Michael Murray
- */
-public class BlackBody implements Absorber, PhysicalConstants {
-//	public static double verbose = 0.08;
-	public static double verbose = 1.1;
-	
-	private static final DecimalFormat format = new DecimalFormat("0.000E0");
-
-	protected double energy;
-	private Clock clock;
-	
+public class BlackBodyExperiment {
 	public static void main(String[] args) throws FileNotFoundException {
 		Clock c;
 
@@ -77,11 +46,11 @@ public class BlackBody implements Absorber, PhysicalConstants {
 		}
 
 		long start = System.currentTimeMillis();
-		
+
 		// Run the simulation and print out flux measurements every second
 		while (true) {
 			c.tick().get().run();
-			
+
 			if (Math.random() < BlackBody.verbose) {
 //				int rate = (int) ((System.currentTimeMillis() - start) /
 //									(60 * 60000 * c.getTime()));
@@ -91,12 +60,12 @@ public class BlackBody implements Absorber, PhysicalConstants {
 //							format.format(b.getFlux() * BlackBody.evMsecToWatts)
 //							+ " watts.");
 //				System.out.println("Using t2.large, exposure would require $" + (rate * 0.0928) + " per microsecond.\n");
-				
+
 				try {
 					camera.getAbsorptionPlane().saveImage("black-body-sim.jpg");
 				} catch (IOException ioe) {
 					System.out.println("BlackBody: Could not write image (" +
-										ioe.getMessage() + ")");
+							ioe.getMessage() + ")");
 				}
 			}
 		}
@@ -169,38 +138,4 @@ public class BlackBody implements Absorber, PhysicalConstants {
 
 		return output;
 	}
-
-	@Override
-	public boolean absorb(Vector x, Vector p, double energy) {
-		this.energy += energy;
-		return true;
-	}
-	
-	/**
-	 * Returns the running total average energy (eV) per microsecond absorbed
-	 * by this BlackBody. This can be converted to watts by multiplying the value
-	 * by BlockBody.evMsecToWatts.
-	 */
-	public double getFlux() {
-		if (this.clock == null) return 0.0;
-		return this.energy / this.clock.getTime();
-	}
-
-	@Override
-	public Producer<PackedCollection> emit() { return null; }
-
-	@Override
-	public double getEmitEnergy() { return 0; }
-
-	@Override
-	public Producer<PackedCollection> getEmitPosition() { return null; }
-
-	@Override
-	public double getNextEmit() { return Integer.MAX_VALUE; }
-
-	@Override
-	public void setClock(Clock c) { this.clock = c; }
-
-	@Override
-	public Clock getClock() { return this.clock; }
 }

@@ -17,9 +17,9 @@
 package com.almostrealism.photon.test;
 
 import com.almostrealism.geometry.Box;
-import com.almostrealism.light.PlanarLight;
-import com.almostrealism.physics.AbsorberHashSet;
-import com.almostrealism.physics.DefaultPhotonField;
+import org.almostrealism.light.PlanarLight;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
 import com.almostrealism.physics.SpecularAbsorber;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;

@@ -17,12 +17,12 @@
 package com.almostrealism.photon.ui;
 
 import com.almostrealism.geometry.Sphere;
-import com.almostrealism.light.LightBulb;
-import com.almostrealism.light.PlanarLight;
-import com.almostrealism.physics.AbsorberHashSet;
-import com.almostrealism.physics.DefaultPhotonField;
+import org.almostrealism.light.LightBulb;
+import org.almostrealism.light.PlanarLight;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
 import com.almostrealism.physics.SpecularAbsorber;
-import com.almostrealism.physics.VolumeAbsorber;
+import org.almostrealism.physics.VolumeAbsorber;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
@@ -32,7 +32,7 @@ import org.almostrealism.physics.Clock;
 import org.almostrealism.physics.PhysicalConstants;
 import org.almostrealism.primitives.PinholeCameraAbsorber;
 import org.almostrealism.primitives.Plane;
-import org.almostrealism.space.Volume;
+import org.almostrealism.physics.Volume;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.ImageCanvas;
 
