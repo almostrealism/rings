@@ -16,8 +16,13 @@
 
 package org.almostrealism.audio;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.cycle.Setup;
 import io.almostrealism.lifecycle.Destroyable;
@@ -47,6 +52,7 @@ import org.almostrealism.audio.pattern.NoteAudioChoiceList;
 import org.almostrealism.audio.pattern.PatternSystemManager;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.KeyboardTuning;
+import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.audio.tone.WesternScales;
 import org.almostrealism.collect.PackedCollection;
@@ -711,7 +717,29 @@ public class AudioScene<T extends ShadableSurface> implements Setup, Destroyable
 	public static ObjectMapper defaultMapper() {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+		SimpleModule module = new SimpleModule();
+		module.addDeserializer(KeyPosition.class, keyPositionDeserializer(KeyPosition.class, KeyPosition::of));
+		module.addDeserializer(WesternChromatic.class, keyPositionDeserializer(WesternChromatic.class, s -> WesternChromatic.valueOf(s)));
+		mapper.registerModule(module);
+
 		return mapper;
+	}
+
+	private static <T> StdDeserializer<T> keyPositionDeserializer(Class<T> clazz, Function<String, T> factory) {
+		return new StdDeserializer<>(clazz) {
+			@Override
+			public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+				if (p.currentToken() == JsonToken.START_ARRAY) {
+					p.nextToken(); // class name
+					p.nextToken(); // value
+					String value = p.getValueAsString();
+					p.nextToken(); // END_ARRAY
+					return factory.apply(value);
+				}
+				return factory.apply(p.getValueAsString());
+			}
+		};
 	}
 
 	public static UnaryOperator<ProjectedGenome> defaultVariation() {
