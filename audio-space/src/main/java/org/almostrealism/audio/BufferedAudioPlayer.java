@@ -47,7 +47,7 @@ import java.util.stream.IntStream;
  * The player is designed to work in two primary configurations:
  * <ul>
  *   <li><b>DAW Integration Mode:</b> Audio is delivered to a {@link DelegatedAudioLine}
- *       for streaming to external DAW software via {@link AudioStreamManager}</li>
+ *       for streaming to external DAW software</li>
  *   <li><b>Direct Playback Mode:</b> Audio is delivered to a {@link SourceDataOutputLine}
  *       for direct hardware playback through the Java Sound API</li>
  * </ul>
@@ -77,7 +77,6 @@ import java.util.stream.IntStream;
  * player.play();
  * }</pre>
  *
- * @see AudioStreamManager for managing players in DAW integration scenarios
  * @see BufferedOutputScheduler for the scheduling mechanism
  * @see SourceDataOutputLine for direct hardware playback
  * @see DelegatedAudioLine for streaming/DAW integration
