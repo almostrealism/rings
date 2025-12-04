@@ -17,23 +17,126 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+/**
+ * Abstract base class for converting frequency-domain data into spatial
+ * representations for 3D visualization.
+ *
+ * <p>{@code FrequencyTimeseries} implements the core algorithm for transforming
+ * spectrogram or frequency magnitude data into a list of {@link SpatialValue}
+ * objects. Each frequency bin above the threshold becomes a positioned point
+ * in 3D space, with the value representing the log-scaled magnitude.</p>
+ *
+ * <h2>Data Model</h2>
+ * <p>Subclasses must provide frequency data through the abstract methods:</p>
+ * <ul>
+ *   <li>{@link #getLayerCount()} - Number of independent layers to visualize</li>
+ *   <li>{@link #getIndex(int)} - Channel index for each layer</li>
+ *   <li>{@link #getElementInterval(int)} - Sampling interval for time axis</li>
+ *   <li>{@link #getFrequencyTimeScale(int)} - Time scale factor for frequency frames</li>
+ *   <li>{@link #getSeries(int)} - The actual frequency magnitude data</li>
+ * </ul>
+ *
+ * <h2>Visualization Algorithm</h2>
+ * <p>The {@link #loadElements(TemporalSpatialContext)} method:</p>
+ * <ol>
+ *   <li>Iterates through time intervals defined by element interval</li>
+ *   <li>For each time position, scans all frequency bins</li>
+ *   <li>Creates {@link SpatialValue} objects for magnitudes above threshold</li>
+ *   <li>Applies logarithmic scaling: {@code Math.log(value + 1)}</li>
+ *   <li>Aggregates frequencies into quartiles for summary visualization</li>
+ *   <li>Retries with lower threshold if insufficient points generated</li>
+ * </ol>
+ *
+ * <h2>Threshold and Scaling</h2>
+ * <p>Two static parameters control visualization sensitivity:</p>
+ * <ul>
+ *   <li>{@link #frequencyThreshold} - Minimum magnitude to display (default: 35)</li>
+ *   <li>{@link #frequencyScale} - Amplitude multiplier (default: 1.0)</li>
+ * </ul>
+ *
+ * @see SpatialTimeseries
+ * @see SpatialValue
+ * @see FrequencyTimeseriesAdapter
+ * @see SpatialWaveDetails
+ */
 public abstract class FrequencyTimeseries implements SpatialTimeseries, ConsoleFeatures {
+
+	/**
+	 * The minimum magnitude threshold for a frequency bin to be visualized.
+	 * Values below this threshold are not displayed. Default is 35.
+	 */
 	public static double frequencyThreshold = 35;
+
+	/**
+	 * Amplitude scaling factor applied to frequency magnitudes.
+	 * Default is 1.0.
+	 */
 	public static double frequencyScale = 1;
 
 	private List<SpatialValue> elements;
 	private double contextDuration;
 
+	/**
+	 * Returns the number of independent layers in this timeseries.
+	 *
+	 * <p>Each layer represents a separate data source that can be
+	 * visualized at a different Z position.</p>
+	 *
+	 * @return the number of layers
+	 */
 	public abstract int getLayerCount();
 
+	/**
+	 * Returns the channel index for the specified layer.
+	 *
+	 * <p>This index affects the Y position in channel-based visualization mode.</p>
+	 *
+	 * @param layer the layer index
+	 * @return the channel index
+	 */
 	public abstract int getIndex(int layer);
 
+	/**
+	 * Returns the sampling interval for the time axis of the specified layer.
+	 *
+	 * <p>Smaller values create more spatial points (higher resolution)
+	 * but increase memory usage and rendering time.</p>
+	 *
+	 * @param layer the layer index
+	 * @return the element interval in frame units
+	 */
 	public abstract double getElementInterval(int layer);
 
+	/**
+	 * Returns the time scale factor for converting frequency frames to seconds.
+	 *
+	 * <p>This is typically the inverse of the frequency sample rate.</p>
+	 *
+	 * @param layer the layer index
+	 * @return the frequency time scale (seconds per frame)
+	 */
 	public abstract double getFrequencyTimeScale(int layer);
 
+	/**
+	 * Returns the frequency magnitude data for the specified layer.
+	 *
+	 * <p>The returned list contains {@link PackedCollection} objects, typically
+	 * one per audio channel, with shape [frames, frequency_bins, 1].</p>
+	 *
+	 * @param layer the layer index
+	 * @return list of frequency data collections, or {@code null} if unavailable
+	 */
 	public abstract List<PackedCollection> getSeries(int layer);
 
+	/**
+	 * Loads spatial elements from frequency data using the provided context.
+	 *
+	 * <p>This method implements the core frequency-to-spatial conversion algorithm.
+	 * It handles caching, threshold adjustment, and aggregation. Results are
+	 * cached in the {@code elements} field.</p>
+	 *
+	 * @param context the temporal-spatial context for coordinate mapping
+	 */
 	protected void loadElements(TemporalSpatialContext context) {
 		if (elements != null) return;
 
@@ -116,6 +219,15 @@ public abstract class FrequencyTimeseries implements SpatialTimeseries, ConsoleF
 		}
 	}
 
+	/**
+	 * Extracts the maximum value at each position across multiple data arrays.
+	 *
+	 * <p>This is used to combine multi-channel frequency data by taking the
+	 * maximum magnitude across all channels at each time/frequency position.</p>
+	 *
+	 * @param data list of arrays to extract maximum from
+	 * @return array containing the maximum value at each position
+	 */
 	protected double[] extractMax(List<double[]> data) {
 		int len = data.get(0).length;
 		double max[] = new double[len];
@@ -129,8 +241,18 @@ public abstract class FrequencyTimeseries implements SpatialTimeseries, ConsoleF
 		return max;
 	}
 
+	/**
+	 * Clears the cached spatial elements, forcing regeneration on next access.
+	 */
 	protected void resetElements() { this.elements = null; }
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>This implementation caches the generated elements and regenerates
+	 * them when the context duration changes. Each element's referent is
+	 * set to this timeseries for back-navigation.</p>
+	 */
 	@Override
 	public List<SpatialValue> elements(TemporalSpatialContext context) {
 		if (contextDuration != context.getDuration()) {
@@ -146,6 +268,12 @@ public abstract class FrequencyTimeseries implements SpatialTimeseries, ConsoleF
 		return elements;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>Calculates duration from the frequency data dimensions and time scale.
+	 * Returns the maximum duration across all layers.</p>
+	 */
 	@Override
 	public double getDuration(TemporalSpatialContext context) {
 		return IntStream.range(0, getLayerCount())
