@@ -25,20 +25,25 @@
 	<modules>
 		<module>pattern</module>
 		<module>audio-space</module>
+
 		<module>treeview</module>
 		<module>swing</module>
 		<module>gl</module>
 		<module>raytracer</module>
 		<module>photonfield</module>
 		<module>replicate</module>
+
 		<module>rings</module>
 		<module>tensorflow</module>
 		<module>torch</module>
 		<module>keyframing</module>
 		<module>rings-ml</module>
-		<module>remote</module>
-		<module>remote-server</module>
 		<module>generate</module>
+
+		<module>remote</module>
+		<module>spatial</module>
+
+		<module>remote-server</module>
 	</modules>
 
 	<packaging>pom</packaging>
