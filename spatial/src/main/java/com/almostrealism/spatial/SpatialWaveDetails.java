@@ -80,6 +80,12 @@ public class SpatialWaveDetails extends FrequencyTimeseriesAdapter {
 		return wave.getIdentifier();
 	}
 
+	public WaveDetails getWave() { return wave; }
+
+	public int getOffset() { return offset; }
+
+	public int getLength() { return length; }
+
 	/**
 	 * {@inheritDoc}
 	 *
