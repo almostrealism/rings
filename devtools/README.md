@@ -39,13 +39,27 @@ Add this function to your `~/.zshrc` for quick sandbox access:
 ```bash
 # Connect to AlmostRealism dev sandbox
 sandbox() {
-    local container="${1:-dev-sandbox-a}"
-    if ! docker ps --format '{{.Names}}' | grep -q "^${container}$"; then
-        echo "Container '${container}' is not running"
-        echo "Start with: cd /Users/michael/AlmostRealism/rings/devtools && docker-compose up -d"
-        return 1
+    if [ -z "$1" ]; then
+        echo "Error: Container name required"
+        echo "Usage: $0 CONTAINER_NAME"
+        echo ""
+        echo "Example:"
+        echo "  $0 dev-sandbox-a"
+        exit 1
     fi
-    docker exec -it "${container}" bash
+    
+    CONTAINER_NAME=$1
+    
+    # Check if container is running
+    if ! docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+        echo "Error: Container '${CONTAINER_NAME}' is not running"
+        echo ""
+        echo "Start the containers with: docker-compose up -d"
+        exit 1
+    fi
+    
+    # Try to attach to existing session, or create a new one if it doesn't exist
+    docker exec -it "${CONTAINER_NAME}" bash -c "tmux attach -t claude 2>/dev/null || tmux new -s claude"
 }
 ```
 
