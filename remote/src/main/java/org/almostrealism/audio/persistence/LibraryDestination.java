@@ -43,10 +43,10 @@ public class LibraryDestination implements ConsoleFeatures {
 	public static final String TEMP = "temp";
 	public static final String SAMPLES = "samples";
 
-	private String prefix;
+	private final String prefix;
 	private int index;
-	private boolean append;
-	private List<String> temporaryFiles;
+	private final boolean append;
+	private final List<String> temporaryFiles;
 
 	public LibraryDestination(String prefix) {
 		this(prefix, false);

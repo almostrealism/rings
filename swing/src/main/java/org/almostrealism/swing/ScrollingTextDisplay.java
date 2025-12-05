@@ -16,21 +16,19 @@
 
 package org.almostrealism.swing;
 
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
-
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 
 /**
  * @author  Michael Murray
  */
 public class ScrollingTextDisplay extends JLabel implements Runnable {
-	public static interface TextProducer { public String nextPhrase(); }
+	public interface TextProducer { String nextPhrase(); }
 	
-	private TextProducer producer;
+	private final TextProducer producer;
 	private String text, display;
-	private int col;
+	private final int col;
 	private int sleep;
 
 	public ScrollingTextDisplay(TextProducer p, int col) {

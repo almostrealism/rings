@@ -16,16 +16,14 @@
 
 package org.almostrealism.audio.optimize.test;
 
-import org.almostrealism.audio.health.MultiChannelAudioOutput;
-import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.audio.Cells;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.graph.ReceptorCell;
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
+import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.time.TemporalRunner;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.Arrays;
 
 public class AdjustmentLayerOrganSystemFactoryTest extends AudioSceneOptimizationTest {
 

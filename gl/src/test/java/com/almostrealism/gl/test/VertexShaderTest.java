@@ -16,12 +16,11 @@
 
 package com.almostrealism.gl.test;
 
+import com.almostrealism.gl.GLSLPrintWriter;
+import com.almostrealism.gl.shaders.DotProductVertexShader;
 import io.almostrealism.code.Precision;
 import org.almostrealism.c.CLanguageOperations;
 import org.junit.Test;
-
-import com.almostrealism.gl.GLSLPrintWriter;
-import com.almostrealism.gl.shaders.DotProductVertexShader;
 
 public class VertexShaderTest {
 	@Test

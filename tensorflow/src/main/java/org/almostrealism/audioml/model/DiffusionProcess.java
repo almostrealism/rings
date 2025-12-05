@@ -2,7 +2,6 @@ package org.almostrealism.audioml.model;
 
 import org.almostrealism.audioml.utils.TensorUtils;
 import org.tensorflow.Tensor;
-import org.tensorflow.ndarray.FloatNdArray;
 import org.tensorflow.ndarray.Shape;
 import org.tensorflow.types.TFloat32;
 
@@ -32,7 +31,7 @@ public class DiffusionProcess {
 		long startTime = System.currentTimeMillis();
 
 		// Get DiT input dimensions from crossAttn shape
-		Shape crossAttnShape = ((TFloat32)crossAttn).shape();
+		Shape crossAttnShape = crossAttn.shape();
 		Shape xShape = Shape.of(1, 32, 32); // This may need adjustment based on model requirements
 
 		// Initialize x with random normal distribution

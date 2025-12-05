@@ -16,30 +16,31 @@
 
 package com.almostrealism.network;
 
-import org.almostrealism.space.StandardLightingRigs;
-import org.almostrealism.projection.OrthographicCamera;
-import org.almostrealism.primitives.Sphere;
-import org.almostrealism.projection.ThinLensCamera;
-import org.almostrealism.color.DiffuseShader;
-import org.almostrealism.rayshade.ReflectionShader;
-import org.almostrealism.color.SilhouetteShader;
 import com.almostrealism.raytracer.Thing;
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.color.DiffuseShader;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.color.Shader;
+import org.almostrealism.color.SilhouetteShader;
 import org.almostrealism.color.computations.GeneratedColorProducer;
+import org.almostrealism.primitives.Sphere;
+import org.almostrealism.projection.OrthographicCamera;
+import org.almostrealism.projection.ThinLensCamera;
+import org.almostrealism.rayshade.ReflectionShader;
+import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.DefaultVertexData;
 import org.almostrealism.space.Mesh;
-import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
-import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.space.StandardLightingRigs;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
-import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Evaluable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -119,7 +120,7 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 
 		if (enableRandomThing) {
 			Texture randomTex = new Texture() {
-				Producer<RGB> p = GeneratedColorProducer.fromProducer(this, () -> args -> {
+				final Producer<PackedCollection> p = GeneratedColorProducer.fromProducer(this, () -> args -> {
 					Vector t = args.length > 0 ? (Vector) args[0] : new Vector(1.0, 1.0, 1.0);
 					Vector point = new Vector(t.getX(), t.getY(), 0.0);
 					double d = (point.length() * 4.0) % 3;
@@ -133,10 +134,10 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 					}
 				});
 
-				public Evaluable<RGB> getColorAt(Object args[]) { return p.get(); }
+				public Evaluable<PackedCollection> getColorAt(Object[] args) { return p.get(); }
 
 				@Override
-				public RGB operate(Vector in) { return p.get().evaluate(in); }
+				public RGB operate(Vector in) { return (RGB) p.get().evaluate(in); }
 			};
 
 			s.addTexture(randomTex);

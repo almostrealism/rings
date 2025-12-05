@@ -24,8 +24,8 @@ import org.almostrealism.util.ProcessFeatures;
 import java.io.File;
 
 public class LocalResourceManager implements GenerationResourceManager, ProcessFeatures {
-	private File models;
-	private File audio;
+	private final File models;
+	private final File audio;
 
 	public LocalResourceManager(File models, File audio) {
 		this.models = models;

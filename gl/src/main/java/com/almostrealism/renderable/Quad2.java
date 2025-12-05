@@ -31,7 +31,7 @@ public class Quad2 implements Renderable {
 
 	private static final int NUM_VECS = 4;
 
-	private Pair vecs[];
+	private Pair[] vecs;
 	private FloatBuffer vertBuf;
 
 	@Override

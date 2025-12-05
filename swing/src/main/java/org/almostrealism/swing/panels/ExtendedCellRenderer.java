@@ -16,17 +16,13 @@
 
 package org.almostrealism.swing.panels;
 
-import java.awt.Component;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.border.Border;
-import javax.swing.table.DefaultTableCellRenderer;
-
 import org.almostrealism.color.RGB;
 import org.almostrealism.texture.GraphicsConverter;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 
 /**
  * An {@link ExtendedCellRenderer} can be used to render values in a table
@@ -49,7 +45,7 @@ public class ExtendedCellRenderer extends DefaultTableCellRenderer {
 			label.setBackground(GraphicsConverter.convertToAWTColor((RGB)value));
 			label.setToolTipText(value.toString());
 			
-			if (isSelected == true) {
+			if (isSelected) {
 				this.selectedBorder = BorderFactory.createMatteBorder(2, 5, 2, 5, table.getSelectionBackground());
 				label.setBorder(this.selectedBorder);
 			} else {
@@ -70,7 +66,7 @@ public class ExtendedCellRenderer extends DefaultTableCellRenderer {
 			label.setWrapStyleWord(true);
 			label.setText(name);
 			
-			if (isSelected == true) {
+			if (isSelected) {
 				this.selectedBorder = BorderFactory.createMatteBorder(2, 5, 2, 5, table.getSelectionBackground());
 				label.setBorder(this.selectedBorder);
 			} else {
@@ -86,7 +82,7 @@ public class ExtendedCellRenderer extends DefaultTableCellRenderer {
 			textArea.setWrapStyleWord(true);
 			textArea.setText((String)value);
 			
-			if (isSelected == true) {
+			if (isSelected) {
 				textArea.setBackground(table.getSelectionBackground());
 			} else {
 				textArea.setBackground(table.getBackground());

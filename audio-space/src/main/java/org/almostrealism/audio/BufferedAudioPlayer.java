@@ -23,7 +23,9 @@ import org.almostrealism.audio.line.AudioLineOperation;
 import org.almostrealism.audio.line.BufferDefaults;
 import org.almostrealism.audio.line.BufferedAudio;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
+import org.almostrealism.audio.line.DelegatedAudioLine;
 import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.audio.line.SourceDataOutputLine;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.TimeCell;
 import org.almostrealism.graph.temporal.WaveCell;
@@ -36,26 +38,69 @@ import java.util.function.DoubleConsumer;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
+/**
+ * A multi-channel audio player that uses buffered audio processing for real-time playback.
+ * This player supports loading audio from files or {@link WaveData} into multiple player
+ * channels, mixing them together via {@link SampleMixer}, and delivering the output to
+ * an {@link OutputLine} through a {@link BufferedOutputScheduler}.
+ * <p>
+ * The player is designed to work in two primary configurations:
+ * <ul>
+ *   <li><b>DAW Integration Mode:</b> Audio is delivered to a {@link DelegatedAudioLine}
+ *       for streaming to external DAW software</li>
+ *   <li><b>Direct Playback Mode:</b> Audio is delivered to a {@link SourceDataOutputLine}
+ *       for direct hardware playback through the Java Sound API</li>
+ * </ul>
+ * <p>
+ * Key features:
+ * <ul>
+ *   <li>Multi-channel mixing with per-channel mute and volume control</li>
+ *   <li>Configurable loop duration per channel</li>
+ *   <li>Time tracking via {@link TimeCell} for seek and position reporting</li>
+ *   <li>Support for passthrough monitoring when used with bidirectional audio lines</li>
+ * </ul>
+ * <p>
+ * Usage example for direct playback:
+ * <pre>{@code
+ * // Create player for single channel
+ * BufferedAudioPlayer player = new BufferedAudioPlayer(1, 44100, 65536);
+ *
+ * // Get output line for hardware playback
+ * SourceDataOutputLine outputLine = (SourceDataOutputLine) LineUtilities.getLine();
+ *
+ * // Connect player to output and start playback
+ * BufferedOutputScheduler scheduler = player.deliver(outputLine);
+ * scheduler.start();
+ *
+ * // Load and play audio
+ * player.load(0, "audio.wav");
+ * player.play();
+ * }</pre>
+ *
+ * @see BufferedOutputScheduler for the scheduling mechanism
+ * @see SourceDataOutputLine for direct hardware playback
+ * @see DelegatedAudioLine for streaming/DAW integration
+ */
 public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures {
 	public static boolean enableUnifiedClock = false;
 
-	private int sampleRate;
-	private int bufferFrames;
+	private final int sampleRate;
+	private final int bufferFrames;
 
-	private PackedCollection<?> raw;
-	private List<DoubleConsumer> timeListeners;
+	private final PackedCollection raw;
+	private final List<DoubleConsumer> timeListeners;
 
-	private SampleMixer mixer;
+	private final SampleMixer mixer;
 	private TimeCell clock;
-	private PackedCollection<?>[] level;
-	private PackedCollection<?> loopDuration[];
+	private PackedCollection[] level;
+	private PackedCollection[] loopDuration;
 	private AudioLine outputLine;
 
-	private boolean loaded[];
-	private boolean muted[];
-	private double volume[];
-	private double playbackDuration[];
-	private double sampleDuration[];
+	private final boolean[] loaded;
+	private final boolean[] muted;
+	private final double[] volume;
+	private final double[] playbackDuration;
+	private final double[] sampleDuration;
 	private double passthrough;
 	private boolean playing;
 
@@ -68,11 +113,11 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		this.bufferFrames = bufferFrames;
 		this.sampleRate = sampleRate;
 
-		this.raw = new PackedCollection<>(playerCount, bufferFrames);
+		this.raw = new PackedCollection(playerCount, bufferFrames);
 		this.timeListeners = new ArrayList<>();
 
 		this.loopDuration = IntStream.range(0, playerCount)
-				.mapToObj(c -> new PackedCollection<>(1))
+				.mapToObj(c -> new PackedCollection(1))
 				.toArray(PackedCollection[]::new);
 		this.loaded = new boolean[playerCount];
 		this.muted = new boolean[playerCount];
@@ -84,7 +129,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 	}
 
 	protected void initMixer() {
-		level = new PackedCollection<?>[mixer.getChannelCount()];
+		level = new PackedCollection[mixer.getChannelCount()];
 
 		if (enableUnifiedClock) {
 			this.clock = new TimeCell();
@@ -187,7 +232,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 				return;
 			}
 
-			double result[][] = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
+			double[][] result = new double[in.getNumChannels()][(int) in.getFramesRemaining()];
 			in.readFrames(result, (int) in.getFramesRemaining());
 
 			int frames = resetPlayer(player, result[0].length);
@@ -381,7 +426,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		}
 
 		if (this.loopDuration != null) {
-			for (PackedCollection<?> packedCollection : loopDuration) {
+			for (PackedCollection packedCollection : loopDuration) {
 				packedCollection.destroy();
 			}
 

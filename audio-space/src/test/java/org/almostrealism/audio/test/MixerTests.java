@@ -41,9 +41,9 @@ public class MixerTests implements CellFeatures {
 			}
 		});
 
-		PackedCollection<?> control = new PackedCollection<>(SharedMemoryAudioLine.controlSize);
-		PackedCollection<?> input = new PackedCollection<>(BufferDefaults.defaultBufferSize);
-		PackedCollection<?> output = new PackedCollection<>(BufferDefaults.defaultBufferSize);
+		PackedCollection control = new PackedCollection(SharedMemoryAudioLine.controlSize);
+		PackedCollection input = new PackedCollection(BufferDefaults.defaultBufferSize);
+		PackedCollection output = new PackedCollection(BufferDefaults.defaultBufferSize);
 		SharedMemoryAudioLine line = new SharedMemoryAudioLine(control, input, output);
 
 		BufferedOutputScheduler scheduler = mixer.toCellList().addRequirement(clock).buffer(line);

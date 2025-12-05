@@ -16,20 +16,14 @@
 
 package org.almostrealism.swing.panels;
 
-import java.awt.GridLayout;
-import java.awt.LayoutManager;
-import java.text.ParseException;
+import io.almostrealism.util.NumberFormats;
 
-import javax.swing.InputVerifier;
-import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
+import javax.swing.*;
 import javax.swing.JFormattedTextField.AbstractFormatter;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import io.almostrealism.util.NumberFormats;
+import java.awt.*;
+import java.text.ParseException;
 
 /**
  * A PercentagePanel object can be used to display a decimal value
@@ -40,8 +34,8 @@ import io.almostrealism.util.NumberFormats;
 public class PercentagePanel extends JPanel {
   private double value;
   
-  private JFormattedTextField valueField;
-  private JSlider slider;
+  private final JFormattedTextField valueField;
+  private final JSlider slider;
 
 	/**
 	 * Constructs a new PercentagePanel object using a grid layout.

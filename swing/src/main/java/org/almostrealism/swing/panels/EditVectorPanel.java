@@ -16,7 +16,11 @@
 
 package org.almostrealism.swing.panels;
 
-import java.awt.GridLayout;
+import io.almostrealism.util.NumberFormats;
+import org.almostrealism.algebra.Vector;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -24,21 +28,15 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyListener;
 
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import io.almostrealism.util.NumberFormats;
-
-import org.almostrealism.algebra.Vector;
-
 /** An EditVectorPanel object can be used to specify a 3D vector. */
 public class EditVectorPanel extends JPanel {
-  private JLabel xLabel, yLabel, zLabel;
-  private JFormattedTextField xField, yField, zField;
-  private JComboBox coordTypeBox;
+  private final JLabel xLabel;
+	private final JLabel yLabel;
+	private final JLabel zLabel;
+  private final JFormattedTextField xField;
+	private final JFormattedTextField yField;
+	private final JFormattedTextField zField;
+  private final JComboBox coordTypeBox;
 
 	/**
 	 * Constructs a new EditVectorPanel object with the initial values set to 0.0.

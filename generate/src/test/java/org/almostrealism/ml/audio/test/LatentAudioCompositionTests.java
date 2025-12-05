@@ -46,21 +46,21 @@ public class LatentAudioCompositionTests implements TestFeatures {
 		WaveData a = WaveData.load(new File("Library/Long Omni C1.wav"));
 		WaveData b = WaveData.load(new File("Library/Dip Riser DD 168.wav"));
 
-		PackedCollection<?> featA = encoder.encode(cp(a.getData())).evaluate();
-		PackedCollection<?> featB = encoder.encode(cp(b.getData())).evaluate();
+		PackedCollection featA = encoder.encode(cp(a.getData())).evaluate();
+		PackedCollection featB = encoder.encode(cp(b.getData())).evaluate();
 
 		featA = featA.reshape(bins, frames).transpose();
 		featB = featB.reshape(bins, frames).transpose();
 
-		CollectionProducer<PackedCollection<?>> scale = integers(0, frames).divide(frames * 0.6)
+		CollectionProducer scale = integers(0, frames).divide(frames * 0.6)
 														.traverse(1).repeat(bins);
-		CollectionProducer<PackedCollection<?>> blend =
+		CollectionProducer blend =
 				cp(featA).multiply(scale).add(
 						cp(featB).multiply(c(1.0).subtract(scale)));
-		PackedCollection<?> result = blend.evaluate();
+		PackedCollection result = blend.evaluate();
 		log(result.getShape().toStringDetail());
 
-		PackedCollection<?> audio = encoder
+		PackedCollection audio = encoder
 				.decode(cp(result.traverse(0)).transpose()).get().evaluate();
 		new WaveData(audio, sampleRate)
 				.save(new File("results/latent-composition.wav"));

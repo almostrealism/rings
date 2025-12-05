@@ -20,14 +20,13 @@ import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import org.junit.Test;
 
 public class IntersectionCompactTest extends AbstractIntersectionTest {
 	@Test
 	public void compact() {
-		Producer<PackedCollection<?>> combined = combined();
-		Evaluable<PackedCollection<?>> ev = combined.get();
+		Producer<PackedCollection> combined = combined();
+		Evaluable<PackedCollection> ev = combined.get();
 
 		Pair r = new Pair(ev.evaluate(new Pair(50, 50)));
 		System.out.println(r.getX());

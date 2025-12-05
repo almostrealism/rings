@@ -10,7 +10,7 @@ import org.tensorflow.types.TInt32;
 import java.util.List;
 
 public class Operations implements TensorFeatures {
-	private Ops tf;
+	private final Ops tf;
 
 	public Operations(Ops tf) {
 		this.tf = tf;
@@ -48,10 +48,10 @@ public class Operations implements TensorFeatures {
 
 		if (dilation > 1) {
 			transformed = timeToBatch(value, dilation);
-			conv = conv1d(transformed, filter, 1l, "VALID");
+			conv = conv1d(transformed, filter, 1L, "VALID");
 			restored = batchToTime(conv, dilation);
 		} else {
-			restored = conv1d(value, filter, 1l, "VALID");
+			restored = conv1d(value, filter, 1L, "VALID");
 		}
 
 		long outWidth = value.shape().asArray()[1] - (filterWidth - 1) * dilation;
@@ -60,16 +60,14 @@ public class Operations implements TensorFeatures {
 	}
 
 	public Operand<TFloat32> conv1d(Operand<TFloat32> input, Operand<TFloat32> filter, Long stride, String padding) {
-		return conv1d(input, filter, 1l, stride, 1l, padding);
+		return conv1d(input, filter, 1L, stride, 1L, padding);
 	}
 
 	public Operand<TFloat32> conv1d(Operand<TFloat32> input, Operand<TFloat32> filter, Long nStride, Long wStride, Long cStride, String padding) {
-		long inputShape[] = input.shape().asArray();
+		long[] inputShape = input.shape().asArray();
 
-		long newInputShape[] = new long[inputShape.length + 1];
-		for (int i = 0; i < newInputShape.length - 3; i++) {
-			newInputShape[i] = inputShape[i];
-		}
+		long[] newInputShape = new long[inputShape.length + 1];
+		if (newInputShape.length - 3 >= 0) System.arraycopy(inputShape, 0, newInputShape, 0, newInputShape.length - 3);
 
 		newInputShape[newInputShape.length - 3] = 1;
 		newInputShape[newInputShape.length - 2] = inputShape[inputShape.length - 2];
@@ -79,13 +77,11 @@ public class Operations implements TensorFeatures {
 		Operand<TFloat32> reshapedFilter = reshape(filter, filter.shape().prepend(1));
 
 		Operand<TFloat32> conv = tf.nn.conv2d(reshapedInput, reshapedFilter, List.of(nStride, wStride, wStride, cStride), padding);
-		long outputShape[] = conv.shape().asArray();
+		long[] outputShape = conv.shape().asArray();
 //		System.out.println("Original conv shape: " + Arrays.toString(outputShape));
 
-		long newOutputShape[] = new long[outputShape.length - 1];
-		for (int i = 0; i < newInputShape.length - 3; i++) {
-			newOutputShape[i] = outputShape[i];
-		}
+		long[] newOutputShape = new long[outputShape.length - 1];
+		System.arraycopy(outputShape, 0, newOutputShape, 0, newInputShape.length - 3);
 
 		newOutputShape[newOutputShape.length - 2] = outputShape[outputShape.length - 2];
 		newOutputShape[newOutputShape.length - 1] = outputShape[outputShape.length - 1];

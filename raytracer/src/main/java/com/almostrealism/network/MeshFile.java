@@ -16,23 +16,20 @@
 
 package com.almostrealism.network;
 
+import io.almostrealism.code.Operator;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.color.ShaderContext;
+import org.almostrealism.geometry.BoundingSolid;
+import org.almostrealism.geometry.ContinuousField;
+import org.almostrealism.space.Mesh;
+import org.almostrealism.space.MeshSource;
+import org.almostrealism.space.ShadableSurfaceWrapper;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.color.RGB;
-import org.almostrealism.color.ShaderContext;
-import org.almostrealism.geometry.Ray;
-import org.almostrealism.geometry.ContinuousField;
-import io.almostrealism.relation.Producer;
-import io.almostrealism.code.Operator;
-import org.almostrealism.geometry.BoundingSolid;
-import org.almostrealism.space.Mesh;
-import org.almostrealism.space.MeshSource;
-import org.almostrealism.color.ShadableSurface;
-import org.almostrealism.space.ShadableSurfaceWrapper;
 
 public class MeshFile implements MeshSource, ShadableSurfaceWrapper, ShadableSurface {
 	private String name;
@@ -81,18 +78,18 @@ public class MeshFile implements MeshSource, ShadableSurfaceWrapper, ShadableSur
 
 	@Override public boolean getShadeFront() { return this.getSurface().getShadeFront(); }
 	@Override public boolean getShadeBack() { return this.getSurface().getShadeBack(); }
-	@Override public Producer<RGB> getValueAt(Producer<Vector> point) { return this.getSurface().getValueAt(point); }
+	@Override public Producer<PackedCollection> getValueAt(Producer<PackedCollection> point) { return this.getSurface().getValueAt(point); }
 
 	@Override
 	public BoundingSolid calculateBoundingSolid() { return mesh.calculateBoundingSolid(); }
 
-	@Override public Producer<Vector> getNormalAt(Producer<Vector> point) { return this.getSurface().getNormalAt(point); }
-	@Override public ContinuousField intersectAt(Producer<Ray> ray) { return this.getSurface().intersectAt(ray); }
+	@Override public Producer<PackedCollection> getNormalAt(Producer<PackedCollection> point) { return this.getSurface().getNormalAt(point); }
+	@Override public ContinuousField intersectAt(Producer<?> ray) { return this.getSurface().intersectAt(ray); }
 
-	@Override public Operator<PackedCollection<?>> get() { return getSurface().get(); }
+	@Override public Operator<PackedCollection> get() { return getSurface().get(); }
 
 	@Override
-	public Operator<PackedCollection<?>> expect() { return getSurface().expect(); }
+	public Operator<PackedCollection> expect() { return getSurface().expect(); }
 
-	@Override public Producer<RGB> shade(ShaderContext p) { return this.getSurface().shade(p); }
+	@Override public Producer<PackedCollection> shade(ShaderContext p) { return this.getSurface().shade(p); }
 }

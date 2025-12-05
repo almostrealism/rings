@@ -27,8 +27,8 @@ import java.util.List;
 
 public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 
-	private ParameterizedEnvelopeLayers parent;
-	private int layer;
+	private final ParameterizedEnvelopeLayers parent;
+	private final int layer;
 
 	public ParameterizedLayerEnvelope(ParameterizedEnvelopeLayers parent, int layer) {
 		this.parent = parent;
@@ -41,8 +41,8 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 	}
 
 	public class Filter implements NoteAudioFilter, EnvelopeFeatures {
-		private ParameterSet params;
-		private ChannelInfo.Voicing voicing;
+		private final ParameterSet params;
+		private final ChannelInfo.Voicing voicing;
 
 		public Filter(ParameterSet params, ChannelInfo.Voicing voicing) {
 			this.params = params;
@@ -78,35 +78,35 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 		}
 
 		@Override
-		public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> audio,
-												   Producer<PackedCollection<?>> duration,
-												   Producer<PackedCollection<?>> automationLevel) {
-			PackedCollection<?> d0 = new PackedCollection<>(1);
+		public Producer<PackedCollection> apply(Producer<PackedCollection> audio,
+												   Producer<PackedCollection> duration,
+												   Producer<PackedCollection> automationLevel) {
+			PackedCollection d0 = new PackedCollection(1);
 			d0.set(0, getAttack());
 
-			PackedCollection<?> d1 = new PackedCollection<>(1);
+			PackedCollection d1 = new PackedCollection(1);
 			d1.set(0, getSustain());
 
-			PackedCollection<?> d2 = new PackedCollection<>(1);
+			PackedCollection d2 = new PackedCollection(1);
 			d2.set(0, getRelease());
 
-			PackedCollection<?> v0 = new PackedCollection<>(1);
+			PackedCollection v0 = new PackedCollection(1);
 			v0.set(0, getVolume0());
 
-			PackedCollection<?> v1 = new PackedCollection<>(1);
+			PackedCollection v1 = new PackedCollection(1);
 			v1.set(0, getVolume1());
 
-			PackedCollection<?> v2 = new PackedCollection<>(1);
+			PackedCollection v2 = new PackedCollection(1);
 			v2.set(0, getVolume2());
 
-			PackedCollection<?> v3 = new PackedCollection<>(1);
+			PackedCollection v3 = new PackedCollection(1);
 			v3.set(0, getVolume3());
 
-			return new DynamicCollectionProducer<>(shape(audio), args -> {
-				PackedCollection<?> audioData = audio.get().evaluate();
-				PackedCollection<?> dr = duration.get().evaluate();
+			return new DynamicCollectionProducer(shape(audio), args -> {
+				PackedCollection audioData = audio.get().evaluate();
+				PackedCollection dr = duration.get().evaluate();
 
-				PackedCollection<?> out = AudioProcessingUtils.getLayerEnv()
+				PackedCollection out = AudioProcessingUtils.getLayerEnv()
 						.evaluate(audioData.traverse(1), dr, d0, d1, d2, v0, v1, v2, v3);
 
 				if (out.getShape().getTotalSize() == 1) {
@@ -130,8 +130,7 @@ public class ParameterizedLayerEnvelope implements ParameterizedEnvelope {
 			if (filter.getVolume0() != getVolume0()) return false;
 			if (filter.getVolume1() != getVolume1()) return false;
 			if (filter.getVolume2() != getVolume2()) return false;
-			if (filter.getVolume3() != getVolume3()) return false;
-			return true;
+			return filter.getVolume3() == getVolume3();
 		}
 
 		@Override

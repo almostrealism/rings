@@ -16,20 +16,20 @@
 
 package com.almostrealism.gl;
 
-import org.almostrealism.color.PointLight;
-import org.almostrealism.primitives.Sphere;
-import org.almostrealism.projection.PinholeCamera;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
+import org.almostrealism.color.PointLight;
 import org.almostrealism.color.RGB;
-import org.almostrealism.space.Scene;
 import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.primitives.Sphere;
+import org.almostrealism.projection.PinholeCamera;
+import org.almostrealism.space.Scene;
 
 public class AbstractGLSceneTest {
 	public Scene createTestScene() {
 		Scene<ShadableSurface> scene = new Scene<>();
 		scene.setCamera(new PinholeCamera());
-		scene.add(new Sphere(ZeroVector.getEvaluable().evaluate(), Math.pow(10, 5), new RGB(0.0, 0.0, 1.0)).triangulate());
+		scene.add(new Sphere(new Vector(ZeroVector.getEvaluable().evaluate(), 0), Math.pow(10, 5), new RGB(0.0, 0.0, 1.0)).triangulate());
 		scene.getLights().add(new PointLight(Vector.yAxis().multiply((Math.pow(10, 6)))));
 		return scene;
 	}

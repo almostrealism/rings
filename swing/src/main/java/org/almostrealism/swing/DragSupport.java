@@ -16,13 +16,11 @@
 
 package org.almostrealism.swing;
 
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 /**
  * {@link DragSupport} is used to make {@link JFrame}s draggable when clicking
@@ -33,8 +31,8 @@ import javax.swing.JPanel;
  */
 public class DragSupport implements MouseListener, MouseMotionListener {
     private Point initialClick;
-    private JFrame frame;
-    private JPanel panel;
+    private final JFrame frame;
+    private final JPanel panel;
     
     public DragSupport(JFrame frame, JPanel panel) {
     	this.frame = frame;

@@ -16,28 +16,27 @@
 
 package com.almostrealism.geometry;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-
-import javax.swing.JFrame;
-
-import org.almostrealism.primitives.AbsorptionPlane;
-import org.almostrealism.primitives.Pinhole;
-import org.almostrealism.primitives.Plane;
+import org.almostrealism.light.PlanarLight;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
+import com.almostrealism.physics.SpecularAbsorber;
+import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
-import org.almostrealism.physics.PhotonField;
-import io.almostrealism.relation.Producer;
-import org.almostrealism.space.Volume;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.physics.Clock;
+import org.almostrealism.physics.PhotonField;
+import org.almostrealism.primitives.AbsorptionPlane;
+import org.almostrealism.primitives.Pinhole;
+import org.almostrealism.primitives.Plane;
+import org.almostrealism.physics.Volume;
 
-import com.almostrealism.physics.AbsorberHashSet;
-import com.almostrealism.physics.DefaultPhotonField;
-import com.almostrealism.physics.SpecularAbsorber;
-import com.almostrealism.light.PlanarLight;
-import org.almostrealism.CodeFeatures;
+import javax.swing.*;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * 
@@ -46,7 +45,7 @@ import org.almostrealism.CodeFeatures;
 public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 	public static double verbose = Math.pow(10.0, -3.0);
 	
-	private Vector coords[];
+	private Vector[] coords;
 	private double width, height, depth, wallThickness;
 	private double[] orientation, normal;
 	
@@ -69,7 +68,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 		plane.setThickness(0.05);
 		plane.setSurfaceNormal(Ops.o().vector(0.0, 0.0, -1.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
-		
+
 		//The focal length of the Cornell Box's lense is .035
 		//The distance between the Pinhole and the AbsorbtionPlane is the focal length
 		//The diameter of the pinhole is given by the equation
@@ -145,7 +144,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 	public void setDepth(double x){
 		this.depth = x;
 	}
-	public void setOrientation(double x[]){
+	public void setOrientation(double[] x){
 		//Sets the orientation for the bottom of the box
 		this.orientation = x;
 	}
@@ -191,8 +190,9 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 			// SpecularAbsorber S1 = new SpecularAbsorber();
 			side1.setWidth(this.depth);
 			side1.setHeight(this.height);
-			side1.setSurfaceNormal(value(new Vector(bottom.getOrientation()).crossProduct(bottom.getSurfaceNormal().get().evaluate())));
-			side1.setOrientation(bottom.getSurfaceNormal().get().evaluate().crossProduct(new Vector(bottom.getAcross())).toArray());
+			Vector bottomNormal = (Vector) bottom.getSurfaceNormal().get().evaluate();
+			side1.setSurfaceNormal(value(new Vector(bottom.getOrientation()).crossProduct(bottomNormal)));
+			side1.setOrientation(bottomNormal.crossProduct(new Vector(bottom.getAcross())).toArray());
 			side1.setThickness(this.wallThickness);
 			// S1.setVolume(side1);
 			// S1.setColorRange(this.startColor, this.range);
@@ -204,7 +204,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 			side2.setWidth(this.width);
 			side2.setHeight(this.height);
 			side2.setSurfaceNormal(value(new Vector(bottom.getOrientation()).minus()));
-			side2.setOrientation(bottom.getSurfaceNormal().get().evaluate().minus().toArray());
+			side2.setOrientation(bottomNormal.minus().toArray());
 			side2.setThickness(this.wallThickness);
 //			S2.setVolume(side2);
 //			S2.setColorRange(this.startColor, this.range);
@@ -215,7 +215,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 //			SpecularAbsorber S3 = new SpecularAbsorber();
 			side3.setWidth(this.depth);
 			side3.setHeight(this.height);
-			side3.setSurfaceNormal(value(side1.getSurfaceNormal().get().evaluate().minus()));
+			side3.setSurfaceNormal(value(((Vector) side1.getSurfaceNormal().get().evaluate()).minus()));
 			side3.setOrientation(side1.getOrientation());
 			side3.setThickness(this.wallThickness);
 //			S3.setVolume(side3);
@@ -227,7 +227,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 //			SpecularAbsorber S4 = new SpecularAbsorber();
 			side4.setWidth(this.width);
 			side4.setHeight(this.height);
-			side4.setSurfaceNormal(value(side2.getSurfaceNormal().get().evaluate().minus()));
+			side4.setSurfaceNormal(value(((Vector) side2.getSurfaceNormal().get().evaluate()).minus()));
 			side4.setOrientation(side2.getOrientation());
 			side4.setThickness(this.wallThickness);
 //			S4.setVolume(side4);
@@ -292,7 +292,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 	}
 
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> x) {
+	public Producer<PackedCollection> getNormalAt(Producer<PackedCollection> x) {
 		return () -> args -> {
 			Iterator it = iterator();
 			Plane lowest = (Plane) it.next();
@@ -307,9 +307,10 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 			w:
 			while (it.hasNext()) {
 				Plane current = (Plane) it.next();
-				if (!current.inside(v(x.get().evaluate(args)))) continue w;
-				Vector n = current.getNormalAt(x).get().evaluate(args);
-				double cd = Math.abs(x.get().evaluate(args).dotProduct(n));
+				Vector xVec = new Vector(x.get().evaluate(args), 0);
+				if (!current.inside(v(xVec))) continue w;
+				Vector n = new Vector(current.getNormalAt(x).get().evaluate(args), 0);
+				double cd = Math.abs(xVec.dotProduct(n));
 
 				tot++;
 
@@ -330,17 +331,17 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 	}
 
 	@Override
-	public boolean inside(Producer<Vector> x) {
+	public boolean inside(Producer<PackedCollection> x) {
 		int i = 0;
-		
+
 		Iterator itr = this.iterator();
-		
+
 		while (itr.hasNext()){
-			Vector p = x.get().evaluate().subtract(coords[i]);
+			Vector p = new Vector(x.get().evaluate(), 0).subtract(coords[i]);
 			if (((Plane) itr.next()).inside(v(p))) return true;
 			i++;
 		}
-		
+
 		return false;
 	}
 
@@ -367,7 +368,7 @@ public class Box extends HashSet implements Volume<Object>, CodeFeatures {
 	}
 
 	@Override
-	public double[] getSurfaceCoords(Producer<Vector> xyz) {
+	public double[] getSurfaceCoords(Producer<PackedCollection> xyz) {
 		// TODO Auto-generated method stub
 		return null;
 	}

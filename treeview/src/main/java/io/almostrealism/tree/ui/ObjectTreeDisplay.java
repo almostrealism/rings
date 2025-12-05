@@ -16,10 +16,18 @@
 
 package io.almostrealism.tree.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
+import org.almostrealism.algebra.VectorMath;
+import org.almostrealism.obj.ObjectFactory;
+import org.almostrealism.swing.panels.PercentagePanel;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellRenderer;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -29,26 +37,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JSplitPane;
-import javax.swing.JTree;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeCellRenderer;
-
-import org.almostrealism.algebra.VectorMath;
-import org.almostrealism.obj.ObjectFactory;
-import org.almostrealism.swing.panels.PercentagePanel;
-
 /**
  * @author  Michael Murray
  */
@@ -56,17 +44,26 @@ public class ObjectTreeDisplay extends JPanel implements ActionListener,
 														MouseListener,
 														TreeSelectionListener,
 														ChangeListener {
-	private JPanel treePanel, rPanel, propPanel;
-	private JPanel buttonPanel;
-	private PercentagePanel perPanel;
+	private final JPanel treePanel;
+	private final JPanel rPanel;
+	private final JPanel propPanel;
+	private final JPanel buttonPanel;
+	private final PercentagePanel perPanel;
 	
-	private ObjectTreeNode root;
-	private JTree tree;
-	private JButton addButton, upButton, downButton;
-	private JPopupMenu addMenu;
-	private JMenu addMethodMenu, addObjectMenu;
+	private final ObjectTreeNode root;
+	private final JTree tree;
+	private final JButton addButton;
+	private final JButton upButton;
+	private final JButton downButton;
+	private final JPopupMenu addMenu;
+	private final JMenu addMethodMenu;
+	private final JMenu addObjectMenu;
 	
-	private Hashtable types, methods, panelTypes, panels, configTypes;
+	private final Hashtable types;
+	private final Hashtable methods;
+	private final Hashtable panelTypes;
+	private final Hashtable panels;
+	private final Hashtable configTypes;
 	
 	public ObjectTreeDisplay(ObjectTreeNode root) {
 		super(new BorderLayout());
@@ -169,8 +166,7 @@ public class ObjectTreeDisplay extends JPanel implements ActionListener,
 					Class dc = (Class) this.configTypes.get(c);
 					Object o = dc.newInstance();
 					
-					if (o instanceof ObjectFactory) {
-						ObjectFactory f = (ObjectFactory) o;
+					if (o instanceof ObjectFactory f) {
 						if (JOptionPane.showConfirmDialog(this, o, "Add " + c.getName(),
 								JOptionPane.INFORMATION_MESSAGE) == JOptionPane.OK_OPTION)
 							p.addChildObject(f.newInstance());
@@ -255,7 +251,7 @@ public class ObjectTreeDisplay extends JPanel implements ActionListener,
 		this.tree.repaint();
 	}
 	
-	public static void main(String args[]) throws SecurityException, NoSuchMethodException {
+	public static void main(String[] args) throws SecurityException, NoSuchMethodException {
 		Method m =
 			VectorMath.class.getMethod("add", double[].class, double[].class);
 		

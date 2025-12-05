@@ -18,13 +18,14 @@ package com.almostrealism.renderable;
 
 import com.almostrealism.gl.GLDriver;
 import com.jogamp.opengl.GL2;
-
 import org.almostrealism.algebra.Vector;
 
 public class Gear extends RenderableGLAdapter {
-	private float innerRadius, outerRadius;
-	private float width, toothDepth;
-	private int teeth;
+	private final float innerRadius;
+	private final float outerRadius;
+	private final float width;
+	private final float toothDepth;
+	private final int teeth;
 	
 	public Gear(float innerRadius, float outerRadius, float width, int teeth, float toothDepth) {
 		this.innerRadius = innerRadius;

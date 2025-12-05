@@ -16,8 +16,8 @@
 
 package org.almostrealism.rml.clip;
 
-import org.almostrealism.rml.Bpe;
 import org.almostrealism.ml.Tokenizer;
+import org.almostrealism.rml.Bpe;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -37,11 +37,11 @@ import java.util.stream.Collectors;
 
 public class ClipTokenizer implements Tokenizer {
 
-	private Map<Integer, String> byteEncoder;
-	private Map<String, Integer> encoder;
-	private Map<List<String>, Integer> bpeRanks;
-	private Map<String, String> cache;
-	private Pattern pat;
+	private final Map<Integer, String> byteEncoder;
+	private final Map<String, Integer> encoder;
+	private final Map<List<String>, Integer> bpeRanks;
+	private final Map<String, String> cache;
+	private final Pattern pat;
 
 	public ClipTokenizer(String bpePath) throws IOException {
 		byteEncoder = Bpe.bytesToUnicode();

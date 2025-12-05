@@ -16,26 +16,25 @@
 
 package com.almostrealism.raytracer;
 
-import java.util.Arrays;
-import java.util.List;
-
+import io.almostrealism.relation.Factory;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.Light;
+import org.almostrealism.color.PointLight;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.color.computations.RandomColorGenerator;
 import org.almostrealism.geometry.Positioned;
 import org.almostrealism.heredity.Chromosome;
-import org.almostrealism.heredity.ProjectedChromosome;
 import org.almostrealism.heredity.ProbabilisticFactory;
-import org.almostrealism.space.Scene;
-import org.almostrealism.color.ShadableSurface;
-import io.almostrealism.relation.Factory;
-
-import org.almostrealism.color.PointLight;
+import org.almostrealism.heredity.ProjectedChromosome;
+import org.almostrealism.primitives.Sphere;
 import org.almostrealism.projection.OrthographicCamera;
 import org.almostrealism.projection.ThinLensCamera;
-import org.almostrealism.primitives.Sphere;
+import org.almostrealism.space.Scene;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * The {@link SceneFactory} class provides static utility methods for getting commonly
@@ -45,17 +44,17 @@ import org.almostrealism.primitives.Sphere;
  * @author  Michael Murray
  */
 public class SceneFactory implements Factory<Scene<ShadableSurface>> {
-	private ProbabilisticFactory<ShadableSurface> surfaces;
+	private final ProbabilisticFactory<ShadableSurface> surfaces;
 	
 	public SceneFactory() {
-		this(new ProjectedChromosome(new PackedCollection<>().randFill()));
+		this(new ProjectedChromosome(new PackedCollection().randFill()));
 	}
 	
-	public SceneFactory(Chromosome<PackedCollection<?>> c) {
+	public SceneFactory(Chromosome<PackedCollection> c) {
 		List<Factory<ShadableSurface>> f =
-			Arrays.asList(
-					() -> new Sphere(location(), Math.random(), color())
-			);
+				List.of(
+						() -> new Sphere(location(), Math.random(), color())
+				);
 		
 		surfaces = new ProbabilisticFactory<>(f, c.valueAt(0));
 	}
@@ -89,7 +88,7 @@ public class SceneFactory implements Factory<Scene<ShadableSurface>> {
 	}
 	
 	public static List<Light> getStandard3PointLightRig(double scale) {
-		Light l[] = new Light[3];
+		Light[] l = new Light[3];
 		
 		l[0] = new PointLight(new Vector(scale, scale, scale));
 		l[1] = new PointLight(new Vector(-scale, scale, scale));

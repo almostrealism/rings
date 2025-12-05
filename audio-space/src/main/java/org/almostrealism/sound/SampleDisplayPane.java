@@ -16,15 +16,13 @@
 
 package org.almostrealism.sound;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import javax.sound.sampled.SourceDataLine;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
-import javax.sound.sampled.SourceDataLine;
-import javax.swing.JPanel;
 
 public class SampleDisplayPane extends JPanel implements MouseListener, KeyListener {
 	private Sample sample;

@@ -16,45 +16,30 @@
 
 package com.almostrealism.raytracer;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
+import org.almostrealism.swing.JTextAreaPrintWriter;
+
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JToggleButton;
-import javax.swing.JViewport;
-import javax.swing.text.JTextComponent;
-
-import org.almostrealism.swing.JTextAreaPrintWriter;
-
 /**
  * A DebugOutputPanel object provides a display for the debug output of the ray tracing application.
  */
 public class DebugOutputPanel extends JPanel {
-  private JFrame frame;
+  private final JFrame frame;
   
-  private JMenu fileMenu;
-  private JMenuItem saveItem;
+  private final JMenu fileMenu;
+  private final JMenuItem saveItem;
   
-  private JTabbedPane tabbedPane;
+  private final JTabbedPane tabbedPane;
   private JPanel rayEnginePanel, shaderPanel, surfacePanel, cameraPanel, eventPanel;
   private JToggleButton rayEngineToggle, surfaceToggle, cameraToggle, eventToggle;
-  private JButton clearButton;
+  private final JButton clearButton;
 
 	/**
 	  Constructs a new DebugOutputPanel object.
@@ -118,16 +103,13 @@ public class DebugOutputPanel extends JPanel {
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(this.fileMenu);
 		
-		if (Settings.produceRayTracingEngineOutput == true) {
+		if (Settings.produceRayTracingEngineOutput) {
 			this.rayEnginePanel = new JPanel(new BorderLayout());
 			this.rayEngineToggle = new JToggleButton("Stop Output");
 			
 			this.rayEngineToggle.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
-					if (Settings.produceRayTracingEngineOutput == true)
-						Settings.produceRayTracingEngineOutput = false;
-					else
-						Settings.produceRayTracingEngineOutput = true;
+					Settings.produceRayTracingEngineOutput = !Settings.produceRayTracingEngineOutput;
 				}
 			});
 			
@@ -139,22 +121,19 @@ public class DebugOutputPanel extends JPanel {
 			this.tabbedPane.addTab("Ray Tracing Engine", this.rayEnginePanel);
 		}
 		
-		if (Settings.produceShaderOutput == true) {
+		if (Settings.produceShaderOutput) {
 			this.shaderPanel = new JPanel(new BorderLayout());
 			this.shaderPanel.add(new JScrollPane(((JTextAreaPrintWriter)Settings.shaderOut).getTextArea()), BorderLayout.CENTER);
 			this.tabbedPane.addTab("Shaders", this.shaderPanel);
 		}
 		
-		if (Settings.produceSurfaceOutput == true) {
+		if (Settings.produceSurfaceOutput) {
 			this.surfacePanel = new JPanel(new BorderLayout());
 			this.surfaceToggle = new JToggleButton("Stop Output");
 			
 			this.surfaceToggle.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
-					if (Settings.produceSurfaceOutput == true)
-						Settings.produceSurfaceOutput = false;
-					else
-						Settings.produceSurfaceOutput = true;
+					Settings.produceSurfaceOutput = !Settings.produceSurfaceOutput;
 				}
 			});
 			
@@ -166,16 +145,13 @@ public class DebugOutputPanel extends JPanel {
 			this.tabbedPane.addTab("Surface", this.surfacePanel);
 		}
 		
-		if (Settings.produceCameraOutput == true) {
+		if (Settings.produceCameraOutput) {
 			this.cameraPanel = new JPanel(new BorderLayout());
 			this.cameraToggle = new JToggleButton("Stop Output");
 			
 			this.cameraToggle.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
-					if (Settings.produceCameraOutput == true)
-						Settings.produceCameraOutput = false;
-					else
-						Settings.produceCameraOutput = true;
+					Settings.produceCameraOutput = !Settings.produceCameraOutput;
 				}
 			});
 			
@@ -187,7 +163,7 @@ public class DebugOutputPanel extends JPanel {
 			this.tabbedPane.addTab("Camera", this.cameraPanel);
 		}
 		
-		if (Settings.produceEventHandlerOutput == true) {
+		if (Settings.produceEventHandlerOutput) {
 			this.tabbedPane.addTab("Event", new JScrollPane(
 					((JTextAreaPrintWriter)Settings.eventOut).getTextArea()));
 		}

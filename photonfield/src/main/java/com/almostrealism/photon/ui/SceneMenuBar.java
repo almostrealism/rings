@@ -16,9 +16,7 @@
 
 package com.almostrealism.photon.ui;
 
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -28,8 +26,10 @@ import java.awt.event.KeyEvent;
  */
 public class SceneMenuBar extends JMenuBar implements ActionListener{
 
-	private JMenu fileMenu;
-	private JMenuItem saveAs, save, exit;
+	private final JMenu fileMenu;
+	private final JMenuItem saveAs;
+	private final JMenuItem save;
+	private final JMenuItem exit;
 	
 	public SceneMenuBar() {
 		fileMenu = new JMenu("File");

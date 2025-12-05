@@ -16,33 +16,38 @@
 
 package com.almostrealism.gl;
 
-import io.almostrealism.code.ExpressionAssignment;
-import io.almostrealism.expression.ConstantValue;
-import io.almostrealism.expression.IntegerConstant;
-import io.almostrealism.expression.StaticReference;
-import org.almostrealism.CodeFeatures;
-import org.almostrealism.projection.OrthographicCamera;
-import org.almostrealism.projection.PinholeCamera;
-import org.almostrealism.raytrace.FogParameters;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
-import io.almostrealism.lang.CodePrintWriter;
+import io.almostrealism.code.ExpressionAssignment;
+import io.almostrealism.expression.ConstantValue;
 import io.almostrealism.expression.Expression;
 import io.almostrealism.expression.InstanceReference;
+import io.almostrealism.expression.IntegerConstant;
+import io.almostrealism.expression.StaticReference;
+import io.almostrealism.lang.CodePrintWriter;
 import io.almostrealism.scope.Method;
 import io.almostrealism.scope.Scope;
 import io.almostrealism.scope.Variable;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.geometry.Camera;
-import org.almostrealism.geometry.TransformMatrix;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
+import org.almostrealism.geometry.Camera;
+import org.almostrealism.geometry.TransformMatrix;
+import org.almostrealism.projection.OrthographicCamera;
+import org.almostrealism.projection.PinholeCamera;
+import org.almostrealism.raytrace.FogParameters;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -57,12 +62,12 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	// TODO  this is not ideal
 	public static Predicate<Object> isJs = p -> p.getClass().getSimpleName().equals("JavaScriptPrintWriter");
 
-	private String glMember;
+	private final String glMember;
 
 	private String matrixMember="mat4";
 	
-	private String name; // TODO Use name
-	private CodePrintWriter p;
+	private final String name; // TODO Use name
+	private final CodePrintWriter p;
 
 	private int varIndex = 0;
 
@@ -215,7 +220,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	}
 
 	@Override
-	public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte buf[]) {
+	public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte[] buf) {
 		if (gl != null) super.glTexImage2D(a, b, c, d, e, f, g, h, buf);
 //		p.println(glMethod("texImage2D",
 //				Arrays.asList(new Variable<>("a", a),
@@ -594,7 +599,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	}
 
 	@Override
-	public void glGenBuffers(int a, int b[], int c) {
+	public void glGenBuffers(int a, int[] b, int c) {
 		if (gl != null) super.glGenBuffers(a, b, c);
 		throw new RuntimeException("genBuffers");
 	}
@@ -662,7 +667,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 //	}
 
 	@Override
-	public boolean gluUnProject(Vector w, double modelview[], double projection[], int viewport[], Vector worldpos) {
+	public boolean gluUnProject(Vector w, double[] modelview, double[] projection, int[] viewport, Vector worldpos) {
 		if (glu != null) super.gluUnProject(w, modelview, projection, viewport, worldpos);
 		throw new RuntimeException("unProject");
 	}
@@ -674,7 +679,7 @@ public class GLPrintWriter extends GLDriver implements CodeFeatures {
 	}
 
 	@Override
-	public void gluPickMatrix(float x, float y, float w, float h, int viewport[]) {
+	public void gluPickMatrix(float x, float y, float w, float h, int[] viewport) {
 		if (glu != null) super.gluPickMatrix(x, y, w, h, viewport);
 		throw new RuntimeException("pickMatrix");
 	}

@@ -21,7 +21,7 @@ import com.almostrealism.remote.AccessManager;
 import java.util.Objects;
 
 public class DefaultAccessManager implements AccessManager {
-	private ManagerDatabase db;
+	private final ManagerDatabase db;
 
 	public DefaultAccessManager(ManagerDatabase db) {
 		this.db = db;

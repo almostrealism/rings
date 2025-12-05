@@ -3,6 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<groupId>com.almostrealism</groupId>
+	<artifactId>rings</artifactId>
+	<version>0.43</version>
+
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
@@ -18,28 +22,28 @@
 		<javafx.classifier>mac-aarch64</javafx.classifier>
 	</properties>
 
-	<groupId>com.almostrealism</groupId>
-	<artifactId>rings</artifactId>
-	<version>0.43</version>
-
 	<modules>
-		<module>audio</module>
 		<module>pattern</module>
 		<module>audio-space</module>
+
 		<module>treeview</module>
 		<module>swing</module>
 		<module>gl</module>
 		<module>raytracer</module>
 		<module>photonfield</module>
 		<module>replicate</module>
+
 		<module>rings</module>
 		<module>tensorflow</module>
 		<module>torch</module>
 		<module>keyframing</module>
 		<module>rings-ml</module>
-		<module>remote</module>
-		<module>remote-server</module>
 		<module>generate</module>
+
+		<module>remote</module>
+		<module>spatial</module>
+
+		<module>remote-server</module>
 	</modules>
 
 	<packaging>pom</packaging>
@@ -96,6 +100,12 @@
 
 			<dependency>
 				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-audio</artifactId>
+				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.almostrealism</groupId>
 				<artifactId>ar-ml</artifactId>
 				<version>${common.version}</version>
 			</dependency>
@@ -142,12 +152,6 @@
 				<groupId>org.jogamp.jogl</groupId>
 				<artifactId>jogl-all-main</artifactId>
 				<version>2.5.0</version>
-			</dependency>
-
-			<dependency>
-				<groupId>commons-codec</groupId>
-				<artifactId>commons-codec</artifactId>
-				<version>1.16.1</version>
 			</dependency>
 
 			<dependency>

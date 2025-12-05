@@ -70,6 +70,30 @@ mvn test -Dtest=SphereTest
 mvn clean install -DskipTests
 ```
 
+### Build Verification Requirements
+
+**CRITICAL**: Before declaring any task complete, you MUST verify the full build succeeds:
+
+```bash
+export AR_HARDWARE_LIBS=/tmp/ar_libs/ && \
+export AR_HARDWARE_DRIVER=native && \
+mvn clean install -DskipTests
+```
+
+**This command must complete with BUILD SUCCESS.** Do not rely on:
+- `mvn compile` alone (misses test compilation and packaging)
+- `mvn compile -q` (suppresses errors that may appear later)
+- Building individual modules (misses cross-module dependencies)
+
+The full `mvn clean install -DskipTests` command:
+- Compiles all main sources
+- Compiles all test sources
+- Packages all modules
+- Installs to local repository
+- Verifies all inter-module dependencies
+
+**Only after this command succeeds** should you report that the build is working.
+
 ### Maven Errors vs Warnings
 
 **CRITICAL: Distinguish between Maven errors and warnings**
@@ -328,8 +352,29 @@ This is standard for macOS/Linux development and critical for consistent git dif
 
 ## Important Notes
 
-IF YOU EVER FIND THAT YOU HAVE INTRODUCED CODE WHICH CONTAINS MORE THAN 20 NEARLY-IDENTICAL LINES,
-YOU HAVE MADE A MISTAKE AND MUST REFACTOR THE CODE TO REMOVE THE DUPLICATION.
+## ABSOLUTELY NO CODE DUPLICATION
+
+**THIS IS NON-NEGOTIABLE.**
+
+If you find yourself copying and pasting code, or writing nearly-identical logic multiple times, STOP IMMEDIATELY. This is unacceptable and will never be tolerated.
+
+**The rule**: If you have written more than 3-5 lines that are structurally similar to other code, you MUST refactor to eliminate the duplication BEFORE proceeding. Use:
+- Helper methods with parameters
+- Generic methods with type parameters
+- Factory functions
+- Higher-order functions that accept lambdas/functional interfaces
+- Template method pattern
+- Any other appropriate abstraction
+
+**Examples of violations**:
+- Writing two deserializers with identical structure but different type names
+- Copy-pasting a method and changing a few variable names
+- Creating multiple similar test methods instead of parameterized tests
+- Duplicating validation logic across multiple locations
+
+**No exceptions. No excuses. Refactor first, then proceed.**
+
+The threshold is NOT 20 lines. If you catch yourself typing similar code a second time, that is already too much. Extract it immediately.
 
 - **Cell** interface is from ar-common, not defined in this repo
 - **Producer**, **Evaluable**, **Factor** are core computation abstractions from ar-common

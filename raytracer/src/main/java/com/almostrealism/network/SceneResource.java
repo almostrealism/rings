@@ -3,19 +3,19 @@ package com.almostrealism.network;
 import io.almostrealism.resource.IOStreams;
 import io.almostrealism.resource.Permissions;
 import io.almostrealism.resource.Resource;
-import org.almostrealism.space.Scene;
 import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.space.Scene;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public class SceneResource<T extends ShadableSurface> implements Resource<Scene<T>> {
-	private Scene<T> scene;
+	private final Scene<T> scene;
 
 	public SceneResource(Scene<T> s) { this.scene = s; }
 
 	@Override
-	public void load(byte data[], long offset, int len) { }
+	public void load(byte[] data, long offset, int len) { }
 
 	@Override
 	public void load(IOStreams io) throws IOException { }

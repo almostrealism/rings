@@ -16,17 +16,17 @@
 
 package com.almostrealism.photon.xml;
 
-import java.awt.Container;
-import java.util.List;
-
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.swing.panels.EditVectorPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.awt.*;
+import java.util.List;
+
 public class VectorNode extends Node {
 	private double[] value;
-	private EditVectorPanel panel;
+	private final EditVectorPanel panel;
 	
 	public VectorNode() {
 		this.panel = new EditVectorPanel();
@@ -52,7 +52,7 @@ public class VectorNode extends Node {
 	}
 	
 	public void listElements(Document doc, Element node, List l) {
-		double v[] = (double[]) this.getObject();
+		double[] v = (double[]) this.getObject();
 		Element el = doc.createElement("vector");
 		el.setAttribute("name", super.name);
 		el.setAttribute("x", String.valueOf(v[0]));

@@ -16,21 +16,20 @@
 
 package com.almostrealism.replicator;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import com.almostrealism.gl.GLDriver;
-import com.almostrealism.replicator.transform.TransformedSurfaceGroup;
-import io.almostrealism.lang.CodePrintWriter;
-import org.almostrealism.geometry.BasicGeometry;
-import org.almostrealism.space.GeometryStack;
-import org.almostrealism.color.ShadableSurface;
-import org.almostrealism.space.SurfaceGroup;
-
 import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableGeometry;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
+import com.almostrealism.replicator.transform.TransformedSurfaceGroup;
+import io.almostrealism.lang.CodePrintWriter;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.geometry.BasicGeometry;
+import org.almostrealism.space.GeometryStack;
+import org.almostrealism.space.SurfaceGroup;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A {@link Replicant} combines a set of {@link BasicGeometry}s with the
@@ -44,7 +43,7 @@ import com.almostrealism.renderable.RenderableSurfaceFactory;
  * @author  Michael Murray
  */
 public class Replicant<T extends ShadableSurface> extends SurfaceGroup<T> implements Renderable {
-	private List<Renderable> delegates;
+	private final List<Renderable> delegates;
 	private Iterable<BasicGeometry> geo;
 	private boolean pushed = false;
 	

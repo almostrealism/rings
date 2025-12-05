@@ -16,6 +16,29 @@
 
 package com.almostrealism.util;
 
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.physics.AbsorberSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
+import io.almostrealism.relation.Factory;
+import io.almostrealism.uml.Nameable;
+import org.almostrealism.CodeFeatures;
+import org.almostrealism.algebra.VectorMath;
+import org.almostrealism.algebra.ZeroVector;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.Clock;
+import org.almostrealism.physics.PhysicalConstants;
+import org.almostrealism.primitives.AbsorptionPlane;
+import org.almostrealism.primitives.PinholeCameraAbsorber;
+import org.almostrealism.space.Scene;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import javax.swing.JFrame;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -31,31 +54,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-import javax.swing.JFrame;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.almostrealism.primitives.PinholeCameraAbsorber;
-import org.almostrealism.primitives.AbsorptionPlane;
-import org.almostrealism.algebra.VectorMath;
-import org.almostrealism.algebra.ZeroVector;
-import org.almostrealism.color.RGB;
-import org.almostrealism.physics.Absorber;
-import org.almostrealism.physics.PhysicalConstants;
-import org.almostrealism.space.Scene;
-import org.almostrealism.color.ShadableSurface;
-import org.almostrealism.physics.Clock;
-import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Factory;
-import io.almostrealism.uml.Nameable;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import com.almostrealism.physics.AbsorberHashSet;
-import com.almostrealism.physics.AbsorberSet;
-import com.almostrealism.physics.DefaultPhotonField;
-
 public class FileLoader extends DefaultHandler implements CodeFeatures {
 	public static double verbose = Math.pow(10.0, -5.0);
 	public static boolean localRayTrace = true;
@@ -66,9 +64,9 @@ public class FileLoader extends DefaultHandler implements CodeFeatures {
 	private StringBuffer buf;
 	private InputStream in;
 	
-	private Stack stack;
-	private Stack scales;
-	private Hashtable heap;
+	private final Stack stack;
+	private final Stack scales;
+	private final Hashtable heap;
 	
 	private AbsorberSet set, lset;
 	private Absorber absorber;
@@ -77,18 +75,19 @@ public class FileLoader extends DefaultHandler implements CodeFeatures {
 	private boolean clone, print;
 	private double scale, pscale;
 	
-	private PropertyDescriptor pdesc[];
-	private Method vecmath[];
-	private Field pconstants[];
+	private PropertyDescriptor[] pdesc;
+	private final Method[] vecmath;
+	private final Field[] pconstants;
 	
 	private Object target;
-	private Method setter, methods[];
+	private Method setter;
+	private Method[] methods;
 	private String method;
 	private List args;
 	
 	private boolean abs;
 	
-	public static void main(String args[]) throws SAXException, IOException {
+	public static void main(String[] args) throws SAXException, IOException {
 //		Settings.init();
 //		Settings.produceOutput = true;
 //		Settings.produceRayTracingEngineOutput = true;
@@ -142,10 +141,10 @@ public class FileLoader extends DefaultHandler implements CodeFeatures {
 			
 			if (o instanceof AbsorptionPlane) {
 				plane = (AbsorptionPlane) o;
-				break w;
+				break;
 			} else if (o instanceof PinholeCameraAbsorber) {
 				plane = ((PinholeCameraAbsorber) o).getAbsorptionPlane();
-				break w;
+				break;
 			}
 		}
 		
@@ -168,9 +167,8 @@ public class FileLoader extends DefaultHandler implements CodeFeatures {
 			frame.setVisible(true);
 		}
 		
-		boolean noFile = false;
-		if (args.length > 2 && args[2].equals("off")) noFile = true;
-		
+		boolean noFile = args.length > 2 && args[2].equals("off");
+
 		if (!noFile) {
 			f.setLogFile("photons.txt");
 			f.setLogFrequency(500);
@@ -281,7 +279,7 @@ public class FileLoader extends DefaultHandler implements CodeFeatures {
 	public AbsorberSet getSet() { return this.set; }
 
 	@Override
-	public void characters(char c[], int start, int length) throws SAXException {
+	public void characters(char[] c, int start, int length) throws SAXException {
 		if (this.buf != null)
 			this.buf.append(c, start, length);
 	}
@@ -325,7 +323,7 @@ public class FileLoader extends DefaultHandler implements CodeFeatures {
 		else
 			this.pscale = Double.parseDouble(spscale);
 		
-		double p[] = {0.0, 0.0, 0.0};
+		double[] p = {0.0, 0.0, 0.0};
 		
 		String pos = attr.getValue("position");
 		if (pos != null) p = (double[]) this.heap.get(pos);
@@ -578,11 +576,11 @@ public class FileLoader extends DefaultHandler implements CodeFeatures {
 			}
 		} else if (qName.equals("call")) {
 			Method mt = null;
-			Method m[] = this.methods;
+			Method[] m = this.methods;
 			
 			i: for (int i = 0; i < m.length; i++) {
 				if (!m[i].getName().equals(method)) continue i;
-				Class types[] = m[i].getParameterTypes();
+				Class[] types = m[i].getParameterTypes();
 				if (this.args.size() != types.length) continue i;
 				
 //				for (int j = 0; j < types.length; j++) {
@@ -591,7 +589,7 @@ public class FileLoader extends DefaultHandler implements CodeFeatures {
 //				}
 				
 				mt = m[i];
-				break i;
+				break;
 			}
 			
 			if (mt == null) {
@@ -676,18 +674,18 @@ public class FileLoader extends DefaultHandler implements CodeFeatures {
 				this.abs = false;
 			
 			if (this.args != null)
-				this.args.add(new Integer(d));
+				this.args.add(Integer.valueOf(d));
 			
 			if (this.name != null && this.named.equals(qName)) {
-				this.heap.put(this.name, new Integer(d));
+				this.heap.put(this.name, Integer.valueOf(d));
 				this.name = null;
 			}
 		} else if (qName.equals("boolean")) {
 			if (this.args != null)
-				this.args.add(new Boolean(this.buf.toString()));
+				this.args.add(Boolean.valueOf(this.buf.toString()));
 			
 			if (this.name != null && this.named.equals(qName)) {
-				this.heap.put(this.name, new Boolean(this.buf.toString()));
+				this.heap.put(this.name, Boolean.valueOf(this.buf.toString()));
 				this.name = null;
 			}
 		} else if (qName.equals("reference")) {
@@ -712,7 +710,7 @@ public class FileLoader extends DefaultHandler implements CodeFeatures {
 			}
 			
 			if (o instanceof Integer) {
-				o = new Integer((int) (this.pscale * ((Number)o).doubleValue()));
+				o = Integer.valueOf((int) (this.pscale * ((Number) o).doubleValue()));
 			} else if (o instanceof Number) {
 				o = new Double(this.pscale * ((Number)o).doubleValue());
 			}

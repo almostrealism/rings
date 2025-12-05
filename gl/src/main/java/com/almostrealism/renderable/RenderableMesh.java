@@ -19,26 +19,24 @@ package com.almostrealism.renderable;
 import com.almostrealism.gl.GLDriver;
 import com.almostrealism.gl.GLPrintWriter;
 import com.jogamp.opengl.GL2;
-import io.almostrealism.lang.CodePrintWriter; //this is not good - remove it - Kristen added for experiment
 import io.almostrealism.code.ExpressionAssignment;
 import io.almostrealism.expression.Expression;
 import io.almostrealism.expression.StaticReference;
+import io.almostrealism.lang.CodePrintWriter;
 import io.almostrealism.scope.Method;
 import io.almostrealism.scope.Scope;
 import io.almostrealism.scope.Variable;
+import org.almostrealism.CodeFeatures;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.geometry.TransformMatrix;
+import org.almostrealism.space.Mesh;
+import org.almostrealism.space.Triangle;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.almostrealism.geometry.TransformMatrix;
-import org.almostrealism.algebra.Vector;
-
-import org.almostrealism.space.Mesh;
-import org.almostrealism.space.Triangle;
-import org.almostrealism.CodeFeatures;
 
 public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeatures {
 	public RenderableMesh(Mesh m) { super(m); }
@@ -47,11 +45,11 @@ public class RenderableMesh extends RenderableGeometry<Mesh> implements CodeFeat
 	public void init(GLDriver gl) {
 		List<Double> vertices = new ArrayList<>();
 		for (Triangle t : getGeometry().triangles()) {
-			Vector v[] = t.getVertices();
-			Vector n[] = new Vector[] {
-						t.getNormalAt(v(v[0])).get().evaluate(),
-						t.getNormalAt(v(v[1])).get().evaluate(),
-						t.getNormalAt(v(v[2])).get().evaluate()};
+			Vector[] v = t.getVertices();
+			Vector[] n = new Vector[] {
+						(Vector) t.getNormalAt(v(v[0])).get().evaluate(),
+						(Vector) t.getNormalAt(v(v[1])).get().evaluate(),
+						(Vector) t.getNormalAt(v(v[2])).get().evaluate()};
 
 			vertices.add(v[0].getX());
 			vertices.add(v[0].getY());

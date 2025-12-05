@@ -1,12 +1,14 @@
 package com.almostrealism.network;
 
-import org.almostrealism.algebra.Vector;
-import io.almostrealism.resource.UnicodeResource;
 import io.almostrealism.resource.ResourceTranscoder;
+import io.almostrealism.resource.UnicodeResource;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.Triangle;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.Stack;
 
@@ -19,8 +21,8 @@ public class GtsResource extends UnicodeResource {
 		@Override
 		public GtsResource transcode(MeshResource r) {
 			Mesh m = r.getMesh();
-			Vector v[] = m.getVectors();
-			Triangle t[] = m.getTriangles();
+			Vector[] v = m.getVectors();
+			Triangle[] t = m.getTriangles();
 
 			StringBuffer buf = new StringBuffer();
 
@@ -34,7 +36,7 @@ public class GtsResource extends UnicodeResource {
 			}
 
 			for (int i = 0; i < t.length; i++) {
-				Vector tv[] = t[i].getVertices();
+				Vector[] tv = t[i].getVertices();
 				buf.append(m.indexOf(tv[0]) + " " + m.indexOf(tv[1]) + "\n");
 				buf.append(m.indexOf(tv[1]) + " " + m.indexOf(tv[2]) + "\n");
 				buf.append(m.indexOf(tv[2]) + " " + m.indexOf(tv[0]) + "\n");
@@ -70,16 +72,16 @@ public class GtsResource extends UnicodeResource {
 				if (line == null) return null;
 				if (line.startsWith("#")) continue w;
 
-				double d[] = FileDecoder.parseDoubles(line);
+				double[] d = FileDecoder.parseDoubles(line);
 
 				pointCount = (int)d[0];
 				edgeCount = (int)d[1];
 				triangleCount = (int)d[2];
 
-				break w;
+				break;
 			}
 
-			int edges[][] = new int[edgeCount][2];
+			int[][] edges = new int[edgeCount][2];
 
 			i: for (int i = 0; i < pointCount; ) {
 				line = in.readLine();
@@ -87,7 +89,7 @@ public class GtsResource extends UnicodeResource {
 				if (line == null) return null;
 				if (line.startsWith("#")) continue i;
 
-				double d[] = FileDecoder.parseDoubles(line);
+				double[] d = FileDecoder.parseDoubles(line);
 				m.addVector(new Vector(d[0], d[1], d[2]));
 
 				i++;
@@ -99,7 +101,7 @@ public class GtsResource extends UnicodeResource {
 				if (line == null) return null;
 				if (line.startsWith("#")) continue i;
 
-				double d[] = FileDecoder.parseDoubles(line);
+				double[] d = FileDecoder.parseDoubles(line);
 				edges[i][0] = (int)d[0] - 1;
 				edges[i][1] = (int)d[1] - 1;
 
@@ -112,12 +114,12 @@ public class GtsResource extends UnicodeResource {
 				if (line == null) return null;
 				if (line.startsWith("#")) continue i;
 
-				double d[] = FileDecoder.parseDoubles(line);
+				double[] d = FileDecoder.parseDoubles(line);
 
 				Stack st = new Stack();
 
 				for (int j = 0; j < d.length; j++) {
-					int v[] = edges[(int)d[j] - 1];
+					int[] v = edges[(int)d[j] - 1];
 					Integer v0 = Integer.valueOf(v[0]);
 					Integer v1 = Integer.valueOf(v[1]);
 

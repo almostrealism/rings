@@ -37,7 +37,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	private double audioDurationSeconds;
 	private DoubleConsumer progressMonitor;
 
-	private AudioComposer composer;
+	private final AudioComposer composer;
 	private double strength;
 
 	public AudioGenerator(String modelsPath) throws OrtException, IOException {
@@ -105,7 +105,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	 *
 	 * @param audio PackedCollection of audio data (stereo: [2, frames] or mono: [frames])
 	 */
-	public void addAudio(PackedCollection<?> audio) {
+	public void addAudio(PackedCollection audio) {
 		composer.addAudio(cp(audio));
 	}
 
@@ -114,7 +114,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	 *
 	 * @param features PackedCollection of latent features [64, 256]
 	 */
-	public void addFeatures(PackedCollection<?> features) {
+	public void addFeatures(PackedCollection features) {
 		composer.addSource(cp(features));
 	}
 
@@ -125,7 +125,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	/**
 	 * Generate audio from samples and save to file.
 	 */
-	public void generateAudio(PackedCollection<?> position, String prompt,
+	public void generateAudio(PackedCollection position, String prompt,
 							  long seed, String outputPath) throws IOException {
 		double[][] audio = generateAudio(position, prompt, seed);
 		try (WavFile f = WavFile.newWavFile(new File(outputPath), 2, audio[0].length, 32, SAMPLE_RATE)) {
@@ -143,7 +143,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	 * @param seed Random seed for noise generation
 	 * @return Generated stereo audio
 	 */
-	public double[][] generateAudio(PackedCollection<?> position, String prompt, long seed) {
+	public double[][] generateAudio(PackedCollection position, String prompt, long seed) {
 		try {
 			return generateAudio(position, tokenize(prompt), seed);
 		} finally {
@@ -165,7 +165,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	 * @param seed Random seed for noise generation
 	 * @return Generated stereo audio
 	 */
-	public double[][] generateAudio(PackedCollection<?> position, long[] tokenIds, long seed) {
+	public double[][] generateAudio(PackedCollection position, long[] tokenIds, long seed) {
 		try {
 			if (position == null) {
 				// Pure generation from noise
@@ -178,16 +178,16 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			}
 
 			// 1. Process tokens through conditioners
-			Map<String, PackedCollection<?>> conditionerOutputs = runConditioners(tokenIds);
+			Map<String, PackedCollection> conditionerOutputs = runConditioners(tokenIds);
 
 			// 2. Generate interpolated latent from samples (if position provided)
-			PackedCollection<?> interpolatedLatent = null;
+			PackedCollection interpolatedLatent = null;
 			if (position != null) {
 				interpolatedLatent = composer.getInterpolatedLatent(cp(position)).evaluate();
 			}
 
 			// 3. Run diffusion (with or without sample initialization)
-			PackedCollection<?> finalLatent = runDiffusionSteps(
+			PackedCollection finalLatent = runDiffusionSteps(
 					conditionerOutputs.get("cross_attention_input"),
 					conditionerOutputs.get("global_cond"),
 					interpolatedLatent,
@@ -206,7 +206,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 		}
 	}
 
-	protected Map<String, PackedCollection<?>> runConditioners(long[] ids) {
+	protected Map<String, PackedCollection> runConditioners(long[] ids) {
 		return runConditioners(ids, getAudioDuration());
 	}
 
@@ -222,17 +222,17 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	 * @param seed Random seed
 	 * @return Final latent after diffusion
 	 */
-	private PackedCollection<?> runDiffusionSteps(PackedCollection<?> crossAttentionInput,
-												  PackedCollection<?> globalCond,
-												  PackedCollection<?> interpolatedLatent,
+	private PackedCollection runDiffusionSteps(PackedCollection crossAttentionInput,
+												  PackedCollection globalCond,
+												  PackedCollection interpolatedLatent,
 												  long seed) {
 		Random random = new Random(seed);
-		PackedCollection<?> x;
+		PackedCollection x;
 		int startStep;
 
 		if (interpolatedLatent == null) {
 			// Pure generation: start from random noise at step 0
-			x = new PackedCollection<>(DIT_X_SHAPE).randnFill(random);
+			x = new PackedCollection(DIT_X_SHAPE).randnFill(random);
 			startStep = 0;
 		} else {
 			// Special case: strength = 0.0 means no diffusion at all
@@ -264,9 +264,9 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	/**
 	 * Core diffusion loop that can start from any step.
 	 */
-	private PackedCollection<?> runDiffusionSteps(PackedCollection<?> crossAttentionInput,
-												  PackedCollection<?> globalCond,
-												  PackedCollection<?> x,
+	private PackedCollection runDiffusionSteps(PackedCollection crossAttentionInput,
+												  PackedCollection globalCond,
+												  PackedCollection x,
 												  int startStep,
 												  long seed) {
 		// Generate sigma values
@@ -282,7 +282,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 		long samplingTotal = 0;
 		long modelTotal = 0;
 
-		PackedCollection<?> tPC = new PackedCollection<>(1);
+		PackedCollection tPC = new PackedCollection(1);
 
 		double stepCount = NUM_STEPS - startStep;
 
@@ -294,7 +294,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 			// Run DiffusionTransformer
 			long start = System.currentTimeMillis();
-			PackedCollection<?> output = getDitModel().forward(x, tPC, crossAttentionInput, globalCond);
+			PackedCollection output = getDitModel().forward(x, tPC, crossAttentionInput, globalCond);
 
 			if (progressMonitor != null) {
 				progressMonitor.accept((1 + step - startStep) / stepCount);
@@ -315,7 +315,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			}
 
 			// Generate new noise
-			PackedCollection<?> newNoise = new PackedCollection<>(DIT_X_SHAPE).randnFill(random);
+			PackedCollection newNoise = new PackedCollection(DIT_X_SHAPE).randnFill(random);
 			double[] newNoiseData = newNoise.toArray();
 
 			// Update x for next step
@@ -352,11 +352,11 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	 * @param random Random generator for noise
 	 * @return Noisy latent ready for diffusion
 	 */
-	private PackedCollection<?> addMatchedNoise(PackedCollection<?> interpolatedLatent,
+	private PackedCollection addMatchedNoise(PackedCollection interpolatedLatent,
 												float targetSigma,
 												Random random) {
 		// Generate noise and scale by target sigma
-		PackedCollection<?> noise = new PackedCollection<>(DIT_X_SHAPE).randnFill(random);
+		PackedCollection noise = new PackedCollection(DIT_X_SHAPE).randnFill(random);
 
 		// Add scaled noise to interpolated latent
 		double[] interpData = interpolatedLatent.toArray();
@@ -367,7 +367,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			noisyData[i] = (float) (interpData[i] + targetSigma * noiseData[i]);
 		}
 
-		PackedCollection<?> result = new PackedCollection<>(DIT_X_SHAPE);
+		PackedCollection result = new PackedCollection(DIT_X_SHAPE);
 		result.setMem(noisyData);
 
 		if (HardwareFeatures.outputMonitoring) {
@@ -381,10 +381,10 @@ public class AudioGenerator extends ConditionalAudioSystem {
 		return result;
 	}
 
-	private double[][] decodeAudio(PackedCollection<?> latent) {
-		PackedCollection<?> result = getAutoencoder().decode(cp(latent)).evaluate();
+	private double[][] decodeAudio(PackedCollection latent) {
+		PackedCollection result = getAutoencoder().decode(cp(latent)).evaluate();
 
-		double data[] = result.toArray();
+		double[] data = result.toArray();
 		int totalSamples = data.length;
 		int channelSamples = totalSamples / 2; // Stereo audio, 2 channels
 		int finalSamples = (int) (getAudioDuration() * SAMPLE_RATE);
@@ -420,7 +420,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 		arr[size - 1] = SIGMA_MIN;
 	}
 
-	private void checkNan(PackedCollection<?> x, String context) {
+	private void checkNan(PackedCollection x, String context) {
 		if (HardwareFeatures.outputMonitoring) {
 			long nanCount = x.count(Double::isNaN);
 

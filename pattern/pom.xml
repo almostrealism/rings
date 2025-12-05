@@ -13,9 +13,13 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.almostrealism</groupId>
+			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-audio</artifactId>
-			<version>0.43</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
 		<dependency>

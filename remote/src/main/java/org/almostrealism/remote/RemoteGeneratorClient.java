@@ -17,15 +17,13 @@
 package org.almostrealism.remote;
 
 import io.almostrealism.relation.Validity;
+import io.grpc.Channel;
+import io.grpc.ManagedChannelBuilder;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.remote.api.GeneratorGrpc;
 import org.almostrealism.remote.ops.GenerateRequestor;
 import org.almostrealism.remote.ops.RefreshRequestor;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.Channel;
-import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.audio.notes.NoteAudioProvider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,20 +35,20 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class RemoteGeneratorClient {
-	private RemoteAccessKey key;
-	private Channel channel;
-	private GeneratorGrpc.GeneratorStub generator;
+	private final RemoteAccessKey key;
+	private final Channel channel;
+	private final GeneratorGrpc.GeneratorStub generator;
 
 	private RefreshRequestor refresh;
 	private GenerateRequestor generate;
 
-	private Map<String, Consumer<Boolean>> refreshListeners;
-	private Map<String, Runnable> refreshEndListeners;
+	private final Map<String, Consumer<Boolean>> refreshListeners;
+	private final Map<String, Runnable> refreshEndListeners;
 
-	private Map<String, Consumer<WaveData>> generateListeners;
-	private Map<String, Runnable> generateEndListeners;
+	private final Map<String, Consumer<WaveData>> generateListeners;
+	private final Map<String, Runnable> generateEndListeners;
 
-	private Map<String, AtomicInteger> completion;
+	private final Map<String, AtomicInteger> completion;
 
 	public RemoteGeneratorClient(String host, int port, RemoteAccessKey key) {
 		this(ManagedChannelBuilder.forAddress(host, port).usePlaintext(), key);

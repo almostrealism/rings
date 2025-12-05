@@ -8,10 +8,10 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 public class MediaPreprocessor {
-	private AffineTransform at = new AffineTransform();
+	private final AffineTransform at = new AffineTransform();
 	private AffineTransformOp scaleOp;
 	private int count;
-	private double scale;
+	private final double scale;
 
 	public MediaPreprocessor(double scale) {
 		this.scale = scale;

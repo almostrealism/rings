@@ -1,10 +1,10 @@
 package com.almostrealism.photon.network;
 
-import org.almostrealism.space.SceneLoader;
 import com.almostrealism.network.FileDecoder;
-import io.flowtree.fs.OutputServer;
 import io.almostrealism.resource.Resource;
+import io.flowtree.fs.OutputServer;
 import org.almostrealism.space.Scene;
+import org.almostrealism.space.SceneLoader;
 
 import java.io.IOException;
 

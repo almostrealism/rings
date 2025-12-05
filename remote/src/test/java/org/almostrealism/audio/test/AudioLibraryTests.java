@@ -17,13 +17,13 @@
 package org.almostrealism.audio.test;
 
 import ai.onnxruntime.OrtException;
+import org.almostrealism.audio.AudioLibrary;
 import org.almostrealism.audio.api.Audio;
 import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.audio.persistence.AudioLibraryPersistence;
-import org.almostrealism.audio.AudioLibrary;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.WaveDataProvider;
 import org.almostrealism.audio.data.WaveDetails;
+import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.audio.persistence.AudioLibraryPersistence;
 import org.almostrealism.audio.stream.AudioServer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.ml.audio.AutoEncoder;
@@ -125,8 +125,8 @@ public class AudioLibraryTests implements TestFeatures {
 				library.getWaveDetailsFactory().getFeatureProvider();
 
 		WaveDetails details = library.getDetailsAwait("Library/Dip Flop DD 159.wav", false);
-		PackedCollection<?> features = details.getFeatureData(true);
-		PackedCollection<?> data = provider.getAutoEncoder().decode(cp(features)).evaluate();
+		PackedCollection features = details.getFeatureData(true);
+		PackedCollection data = provider.getAutoEncoder().decode(cp(features)).evaluate();
 
 		new WaveData(data, 44100)
 				.save(new File("results/library-decode.wav"));

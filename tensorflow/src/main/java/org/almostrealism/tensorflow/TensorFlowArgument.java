@@ -1,7 +1,7 @@
 package org.almostrealism.tensorflow;
 
-import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.uml.Multiple;
 
 import java.util.function.Supplier;

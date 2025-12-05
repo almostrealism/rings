@@ -16,16 +16,14 @@
 
 package com.almostrealism.photon.ui;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
-
-import javax.swing.*;
-
-import org.almostrealism.primitives.PinholeCameraAbsorber;
 import com.almostrealism.photon.xml.Node;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.primitives.PinholeCameraAbsorber;
+
+import javax.swing.*;
+import java.awt.*;
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  *  @author Samuel Tepper

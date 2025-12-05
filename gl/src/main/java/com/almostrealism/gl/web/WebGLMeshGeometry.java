@@ -20,7 +20,7 @@ import io.almostrealism.html.HTMLContent;
 import org.almostrealism.space.Mesh;
 
 public class WebGLMeshGeometry implements WebGLExportable {
-	private Mesh.VertexData data;
+	private final Mesh.VertexData data;
 	
 	public WebGLMeshGeometry(Mesh.VertexData data) { this.data = data; }
 	
@@ -57,7 +57,7 @@ public class WebGLMeshGeometry implements WebGLExportable {
 		return "new THREE.Vector3(" + v.getX(index) + ", " + v.getY(index) + ", " + v.getZ(index) + ")";
 	}
 	
-	private static String asThreeFace(int triangle[]) {
+	private static String asThreeFace(int[] triangle) {
 		return "new THREE.Face3(" + triangle[0] + ", " + triangle[1] + ", " + triangle[2] + ")";
 	}
 }

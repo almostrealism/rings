@@ -16,30 +16,24 @@
 
 package org.almostrealism.swing.panels;
 
-import java.awt.Color;
-import java.awt.GridLayout;
+import io.almostrealism.util.NumberFormats;
+import org.almostrealism.color.RGB;
+import org.almostrealism.texture.GraphicsConverter;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import io.almostrealism.util.NumberFormats;
-
-import org.almostrealism.color.RGB;
-import org.almostrealism.texture.GraphicsConverter;
-
 /** An EditRGBPanel object can be used to specify an RGB color. */
 public class EditRGBPanel extends JPanel {
-  private JFormattedTextField redField, greenField, blueField;
-  private JButton selectColorButton;
+  private final JFormattedTextField redField;
+	private final JFormattedTextField greenField;
+	private final JFormattedTextField blueField;
+  private final JButton selectColorButton;
 
 	/**
 	  Constructs a new EditRGBPanel object with the initial values set to 0.0 (black).
@@ -94,7 +88,6 @@ public class EditRGBPanel extends JPanel {
 					RGB newRGB = GraphicsConverter.convertToRGB(newColor);
 					setSelectedColor(newRGB);
 				} else {
-					return;
 				}
 			}
 		});

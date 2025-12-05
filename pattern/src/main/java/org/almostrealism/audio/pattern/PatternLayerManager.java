@@ -19,7 +19,6 @@ package org.almostrealism.audio.pattern;
 import io.almostrealism.profile.OperationMetadata;
 import io.almostrealism.profile.OperationWithInfo;
 import org.almostrealism.audio.arrange.AudioSceneContext;
-import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterFunction;
@@ -43,6 +42,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
+	public static int AUTOMATION_GENE_LENGTH = 6;
 	public static int MAX_LAYERS = 32;
 
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
@@ -59,20 +59,20 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 
 	private double seedBiasAdjustment;
 
-	private Supplier<List<NoteAudioChoice>> percChoices;
-	private Supplier<List<NoteAudioChoice>> melodicChoices;
-	private Chromosome<PackedCollection<?>> layerChoiceChromosome;
-	private Chromosome<PackedCollection<?>> envelopeAutomationChromosome;
+	private final Supplier<List<NoteAudioChoice>> percChoices;
+	private final Supplier<List<NoteAudioChoice>> melodicChoices;
+	private Chromosome<PackedCollection> layerChoiceChromosome;
+	private Chromosome<PackedCollection> envelopeAutomationChromosome;
 
 	private ParameterFunction noteSelection;
 	private ParameterizedPositionFunction activeSelection;
 	private PatternElementFactory elementFactory;
 
-	private List<PatternLayer> roots;
-	private List<ParameterSet> layerParams;
+	private final List<PatternLayer> roots;
+	private final List<ParameterSet> layerParams;
 	private int layerCount;
 
-	private Map<ChannelInfo, PackedCollection<?>> destination;
+	private Map<ChannelInfo, PackedCollection> destination;
 
 	public PatternLayerManager(List<NoteAudioChoice> choices,
 							   ProjectedChromosome chromosome,
@@ -110,11 +110,11 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 				.mapToObj(i -> chromosome.addGene(3))
 				.collect(Collectors.toList()));
 		envelopeAutomationChromosome = chromosome(IntStream.range(0, MAX_LAYERS)
-				.mapToObj(i -> chromosome.addGene(AutomationManager.GENE_LENGTH))
+				.mapToObj(i -> chromosome.addGene(AUTOMATION_GENE_LENGTH))
 				.collect(Collectors.toList()));
 	}
 
-	public Map<ChannelInfo, PackedCollection<?>> getDestination() { return destination; }
+	public Map<ChannelInfo, PackedCollection> getDestination() { return destination; }
 
 	public void updateDestination(AudioSceneContext context) {
 		if (context.getChannels() == null) return;
@@ -272,14 +272,14 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 		refresh();
 	}
 
-	public void layer(Gene<PackedCollection<?>> gene) {
+	public void layer(Gene<PackedCollection> gene) {
 		layer(ParameterSet.fromGene(gene));
 	}
 
 	protected void layer(ParameterSet params) {
-		Gene<PackedCollection<?>> automationGene = envelopeAutomationChromosome.valueAt(depth());
-		PackedCollection<?> automationParams =
-				PackedCollection.factory().apply(AutomationManager.GENE_LENGTH).fill(pos ->
+		Gene<PackedCollection> automationGene = envelopeAutomationChromosome.valueAt(depth());
+		PackedCollection automationParams =
+				PackedCollection.factory().apply(AUTOMATION_GENE_LENGTH).fill(pos ->
 						automationGene.valueAt(pos[0]).getResultant(null).evaluate().toDouble());
 
 		if (rootCount() <= 0) {

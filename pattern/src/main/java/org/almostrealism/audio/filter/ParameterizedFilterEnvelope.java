@@ -53,8 +53,8 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 	}
 
 	public class Filter implements NoteAudioFilter {
-		private ParameterSet params;
-		private ChannelInfo.Voicing voicing;
+		private final ParameterSet params;
+		private final ChannelInfo.Voicing voicing;
 
 		public Filter(ParameterSet params, ChannelInfo.Voicing voicing) {
 			this.params = params;
@@ -82,17 +82,17 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 		}
 
 		@Override
-		public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> audio,
-												   Producer<PackedCollection<?>> duration,
-												   Producer<PackedCollection<?>> automationLevel) {
+		public Producer<PackedCollection> apply(Producer<PackedCollection> audio,
+												   Producer<PackedCollection> duration,
+												   Producer<PackedCollection> automationLevel) {
 			return () -> args -> {
-				PackedCollection<?> audioData = audio.get().evaluate();
+				PackedCollection audioData = audio.get().evaluate();
 
 				TraversalPolicy shape = audioData.getShape();
-				PackedCollection<?> result = PackedCollection.factory()
+				PackedCollection result = PackedCollection.factory()
 						.apply(shape.getTotalSize()).reshape(shape);
-				PackedCollection<?> dr = duration.get().evaluate();
-				PackedCollection<?> al = automationLevel.get().evaluate();
+				PackedCollection dr = duration.get().evaluate();
+				PackedCollection al = automationLevel.get().evaluate();
 
 				double adj = adjustmentBase + adjustmentAutomation * al.toDouble(0);
 //				log("Processing filter envelope with duration (" + dr.toDouble(0) +
@@ -120,8 +120,7 @@ public class ParameterizedFilterEnvelope extends ParameterizedEnvelopeAdapter {
 			if (filter.getAttack() != getAttack()) return false;
 			if (filter.getDecay() != getDecay()) return false;
 			if (filter.getSustain() != getSustain()) return false;
-			if (filter.getRelease() != getRelease()) return false;
-			return true;
+			return filter.getRelease() == getRelease();
 		}
 
 		@Override

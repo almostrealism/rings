@@ -16,29 +16,24 @@
 
 package org.almostrealism.audio.pattern;
 
-import io.almostrealism.profile.OperationMetadata;
-import io.almostrealism.profile.OperationWithInfo;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.arrange.AudioSceneContext;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.data.ParameterFunction;
-import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.audio.notes.NoteAudioChoice;
-import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.TreeNoteSource;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.OperationList;
 import org.almostrealism.heredity.ProjectedChromosome;
-import org.almostrealism.heredity.ProjectedGenome;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,12 +56,12 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	public static boolean enableVerbose = false;
 	public static boolean enableWarnings = true;
 
-	private List<NoteAudioChoice> choices;
-	private List<PatternLayerManager> patterns;
-	private List<ProjectedChromosome> chromosomes;
+	private final List<NoteAudioChoice> choices;
+	private final List<PatternLayerManager> patterns;
+	private final List<ProjectedChromosome> chromosomes;
 
-	private PackedCollection<?> volume;
-	private PackedCollection<?> destination;
+	private PackedCollection volume;
+	private PackedCollection destination;
 
 	public PatternSystemManager( List<ProjectedChromosome> chromosomes) {
 		this(new ArrayList<>(), chromosomes);
@@ -79,7 +74,7 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 	}
 
 	public void init() {
-		volume = new PackedCollection<>(1);
+		volume = new PackedCollection(1);
 		volume.setMem(0, 1.0);
 	}
 
@@ -213,8 +208,8 @@ public class PatternSystemManager implements NoteSourceProvider, CodeFeatures {
 				throw new UnsupportedOperationException("Lazy destination not compatible with computing max");
 			}
 
-			Producer<PackedCollection<?>> max = (Producer) cp(destination).traverse(0).max().isolate();
-			CollectionProducer<PackedCollection<?>> auto = greaterThan(max, c(0.0), c(0.8).divide(max), c(1.0));
+			Producer<PackedCollection> max = (Producer) cp(destination).traverse(0).max().isolate();
+			CollectionProducer auto = greaterThan(max, c(0.0), c(0.8).divide(max), c(1.0));
 			op.add(a(1, p(volume), auto));
 		}
 

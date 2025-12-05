@@ -18,8 +18,8 @@ package org.almostrealism.audio.stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.line.DelegatedAudioLine;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.line.SharedMemoryAudioLine;
 import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.util.KeyUtils;
@@ -30,7 +30,7 @@ import java.io.OutputStream;
 import java.util.Objects;
 
 public class AudioLineDelegationHandler implements HttpAudioHandler, ConsoleFeatures {
-	private DelegatedAudioLine line;
+	private final DelegatedAudioLine line;
 
 	public AudioLineDelegationHandler(DelegatedAudioLine line) {
 		this.line = line;

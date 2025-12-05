@@ -1,31 +1,30 @@
 package com.almostrealism.network;
 
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.DiffuseShader;
+import org.almostrealism.color.PointLight;
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.RGBFeatures;
+import org.almostrealism.color.RealizableImage;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.primitives.Sphere;
+import org.almostrealism.projection.PinholeCamera;
+import org.almostrealism.rayshade.ReflectionShader;
+import org.almostrealism.rayshade.RefractionShader;
+import org.almostrealism.raytrace.FogParameters;
+import org.almostrealism.raytrace.RayIntersectionEngine;
+import org.almostrealism.raytrace.RenderParameters;
+import org.almostrealism.render.RayTracedScene;
+import org.almostrealism.space.Mesh;
+import org.almostrealism.space.Plane;
+import org.almostrealism.space.Scene;
+import org.almostrealism.texture.ImageCanvas;
+import org.almostrealism.texture.StripeTexture;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import org.almostrealism.color.DiffuseShader;
-import org.almostrealism.rayshade.ReflectionShader;
-import org.almostrealism.rayshade.RefractionShader;
-import org.almostrealism.raytrace.FogParameters;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.RGB;
-import org.almostrealism.color.RGBFeatures;
-import org.almostrealism.color.RealizableImage;
-import org.almostrealism.space.Mesh;
-import org.almostrealism.space.Plane;
-import org.almostrealism.space.Scene;
-import org.almostrealism.color.ShadableSurface;
-import org.almostrealism.texture.ImageCanvas;
-
-import org.almostrealism.color.PointLight;
-import org.almostrealism.projection.PinholeCamera;
-import org.almostrealism.raytrace.RayIntersectionEngine;
-import org.almostrealism.render.RayTracedScene;
-import org.almostrealism.raytrace.RenderParameters;
-import org.almostrealism.primitives.Sphere;
-import org.almostrealism.texture.StripeTexture;
 
 public class RayTracingTest {
 	public static boolean waitUntilComplete = false;
@@ -156,7 +155,7 @@ public class RayTracingTest {
 		return r.realize(r.getRenderParameters());
 	}
 
-	public static void main(String args[]) throws IOException {
+	public static void main(String[] args) throws IOException {
 		RealizableImage img = generateImage();
 
 		try {

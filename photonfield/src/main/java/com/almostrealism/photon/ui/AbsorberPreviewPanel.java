@@ -16,31 +16,28 @@
 
 package com.almostrealism.photon.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-
-import javax.swing.JPanel;
-
-import org.almostrealism.primitives.PinholeCameraAbsorber;
-import org.almostrealism.primitives.Plane;
+import com.almostrealism.geometry.Sphere;
+import org.almostrealism.light.LightBulb;
+import org.almostrealism.light.PlanarLight;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
+import com.almostrealism.physics.SpecularAbsorber;
+import org.almostrealism.physics.VolumeAbsorber;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.ProbabilityDistribution;
 import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.Clock;
 import org.almostrealism.physics.PhysicalConstants;
-import org.almostrealism.space.Volume;
+import org.almostrealism.primitives.PinholeCameraAbsorber;
+import org.almostrealism.primitives.Plane;
+import org.almostrealism.physics.Volume;
 import org.almostrealism.swing.displays.ProgressDisplay;
 import org.almostrealism.texture.ImageCanvas;
-import org.almostrealism.physics.Clock;
 
-import com.almostrealism.physics.AbsorberHashSet;
-import com.almostrealism.physics.DefaultPhotonField;
-import com.almostrealism.physics.SpecularAbsorber;
-import com.almostrealism.physics.VolumeAbsorber;
-import com.almostrealism.geometry.Sphere;
-import com.almostrealism.light.LightBulb;
-import com.almostrealism.light.PlanarLight;
-import org.almostrealism.CodeFeatures;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author  Michael Murray
@@ -49,19 +46,19 @@ public class AbsorberPreviewPanel extends JPanel
 								implements Runnable,
 								ProbabilityDistribution.Sampler,
 								PhysicalConstants, CodeFeatures {
-	private Clock clock;
+	private final Clock clock;
 	
-	private AbsorberHashSet set;
+	private final AbsorberHashSet set;
 	private Absorber absorber;
 	private LightBulb light;
 	
 	private ProgressDisplay progPanel;
 	private ImageCanvas canvas;
 	
-	private double specEnd = H * C / 0.380;
-	private double specStart = H * C / 0.780;
-	private int bufDim = 25;
-	private double bufScale = 0.1;
+	private final double specEnd = H * C / 0.380;
+	private final double specStart = H * C / 0.780;
+	private final int bufDim = 25;
+	private final double bufScale = 0.1;
 	
 	private Thread updateThread;
 	private boolean stopUpdate;

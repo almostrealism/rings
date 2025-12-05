@@ -28,6 +28,7 @@ import org.almostrealism.persistence.AssetGroup;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,7 +59,7 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		return computeScore(tokens, audio);
 	}
 
-	public double computeScore(long promptTokenIds[], WaveData audio) {
+	public double computeScore(long[] promptTokenIds, WaveData audio) {
 		// return computeScore(promptTokenIds, audio.getData(), audio.getDuration());
 		// return computeDenoisingScore(promptTokenIds, audio.getData(), audio.getDuration());
 		return computeReconstructionScore(promptTokenIds, audio.getData(), audio.getDuration());
@@ -68,20 +69,20 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 	 * Compute score using conditional denoising loss.
 	 * Lower loss = better alignment between audio and text.
 	 */
-	public double computeDenoisingScore(long[] promptTokenIds, PackedCollection<?> audio, double duration) {
-		Map<String, PackedCollection<?>> conditionerOutputs = runConditioners(promptTokenIds, duration);
-		PackedCollection<?> audioLatent = getAutoencoder().encode(cp(audio)).evaluate();
+	public double computeDenoisingScore(long[] promptTokenIds, PackedCollection audio, double duration) {
+		Map<String, PackedCollection> conditionerOutputs = runConditioners(promptTokenIds, duration);
+		PackedCollection audioLatent = getAutoencoder().encode(cp(audio)).evaluate();
 
 		double totalScore = 0.0;
 		double[] noiseLevels = {0.1, 0.3, 0.5, 0.7, 0.9};
 
 		for (double sigma : noiseLevels) {
 			// Add noise to the latent
-			PackedCollection<?> noise = new PackedCollection<>(audioLatent.getShape()).randnFill();
-			PackedCollection<?> noisyLatent = cp(audioLatent).add(cp(noise).multiply(sigma)).evaluate();
+			PackedCollection noise = new PackedCollection(audioLatent.getShape()).randnFill();
+			PackedCollection noisyLatent = cp(audioLatent).add(cp(noise).multiply(sigma)).evaluate();
 
 			// Predict the noise with conditioning
-			PackedCollection<?> predictedNoise = getDitModel().forward(
+			PackedCollection predictedNoise = getDitModel().forward(
 					noisyLatent,
 					pack(sigma),
 					conditionerOutputs.get("cross_attention_input"),
@@ -102,16 +103,16 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 	 * Compute score using reconstruction similarity.
 	 * Generate audio from text, then compare latents.
 	 */
-	public double computeReconstructionScore(long[] promptTokenIds, PackedCollection<?> audio, double duration) {
+	public double computeReconstructionScore(long[] promptTokenIds, PackedCollection audio, double duration) {
 		// This would require full generation capability
 		// For now, we'll compute a proxy using partial diffusion
 
-		Map<String, PackedCollection<?>> conditionerOutputs = runConditioners(promptTokenIds, duration);
-		PackedCollection<?> audioLatent = getAutoencoder().encode(cp(audio)).evaluate();
+		Map<String, PackedCollection> conditionerOutputs = runConditioners(promptTokenIds, duration);
+		PackedCollection audioLatent = getAutoencoder().encode(cp(audio)).evaluate();
 
 		// Start from noise and denoise partially
-		PackedCollection<?> noise = new PackedCollection<>(audioLatent.getShape()).randnFill();
-		PackedCollection<?> current = noise;
+		PackedCollection noise = new PackedCollection(audioLatent.getShape()).randnFill();
+		PackedCollection current = noise;
 
 		// Run a few denoising steps
 		double[] sigmas = {1.0, 0.7, 0.5, 0.3};
@@ -129,44 +130,44 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		return similarity;
 	}
 
-	private double computeCosineSimilarity(PackedCollection<?> a, PackedCollection<?> b) {
+	private double computeCosineSimilarity(PackedCollection a, PackedCollection b) {
 		double dotProduct = cp(a).multiply(cp(b)).sum(0).evaluateOptimized().valueAt(0);
 		double normA = cp(a).each().sq().sum(0).sqrt().evaluateOptimized().toDouble();
 		double normB = cp(b).each().sq().sum(0).sqrt().evaluateOptimized().toDouble();
 		return dotProduct / (normA * normB + 1e-6);
 	}
 
-	public double computeScore(long promptTokenIds[], PackedCollection<?> audio, double duration) {
+	public double computeScore(long[] promptTokenIds, PackedCollection audio, double duration) {
 		// 1. Process tokens through conditioners
-		Map<String, PackedCollection<?>> conditionerOutputs = runConditioners(promptTokenIds, duration);
+		Map<String, PackedCollection> conditionerOutputs = runConditioners(promptTokenIds, duration);
 
 		// 2. Get audio latent
-		PackedCollection<?> audioLatent = getAutoencoder().encode(cp(audio)).evaluate();
+		PackedCollection audioLatent = getAutoencoder().encode(cp(audio)).evaluate();
 
 		// 3. Run forward passes at multiple noise levels
-		List<Map<Integer, PackedCollection<?>>> allAttentions = new ArrayList<>();
+		List<Map<Integer, PackedCollection>> allAttentions = new ArrayList<>();
 
 		for (double t : timesteps) {
-			PackedCollection<?> output = getDitModel().forward(
+			PackedCollection output = getDitModel().forward(
 					audioLatent, pack(t),
 					conditionerOutputs.get("cross_attention_input"),
 					conditionerOutputs.get("global_cond"));
 
 			allAttentions.add(getDitModel().getAttentionActivations().entrySet().stream()
 					.collect(Collectors.toMap(
-							Map.Entry::getKey, ent -> new PackedCollection<>(ent.getValue()))));
+							Map.Entry::getKey, ent -> new PackedCollection(ent.getValue()))));
 		}
 
 		// 4. Extract attention mask from conditioner outputs
-		PackedCollection<?> attentionMask = conditionerOutputs.get("cross_attention_masks");
+		PackedCollection attentionMask = conditionerOutputs.get("cross_attention_masks");
 
 		// 5. Compute scores with mask-aware aggregation
 		int audioSeqLen = (int) Math.ceil(getAutoencoder().getLatentSampleRate() * duration);
 		return computeMultiTimestepScore(allAttentions, attentionMask, audioSeqLen);
 	}
 
-	private double computeMultiTimestepScore(List<Map<Integer, PackedCollection<?>>> allAttentions,
-											 PackedCollection<?> attentionMask, int audioSeqLen) {
+	private double computeMultiTimestepScore(List<Map<Integer, PackedCollection>> allAttentions,
+											 PackedCollection attentionMask, int audioSeqLen) {
 		// Weight later layers more heavily
 		double[] layerWeights = computeLayerWeights(allAttentions.get(0).size());
 
@@ -174,11 +175,11 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		double totalScore = 0.0;
 		for (int t = 0; t < allAttentions.size(); t++) {
 			double timestepScore = 0.0;
-			Map<Integer, PackedCollection<?>> attentions = allAttentions.get(t);
+			Map<Integer, PackedCollection> attentions = allAttentions.get(t);
 
-			for (Map.Entry<Integer, PackedCollection<?>> entry : attentions.entrySet()) {
+			for (Map.Entry<Integer, PackedCollection> entry : attentions.entrySet()) {
 				int layer = entry.getKey();
-				PackedCollection<?> attention = entry.getValue();
+				PackedCollection attention = entry.getValue();
 				double layerScore = computeMaskedAttentionScore(attention, attentionMask, audioSeqLen);
 				timestepScore += layerScore * layerWeights[layer];
 			}
@@ -204,8 +205,8 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		return weights;
 	}
 
-	private double computeMaskedAttentionScore(PackedCollection<?> attention,
-											   PackedCollection<?> mask,
+	private double computeMaskedAttentionScore(PackedCollection attention,
+											   PackedCollection mask,
 											   int audioSeqLen) {
 		TraversalPolicy shape = attention.getShape();
 		int batch = shape.length(0);
@@ -253,7 +254,7 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		return validPositions > 0 ? totalScore / validPositions : 0.0;
 	}
 
-	public static void main(String args[]) throws IOException, OrtException {
+	public static void main(String[] args) throws IOException, OrtException {
 		if (args.length < 3) {
 			System.out.println("Usage: java AudioGenerator <models_path> <prompt> <input_file> [additional_inputs...]");
 			return;
@@ -263,9 +264,7 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		String prompt = args[1];
 
 		List<String> inputs = new ArrayList<>();
-		for (int i = 2; i < args.length; i++) {
-			inputs.add(args[i]);
-		}
+		inputs.addAll(Arrays.asList(args).subList(2, args.length));
 
 		try (ConditionalAudioScoring scoring = new ConditionalAudioScoring(modelsPath)) {
 			for (String in : inputs) {

@@ -31,7 +31,7 @@ public class SpanCalculator {
 	
 	public static class RowList extends ArrayList {
 		public boolean add(Object o) {
-			if (o instanceof boolean[] == false)
+			if (!(o instanceof boolean[]))
 				throw new IllegalArgumentException("RowList: " + o + " is not a row.");
 			
 			if (this.contains(o)) {
@@ -54,13 +54,13 @@ public class SpanCalculator {
 		public boolean addAll(int index, Collection c) { return this.addAll(c); }
 		
 		public boolean contains(Object o) {
-			if (o instanceof boolean[] == false) return false;
+			if (!(o instanceof boolean[])) return false;
 			
-			boolean row[] = (boolean[]) o;
+			boolean[] row = (boolean[]) o;
 			Iterator itr = this.iterator();
 			
 			w: while (itr.hasNext()) {
-				boolean b[] = (boolean[]) itr.next();
+				boolean[] b = (boolean[]) itr.next();
 				for (int i = 0; i < b.length; i++) if (b[i] != row[i]) continue w;
 				return true;
 			}
@@ -74,13 +74,13 @@ public class SpanCalculator {
 	private List rows;
 	private int x, y, z;
 	
-	public static void main(String args[]) throws IOException {
+	public static void main(String[] args) throws IOException {
 		BufferedReader in = new BufferedReader(new FileReader(args[0]));
 
 		String line = in.readLine();
 		while (line.startsWith("#")) line = in.readLine();
 
-		String dim[] = line.split(" ");
+		String[] dim = line.split(" ");
 		int x = Integer.parseInt(dim[0]);
 		int y = Integer.parseInt(dim[1]);
 		int z = Integer.parseInt(dim[2]);
@@ -90,20 +90,17 @@ public class SpanCalculator {
 		int count = 0;
 		
 		w: while (true) {
-			boolean piece[][][] = new boolean[x][y][z];
+			boolean[][][] piece = new boolean[x][y][z];
 			
 			String head = in.readLine();
 			while (head != null && head.startsWith("#")) head = in.readLine();
 			
-			if (head == null) break w;
+			if (head == null) break;
 			
-			String h[] = head.split(" ");
-			boolean bh[] = new boolean[h.length];
+			String[] h = head.split(" ");
+			boolean[] bh = new boolean[h.length];
 			for (int i = 0; i < h.length; i++) {
-				if (h[i].equals("0"))
-					bh[i] = false;
-				else
-					bh[i] = true;
+				bh[i] = !h[i].equals("0");
 			}
 			
 			if (output == null)
@@ -115,13 +112,10 @@ public class SpanCalculator {
 					while (line != null && line.startsWith("#")) line = in.readLine();
 					if (line == null) break w;
 					
-					String s[] = line.split(" ");
+					String[] s = line.split(" ");
 
 					for (int k = 0; k < z; k++) {
-						if (s[k].equals("0"))
-							piece[i][j][k] = false;
-						else
-							piece[i][j][k] = true;
+						piece[i][j][k] = !s[k].equals("0");
 					}
 				}
 			}
@@ -130,18 +124,18 @@ public class SpanCalculator {
 			int tot = 0, utot = 0;
 			
 			for (int n = 0; n < 4; n++) {
-				boolean npiece[][][] = piece;
+				boolean[][][] npiece = piece;
 				
 				for (int m = 0; m < 4; m++) {
-					boolean mpiece[][][] = npiece;
+					boolean[][][] mpiece = npiece;
 					
 					for (int l = 0; l < 4; l++) {
 						SpanCalculator span = new SpanCalculator(mpiece, x, y, z);
-						boolean r[][] = span.getRows();
+						boolean[][] r = span.getRows();
 						tot += r.length;
 						
 						for (int i = 0; i < r.length; i++) {
-							boolean ro[] = new boolean[r[i].length + bh.length];
+							boolean[] ro = new boolean[r[i].length + bh.length];
 							System.arraycopy(bh, 0, ro, 0, bh.length);
 							System.arraycopy(r[i], 0, ro, bh.length, r[i].length);
 							if (rows.add(ro)) utot++;
@@ -164,7 +158,7 @@ public class SpanCalculator {
 		Iterator itr = rows.iterator();
 		
 		while (itr.hasNext()) {
-			boolean r[] = (boolean[]) itr.next();
+			boolean[] r = (boolean[]) itr.next();
 			
 			for (int i = 0; i < r.length; i++) {
 				if (i > 0) out.print(" ");
@@ -181,8 +175,8 @@ public class SpanCalculator {
 		System.out.println("SpanCalculator: Wrote " + rows.size() + " rows to space.txt");
 	}
 
-	public SpanCalculator(boolean piece[][][], int x, int y, int z) {
-		boolean row[] = new boolean[x * y * z];
+	public SpanCalculator(boolean[][][] piece, int x, int y, int z) {
+		boolean[] row = new boolean[x * y * z];
 		
 		int len = 0;
 		
@@ -198,22 +192,20 @@ public class SpanCalculator {
 		this.init(row, x, y, z);
 	}
 	
-	public static boolean[][][] swapRows(boolean piece[][][]) {
-		boolean swap[][][] = new boolean[piece.length][piece[0].length][piece[0][0].length];
+	public static boolean[][][] swapRows(boolean[][][] piece) {
+		boolean[][][] swap = new boolean[piece.length][piece[0].length][piece[0][0].length];
 		
 		for (int i = 0; i < piece.length; i++) {
 			for (int j = 0; j < piece.length; j++) {
-				for (int k = 0; k < piece.length; k++) {
-					swap[i][swap[i].length - j - 1][k] = piece[i][j][k];
-				}
+				System.arraycopy(piece[i][j], 0, swap[i][swap[i].length - j - 1], 0, piece.length);
 			}
 		}
 		
 		return swap;
 	}
 	
-	public static boolean[][][] swapCols(boolean piece[][][]) {
-		boolean swap[][][] = new boolean[piece.length]
+	public static boolean[][][] swapCols(boolean[][][] piece) {
+		boolean[][][] swap = new boolean[piece.length]
 		                                [piece[0].length]
 		                                [piece[0][0].length];
 		
@@ -228,9 +220,9 @@ public class SpanCalculator {
 		return swap;
 	}
 	
-	public static boolean[][][] rotateX(boolean piece[][][]) {
+	public static boolean[][][] rotateX(boolean[][][] piece) {
 		int l = piece.length;
-		boolean rotated[][][] = new boolean[l][l][l];
+		boolean[][][] rotated = new boolean[l][l][l];
 		
 		for (int i = 0; i < l; i++) {
 			for (int j = 0; j < l; j++) {
@@ -243,9 +235,9 @@ public class SpanCalculator {
 		return rotated;
 	}
 	
-	public static boolean[][][] rotateY(boolean piece[][][]) {
+	public static boolean[][][] rotateY(boolean[][][] piece) {
 		int l = piece.length;
-		boolean rotated[][][] = new boolean[l][l][l];
+		boolean[][][] rotated = new boolean[l][l][l];
 		
 		for (int i = 0; i < l; i++) {
 			for (int j = 0; j < l; j++) {
@@ -258,22 +250,20 @@ public class SpanCalculator {
 		return rotated;
 	}
 	
-	public static boolean[][][] rotateZ(boolean piece[][][]) {
+	public static boolean[][][] rotateZ(boolean[][][] piece) {
 		int l = piece.length;
-		boolean rotated[][][] = new boolean[l][l][l];
+		boolean[][][] rotated = new boolean[l][l][l];
 		
 		for (int i = 0; i < l; i++) {
 			for (int j = 0; j < l; j++) {
-				for (int k = 0; k < l; k++) {
-					rotated[j][l - i - 1][k] = piece[i][j][k];
-				}
+				System.arraycopy(piece[i][j], 0, rotated[j][l - i - 1], 0, l);
 			}
 		}
 		
 		return rotated;
 	}
 	
-	public static void print(boolean piece[][][]) {
+	public static void print(boolean[][][] piece) {
 		if (!SpanCalculator.verbose) return;
 		
 		for (int i = 0; i < piece.length; i++) {
@@ -292,7 +282,7 @@ public class SpanCalculator {
 		}
 	}
 	
-	public static void print(boolean row[]) {
+	public static void print(boolean[] row) {
 		for (int i = 0; i < row.length; i++)
 			if (row[i]) SpanCalculator.output.nextColumn(i);
 		
@@ -301,7 +291,7 @@ public class SpanCalculator {
 		SpanCalculator.output.init();
 	}
 	
-	protected void init(boolean row[], int x, int y, int z) {
+	protected void init(boolean[] row, int x, int y, int z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -331,7 +321,7 @@ public class SpanCalculator {
 		return (boolean[][]) this.rows.toArray(new boolean[0][0]);
 	}
 	
-	public static boolean modTest(boolean r[], boolean nr[], int d) {
+	public static boolean modTest(boolean[] r, boolean[] nr, int d) {
 		for (int i = 0; i < r.length; i = i + d) {
 			int t1 = 0, t2 = 0;
 			for (int j = 0; j < d; j++) if (r[i + j]) t1++;
@@ -342,16 +332,15 @@ public class SpanCalculator {
 		return false;
 	}
 	
-	protected void spanZ(boolean row[], int first, int last, boolean plus) {
+	protected void spanZ(boolean[] row, int first, int last, boolean plus) {
 		this.rows.add(row);
 		this.spanY(row, first, last, plus);
 		this.spanY(row, first, last, !plus);
 		
 		if (plus && last < row.length - 1) {
-			boolean translated[] = new boolean[row.length];
-	
-			for (int i = 1; i < translated.length; i++)
-				translated[i] = row[i - 1];
+			boolean[] translated = new boolean[row.length];
+
+			if (translated.length - 1 >= 0) System.arraycopy(row, 0, translated, 1, translated.length - 1);
 			
 			if (modTest(row, translated, this.z)) return;
 			
@@ -362,10 +351,9 @@ public class SpanCalculator {
 		}
 		
 		if (!plus && first > 0) {
-			boolean translated[] = new boolean[row.length];
-			
-			for (int i = 0; i < translated.length - 1; i++)
-				translated[i] = row[i + 1];
+			boolean[] translated = new boolean[row.length];
+
+			if (translated.length - 1 >= 0) System.arraycopy(row, 1, translated, 0, translated.length - 1);
 			
 			if (modTest(row, translated, this.z)) return;
 			
@@ -376,15 +364,15 @@ public class SpanCalculator {
 		}
 	}
 
-	protected void spanY(boolean row[], int first, int last, boolean plus) {
+	protected void spanY(boolean[] row, int first, int last, boolean plus) {
 		this.spanX(row, first, last, plus);
 		this.spanX(row, first, last, !plus);
 		
 		if (plus && last < row.length - this.z) {
-			boolean translated[] = new boolean[row.length];
-			
-			for (int i = this.z; i < translated.length; i++)
-				translated[i] = row[i - this.z];
+			boolean[] translated = new boolean[row.length];
+
+			if (translated.length - this.z >= 0)
+				System.arraycopy(row, this.z - this.z, translated, this.z, translated.length - this.z);
 			
 			if (modTest(row, translated, this.z * this.y)) return;
 			
@@ -395,10 +383,10 @@ public class SpanCalculator {
 		}
 		
 		if (!plus && first >= this.z) {
-			boolean translated[] = new boolean[row.length];
-			
-			for (int i = 0; i < translated.length - this.z; i++)
-				translated[i] = row[i + this.z];
+			boolean[] translated = new boolean[row.length];
+
+			if (translated.length - this.z >= 0)
+				System.arraycopy(row, 0 + this.z, translated, 0, translated.length - this.z);
 			
 			if (modTest(row, translated, this.z * this.y)) return;
 			
@@ -409,24 +397,22 @@ public class SpanCalculator {
 		}
 	}
 
-	protected void spanX(boolean row[], int first, int last, boolean plus) {
+	protected void spanX(boolean[] row, int first, int last, boolean plus) {
 		int d = this.z * this.y;
 
 		if (plus && last < row.length - d) {
-			boolean translated[] = new boolean[row.length];
-			
-			for (int i = d; i < translated.length; i++)
-				translated[i] = row[i - d];
+			boolean[] translated = new boolean[row.length];
+
+			if (translated.length - d >= 0) System.arraycopy(row, d - d, translated, d, translated.length - d);
 			
 			this.rows.add(translated);
 			this.spanX(translated, first + d, last + d, plus);
 		}
 		
 		if (!plus && first >= d) {
-			boolean translated[] = new boolean[row.length];
-			
-			for (int i = 0; i < translated.length - d; i++)
-				translated[i] = row[i + d];
+			boolean[] translated = new boolean[row.length];
+
+			if (translated.length - d >= 0) System.arraycopy(row, 0 + d, translated, 0, translated.length - d);
 	
 			this.rows.add(translated);
 			this.spanX(translated, first - d, last - d, plus);

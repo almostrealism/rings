@@ -23,7 +23,7 @@ import org.almostrealism.swing.UIEvent;
  * A DialogCloseEvent object represents the event of closing a dialog.
  */
 public class DialogCloseEvent extends UIEvent {
-	private Dialog dialog;
+	private final Dialog dialog;
 	
 	/**
 	 * Constructs a new DialogCloseEvent object for the specified Dialog object.

@@ -16,26 +16,24 @@
 
 package com.almostrealism.photon.test;
 
-import java.io.IOException;
-import java.lang.Math;
-
-import javax.swing.JFrame;
-
-import com.almostrealism.physics.DefaultPhotonField;
-import com.almostrealism.physics.AbsorberHashSet;
+import com.almostrealism.geometry.Box;
+import org.almostrealism.light.PlanarLight;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
 import com.almostrealism.physics.SpecularAbsorber;
+import org.almostrealism.Ops;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.physics.Clock;
+import org.almostrealism.physics.PhotonField;
+import org.almostrealism.physics.PhysicalConstants;
 import org.almostrealism.primitives.AbsorptionPlane;
 import org.almostrealism.primitives.Pinhole;
 import org.almostrealism.primitives.Plane;
-import org.almostrealism.Ops;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.physics.PhotonField;
-import org.almostrealism.physics.PhysicalConstants;
-import org.almostrealism.physics.Clock;
 
-import com.almostrealism.geometry.Box;
-import com.almostrealism.light.PlanarLight;
-import static org.almostrealism.Ops.*;
+import javax.swing.*;
+import java.io.IOException;
+
+import static org.almostrealism.Ops.o;
 
 /**
  * The TestRoom is a room which is based off the Cornell Box.
@@ -49,7 +47,7 @@ public class TestRoom implements PhysicalConstants {
 	/**z
 	 * @param args
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		double scale = 150.0;
 		
 		PlanarLight l = new PlanarLight();

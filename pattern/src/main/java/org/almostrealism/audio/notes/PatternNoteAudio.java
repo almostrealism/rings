@@ -42,7 +42,7 @@ public interface PatternNoteAudio {
 
 	double getDuration(KeyPosition<?> target, DoubleFunction<PatternNoteAudio> audioSelection);
 
-	default Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel) {
+	default Producer<PackedCollection> getAudio(KeyPosition<?> target, int channel) {
 		return getAudio(target, channel, null);
 	}
 
@@ -50,11 +50,11 @@ public interface PatternNoteAudio {
 		return new PatternNoteLayer(this, filter);
 	}
 
-	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel,
+	Producer<PackedCollection> getAudio(KeyPosition<?> target, int channel,
 										   DoubleFunction<PatternNoteAudio> audioSelection);
 
-	Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel,
+	Producer<PackedCollection> getAudio(KeyPosition<?> target, int channel,
 										   double noteDuration,
-										   Factor<PackedCollection<?>> automationLevel,
+										   Factor<PackedCollection> automationLevel,
 										   DoubleFunction<PatternNoteAudio> audioSelection);
 }
