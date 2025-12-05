@@ -60,6 +60,12 @@ public class TemporalSpatialContext implements ConsoleFeatures {
 	public static int LAYER_SPACING = 40;
 
 	/**
+	 * The vertical spacing for frequency in spatial frequency mode.
+	 * Default value is 200 units.
+	 */
+	public static int FREQUENCY_SPACING = 200;
+
+	/**
 	 * The maximum zoom factor applied to the time axis.
 	 * Default value is 1000.
 	 */
@@ -211,7 +217,7 @@ public class TemporalSpatialContext implements ConsoleFeatures {
 		if (spatialFrequency) {
 			y = frequency;
 			z = layer;
-			spacing = 200;
+			spacing = FREQUENCY_SPACING;
 		} else {
 			y = channel;
 			z = layer;
@@ -245,4 +251,60 @@ public class TemporalSpatialContext implements ConsoleFeatures {
 
 		return 3;
 	}
+
+	/**
+	 * Converts a 3D spatial position back to temporal coordinates.
+	 *
+	 * <p>This is the inverse of {@link #position(double, double, double, double)}.
+	 * It extracts time, frequency, and layer information from a spatial position.</p>
+	 *
+	 * <p>Note: Channel information cannot be reliably recovered in spatial frequency
+	 * mode, so it is always returned as 0.</p>
+	 *
+	 * @param position the 3D position to convert
+	 * @return the temporal coordinates extracted from the position
+	 * @see #position(double, double, double, double)
+	 */
+	public TemporalCoordinates inverse(Vector position) {
+		double x = position.getX();
+		double y = position.getY();
+		double z = position.getZ();
+
+		double time = getTimeToSeconds().applyAsDouble(x / getScale());
+
+		double frequency;
+		int layer;
+
+		if (spatialFrequency) {
+			frequency = y / FREQUENCY_SPACING;
+			layer = (int) Math.round(z / LAYER_SPACING);
+		} else {
+			// Channel mode - y represents channel, frequency not applicable
+			frequency = 0.0;
+			layer = (int) Math.round(z / LAYER_SPACING);
+		}
+
+		return new TemporalCoordinates(time, 0, layer, frequency, 0.0);
+	}
+
+	/**
+	 * Represents temporal coordinates extracted from a spatial position.
+	 *
+	 * <p>This record holds the inverse mapping results from
+	 * {@link TemporalSpatialContext#inverse(Vector)}, converting 3D spatial
+	 * positions back to their temporal and frequency-domain representation.</p>
+	 *
+	 * @param time      the time in seconds
+	 * @param channel   the audio channel index (always 0 in current implementation)
+	 * @param layer     the layer index
+	 * @param frequency the normalized frequency (0.0 to 1.0)
+	 * @param intensity the value/magnitude (reserved for future use)
+	 */
+	public record TemporalCoordinates(
+			double time,
+			int channel,
+			int layer,
+			double frequency,
+			double intensity
+	) {}
 }
