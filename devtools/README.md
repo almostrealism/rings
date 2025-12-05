@@ -32,6 +32,39 @@ docker-compose build
 docker-compose up -d
 ```
 
+## Shell Configuration
+
+Add this function to your `~/.zshrc` for quick sandbox access:
+
+```bash
+# Connect to AlmostRealism dev sandbox
+sandbox() {
+    local container="${1:-dev-sandbox-a}"
+    if ! docker ps --format '{{.Names}}' | grep -q "^${container}$"; then
+        echo "Container '${container}' is not running"
+        echo "Start with: cd /Users/michael/AlmostRealism/rings/devtools && docker-compose up -d"
+        return 1
+    fi
+    docker exec -it "${container}" bash
+}
+```
+
+After adding, reload your shell:
+
+```bash
+source ~/.zshrc
+```
+
+Usage:
+
+```bash
+sandbox                 # Connect to dev-sandbox-a (default)
+sandbox dev-sandbox-a   # Connect to sandbox A
+sandbox dev-sandbox-b   # Connect to sandbox B
+sandbox dev-sandbox-c   # Connect to sandbox C
+sandbox dev-sandbox-d   # Connect to sandbox D
+```
+
 ## Sandbox Configuration
 
 Each sandbox mounts a different workspace:
@@ -108,8 +141,8 @@ mvn clean install -pl audio
 # Run tests
 mvn test -pl audio-space
 
-# Run specific test
-mvn test -pl audio -Dtest=CellListTests#export
+# Run specific test class
+mvn test -pl audio -Dtest=CellListTests
 
 # Skip tests
 mvn clean install -DskipTests

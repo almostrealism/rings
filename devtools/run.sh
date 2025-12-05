@@ -65,8 +65,18 @@ restart() {
 
 # Enter the container shell
 shell() {
-    print_info "Entering development container..."
-    docker-compose exec rings-dev bash
+    local sandbox="${1:-a}"
+    local container="dev-sandbox-${sandbox}"
+
+    # Check if container is running
+    if ! docker ps --format '{{.Names}}' | grep -q "^${container}$"; then
+        print_error "Container '${container}' is not running"
+        print_info "Start containers with: ./run.sh start"
+        exit 1
+    fi
+
+    print_info "Entering ${container}..."
+    docker exec -it "${container}" bash
 }
 
 # Show container status
@@ -108,25 +118,26 @@ show_help() {
     cat << EOF
 AlmostRealism Docker Development Environment
 
-Usage: ./run.sh [command]
+Usage: ./run.sh [command] [options]
 
 Commands:
     build       Build the Docker image
-    start       Start the development container
-    stop        Stop the development container
-    restart     Restart the development container
-    shell       Enter the container shell
+    start       Start all development containers
+    stop        Stop all development containers
+    restart     Restart all development containers
+    shell [x]   Enter container shell (a, b, c, or d; defaults to a)
     status      Show container status
     logs        Show container logs (follow mode)
-    clean       Remove container and volumes
+    clean       Remove containers and volumes
     rebuild     Rebuild from scratch (no cache)
     help        Show this help message
 
 Examples:
     ./run.sh build      # Build the image
-    ./run.sh start      # Start the container
-    ./run.sh shell      # Enter the container
-    ./run.sh stop       # Stop the container
+    ./run.sh start      # Start all containers
+    ./run.sh shell      # Enter dev-sandbox-a
+    ./run.sh shell b    # Enter dev-sandbox-b
+    ./run.sh stop       # Stop all containers
 
 Quick start:
     ./run.sh build && ./run.sh start && ./run.sh shell
@@ -151,7 +162,7 @@ main() {
             restart
             ;;
         shell)
-            shell
+            shell "$2"
             ;;
         status)
             status
