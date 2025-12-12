@@ -41,7 +41,7 @@ import java.util.function.Supplier;
 
 public class LibraryDestination implements ConsoleFeatures {
 	public static final String TEMP = "temp";
-	public static final String SAMPLES = "samples";
+	public static final String SAMPLES = "Samples";
 
 	private final String prefix;
 	private int index;
@@ -260,8 +260,8 @@ public class LibraryDestination implements ConsoleFeatures {
 
 	/**
 	 * Returns the default library root path.
-	 * On macOS: ~/Music/RingsLibrary
-	 * On other platforms: ~/RingsLibrary
+	 * On macOS: ~/Music/Samples
+	 * On other platforms: ~/RingsAudioLibrary
 	 *
 	 * @return the default library root path, creating it if necessary
 	 */
@@ -269,9 +269,9 @@ public class LibraryDestination implements ConsoleFeatures {
 		Path home = Path.of(SystemUtils.getHome());
 		Path libraryPath;
 		if (SystemUtils.isMacOS()) {
-			libraryPath = home.resolve("Music").resolve("RingsLibrary");
+			libraryPath = home.resolve("Music").resolve(SAMPLES);
 		} else {
-			libraryPath = home.resolve("RingsLibrary");
+			libraryPath = home.resolve("RingsAudioLibrary");
 		}
 		return SystemUtils.ensureDirectoryExists(libraryPath);
 	}
