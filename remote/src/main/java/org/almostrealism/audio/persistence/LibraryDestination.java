@@ -258,9 +258,22 @@ public class LibraryDestination implements ConsoleFeatures {
 		}
 	}
 
+	/**
+	 * Returns the default library root path.
+	 * On macOS: ~/Music/RingsLibrary
+	 * On other platforms: ~/RingsLibrary
+	 *
+	 * @return the default library root path, creating it if necessary
+	 */
 	public static Path getDefaultLibraryRoot() {
-		Path p = SystemUtils.getLocalDestination().resolve(SAMPLES);
-		return SystemUtils.ensureDirectoryExists(p);
+		Path home = Path.of(SystemUtils.getHome());
+		Path libraryPath;
+		if (SystemUtils.isMacOS()) {
+			libraryPath = home.resolve("Music").resolve("RingsLibrary");
+		} else {
+			libraryPath = home.resolve("RingsLibrary");
+		}
+		return SystemUtils.ensureDirectoryExists(libraryPath);
 	}
 
 	public class Writer implements Supplier<OutputStream>, AutoCloseable {
