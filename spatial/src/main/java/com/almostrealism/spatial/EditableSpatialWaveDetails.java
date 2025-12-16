@@ -50,6 +50,10 @@ public class EditableSpatialWaveDetails extends SpatialWaveDetails
 	/**
 	 * Creates an editable frequency timeseries with the specified dimensions.
 	 *
+	 * <p>The resulting WaveDetails will have no identifier. Use
+	 * {@link #EditableSpatialWaveDetails(String, int, int, double, double)}
+	 * to create a canvas with an identifier for use as an audio condition.</p>
+	 *
 	 * @param timeFrames     number of time frames in the frequency data
 	 * @param frequencyBins  number of frequency bins per frame
 	 * @param sampleRate     audio sample rate in Hz
@@ -57,16 +61,34 @@ public class EditableSpatialWaveDetails extends SpatialWaveDetails
 	 */
 	public EditableSpatialWaveDetails(int timeFrames, int frequencyBins,
 									  double sampleRate, double freqSampleRate) {
-		super(createMutableWaveDetails(timeFrames, frequencyBins, sampleRate, freqSampleRate));
+		this(null, timeFrames, frequencyBins, sampleRate, freqSampleRate);
+	}
+
+	/**
+	 * Creates an editable frequency timeseries with the specified identifier and dimensions.
+	 *
+	 * <p>When an identifier is provided, the resulting WaveDetails can be used
+	 * as an audio condition by adding it to an AudioLibrary and referencing
+	 * its identifier in AudioModel.audioConditions.</p>
+	 *
+	 * @param identifier     unique identifier for the WaveDetails (e.g., from KeyUtils.generateKey())
+	 * @param timeFrames     number of time frames in the frequency data
+	 * @param frequencyBins  number of frequency bins per frame
+	 * @param sampleRate     audio sample rate in Hz
+	 * @param freqSampleRate frequency analysis sample rate in Hz
+	 */
+	public EditableSpatialWaveDetails(String identifier, int timeFrames, int frequencyBins,
+									  double sampleRate, double freqSampleRate) {
+		super(createMutableWaveDetails(identifier, timeFrames, frequencyBins, sampleRate, freqSampleRate));
 		this.modified = false;
 	}
 
 	/**
-	 * Creates a mutable WaveDetails with the specified dimensions.
+	 * Creates a mutable WaveDetails with the specified identifier and dimensions.
 	 */
-	private static WaveDetails createMutableWaveDetails(int timeFrames, int frequencyBins,
+	private static WaveDetails createMutableWaveDetails(String identifier, int timeFrames, int frequencyBins,
 														double sampleRate, double freqSampleRate) {
-		WaveDetails wave = new WaveDetails();
+		WaveDetails wave = new WaveDetails(identifier);
 		wave.setSampleRate((int) sampleRate);
 		wave.setFreqSampleRate((int) freqSampleRate);
 		wave.setFreqBinCount(frequencyBins);
