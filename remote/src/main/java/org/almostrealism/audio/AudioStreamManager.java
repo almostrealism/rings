@@ -74,6 +74,9 @@ import java.util.Map;
  * @see DelegatedAudioLine for streaming/DAW integration output
  * @see SourceDataOutputLine for direct hardware playback output
  */
+// TODO  With UnifiedPlayerConfig and all the features of BufferedAudioPlayer,
+// TODO  the AudioStreamManager really no longer needs to support separate named channels
+// TODO  since one will surely be sufficient for all normal playback
 public class AudioStreamManager implements ConsoleFeatures {
 	public static final int PORT = 7799;
 
@@ -87,12 +90,14 @@ public class AudioStreamManager implements ConsoleFeatures {
 	private final Map<String, BufferedAudioPlayer> players;
 	private final Map<String, BufferedOutputScheduler> schedulers;
 	private final Map<String, DelegatedAudioLine> audioLines;
+	private final Map<String, UnifiedPlayerConfig> unifiedConfigs;
 	public AudioServer server;
 
 	public AudioStreamManager() throws IOException {
 		this.players = new HashMap<>();
 		this.schedulers = new HashMap<>();
 		this.audioLines = new HashMap<>();
+		this.unifiedConfigs = new HashMap<>();
 		this.server = new AudioServer(PORT);
 	}
 
@@ -189,6 +194,77 @@ public class AudioStreamManager implements ConsoleFeatures {
 				outputLine.getBufferSize());
 
 		return addPlayer(channel, playerCount, delegated, inputRecord);
+	}
+
+	/**
+	 * Creates a unified player that supports switching between Direct and DAW modes
+	 * without recreating the player. The player uses a single {@link DelegatedAudioLine}
+	 * whose output delegate can be switched based on the active mode.
+	 *
+	 * <p>The created player starts in the specified initial mode. Use
+	 * {@link UnifiedPlayerConfig#setDirectMode()} and {@link UnifiedPlayerConfig#setDawMode()}
+	 * to switch modes at runtime.</p>
+	 *
+	 * <p>For DAW mode, this also registers the channel with the {@link AudioServer} so that
+	 * DAW clients can connect via {@link org.almostrealism.audio.stream.AudioLineDelegationHandler}.</p>
+	 *
+	 * @param channel The channel name for DAW registration
+	 * @param playerCount Number of audio sources this player can mix
+	 * @param inputRecord Optional output line for recording the mixed output
+	 * @param initialMode The initial output mode (DIRECT or DAW)
+	 * @return The unified player configuration
+	 */
+	public UnifiedPlayerConfig createUnifiedPlayer(String channel, int playerCount,
+												   OutputLine inputRecord,
+												   UnifiedPlayerConfig.OutputMode initialMode) {
+		// Create a DelegatedAudioLine that will switch between outputs
+		DelegatedAudioLine delegatedLine = new DelegatedAudioLine();
+
+		// Calculate buffer parameters based on default settings
+		int bufferSize = delegatedLine.getBufferSize();
+		int maxFrames = (int) (OutputLine.sampleRate * defaultLiveDuration);
+		maxFrames = (maxFrames / bufferSize) * bufferSize;
+
+		// Create the player
+		BufferedAudioPlayer player = new BufferedAudioPlayer(playerCount,
+				OutputLine.sampleRate, maxFrames);
+
+		// Create the unified config
+		UnifiedPlayerConfig config = new UnifiedPlayerConfig(player, delegatedLine,
+				inputRecord);
+
+		// Register with AudioServer for DAW connections
+		server.addStream(channel,
+				new AudioLineDelegationHandler(delegatedLine, config));
+
+		// Set up the scheduler
+		players.put(channel, player);
+		audioLines.put(channel, delegatedLine);
+		unifiedConfigs.put(channel, config);
+
+		BufferedOutputScheduler scheduler = player.deliver(delegatedLine, inputRecord);
+		schedulers.put(channel, scheduler);
+
+		// Set initial mode (this will set the appropriate output delegate)
+		if (initialMode == UnifiedPlayerConfig.OutputMode.DIRECT) {
+			config.setDirectMode();
+		} else {
+			config.setDawMode();
+		}
+
+		scheduler.start();
+
+		return config;
+	}
+
+	/**
+	 * Gets the unified player configuration for the specified channel.
+	 *
+	 * @param channel The channel name
+	 * @return The unified player config, or null if not a unified player
+	 */
+	public UnifiedPlayerConfig getUnifiedConfig(String channel) {
+		return unifiedConfigs.get(channel);
 	}
 
 	/**

@@ -110,6 +110,19 @@ public class SpatialDataHub {
 	}
 
 	/**
+	 * Removes (unpublishes) data from the specified channel by publishing
+	 * a {@link SpatialData} with null timeseries.
+	 *
+	 * <p>Listeners receiving this event should interpret a null timeseries
+	 * as a signal to clear any data associated with that channel index.</p>
+	 *
+	 * @param index the channel index to unpublish
+	 */
+	public void unpublish(int index) {
+		publish(new SpatialData<>(index, null));
+	}
+
+	/**
 	 * Notifies all data listeners to scan at the specified time.
 	 *
 	 * <p>This is typically used for time-based navigation or playhead positioning.</p>

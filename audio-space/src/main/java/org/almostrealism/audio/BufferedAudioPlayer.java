@@ -254,7 +254,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 		if (clock == null) return;
 
 		for (int c = 0; c < mixer.getChannelCount(); c++) {
-			boolean audible = loaded[c] && !muted[c];
+			boolean audible = loaded[c] && !muted[c] && playing;
 			setLevel(c, audible ? volume[c] : 0.0);
 			setLoopDuration(c, playing ? this.playbackDuration[c] : 0.0);
 		}

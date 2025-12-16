@@ -49,6 +49,9 @@ public class BufferedAudioPlayerTest implements TestFeatures {
 
 		scheduler.start();
 
+		// Audio should not play until play() is called
+		player.play();
+
 		while (count < 8) {
 			try {
 				Thread.sleep(1000);
