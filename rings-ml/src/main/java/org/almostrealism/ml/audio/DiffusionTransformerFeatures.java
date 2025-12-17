@@ -66,7 +66,7 @@ public interface DiffusionTransformerFeatures extends AttentionFeatures, Diffusi
 		SequentialBlock embedding = new SequentialBlock(shape(batchSize, 1));
 		embedding.add(fourierFeatures(batchSize, 1, 256, timestepFeaturesWeight));
 		embedding.add(dense(weight0, bias0));
-		embedding.add(silu(shape(embedDim)));
+		embedding.add(silu(shape(batchSize, embedDim)));
 		embedding.add(dense(weight2, bias2));
 		return embedding;
 	}

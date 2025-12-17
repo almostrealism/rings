@@ -20,6 +20,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.ml.StateDictionary;
 import org.almostrealism.ml.audio.DiffusionTransformer;
 import org.almostrealism.ml.audio.DiffusionTransformerFeatures;
+import org.almostrealism.model.Block;
 import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.Model;
 import org.almostrealism.model.SequentialBlock;
@@ -27,6 +28,246 @@ import org.almostrealism.util.TestFeatures;
 import org.junit.Test;
 
 public class DiffusionTransformerTests implements DiffusionTransformerFeatures, TestFeatures {
+
+    /**
+     * Tests that the transformerBlock can be built and compiled with proper shapes.
+     * This isolates the transformer block from the full DiffusionTransformer to
+     * identify shape mismatch issues.
+     */
+    @Test
+    public void transformerBlockShapes() {
+        int batchSize = 1;
+        int seqLen = 8;
+        int dim = 32;
+        int heads = 2;
+        int dimHead = dim / heads;
+        int hiddenDim = dim * 4;
+
+        log("Testing transformerBlock with shapes:");
+        log("  batchSize=" + batchSize + ", seqLen=" + seqLen + ", dim=" + dim + ", heads=" + heads);
+
+        // Create minimal weights for a single transformer block
+        PackedCollection preNormWeight = new PackedCollection(shape(dim)).fill(1.0);
+        PackedCollection preNormBias = new PackedCollection(shape(dim));
+        PackedCollection qkv = new PackedCollection(shape(dim * 3, dim));
+        PackedCollection wo = new PackedCollection(shape(dim, dim));
+        PackedCollection qNormWeight = new PackedCollection(shape(dimHead)).fill(1.0);
+        PackedCollection qNormBias = new PackedCollection(shape(dimHead));
+        PackedCollection kNormWeight = new PackedCollection(shape(dimHead)).fill(1.0);
+        PackedCollection kNormBias = new PackedCollection(shape(dimHead));
+        PackedCollection invFreq = new PackedCollection(shape(dimHead / 4));
+
+        PackedCollection ffnNormWeight = new PackedCollection(shape(dim)).fill(1.0);
+        PackedCollection ffnNormBias = new PackedCollection(shape(dim));
+        PackedCollection w1 = new PackedCollection(shape(2 * hiddenDim, dim));
+        PackedCollection ffW1Bias = new PackedCollection(shape(2 * hiddenDim));
+        PackedCollection w2 = new PackedCollection(shape(dim, hiddenDim));
+        PackedCollection ffW2Bias = new PackedCollection(shape(dim));
+
+        log("Building transformerBlock...");
+        Block block = transformerBlock(
+                batchSize, dim, seqLen, heads,
+                false,  // No cross-attention
+                0, null,  // No context
+                preNormWeight, preNormBias,
+                qkv, wo,
+                qNormWeight, qNormBias,
+                kNormWeight, kNormBias,
+                invFreq,
+                null, null,  // No cross-attention weights
+                null, null, null,
+                null, null,
+                null, null,
+                ffnNormWeight, ffnNormBias,
+                w1, w2, ffW1Bias, ffW2Bias
+        );
+
+        log("TransformerBlock built successfully");
+        log("Block input shape: " + block.getInputShape());
+        log("Block output shape: " + block.getOutputShape());
+
+        // Create a model with this block and compile it
+        Model model = new Model(shape(batchSize, seqLen, dim));
+        model.sequential().add(block);
+
+        log("Compiling model...");
+        CompiledModel compiled = model.compile(false);
+
+        log("Model compiled successfully");
+
+        // Run forward pass
+        PackedCollection input = new PackedCollection(shape(batchSize, seqLen, dim));
+        input.fill(pos -> Math.random());
+
+        log("Running forward pass...");
+        PackedCollection output = compiled.forward(input);
+
+        log("Forward pass completed");
+        log("Input shape: " + input.getShape());
+        log("Output shape: " + output.getShape());
+
+        assertEquals("Output should have same size as input",
+                input.getShape().getTotalSize(), output.getShape().getTotalSize());
+
+        model.destroy();
+        log("Test completed successfully");
+    }
+
+    /**
+     * Tests that DiffusionTransformer can build and compile with random weights.
+     * This verifies that shape validation passes for all layers without needing
+     * external reference data.
+     */
+    @Test
+    public void forwardPassWithRandomWeights() {
+        // Use minimal sizes for fast testing while still exercising the full architecture
+        int ioChannels = 2;
+        int embedDim = 32;
+        int depth = 1;  // Single transformer block
+        int numHeads = 2;
+        int patchSize = 1;
+        int condTokenDim = 0;  // Disable cross-attention for simplicity
+        int globalCondDim = 0; // Disable global conditioning for simplicity
+        int audioSeqLen = 8;
+        int condSeqLen = 4;    // Not used when condTokenDim = 0
+
+        log("Creating DiffusionTransformer with random weights:");
+        log("  ioChannels=" + ioChannels + ", embedDim=" + embedDim + ", depth=" + depth);
+        log("  numHeads=" + numHeads + ", patchSize=" + patchSize + ", audioSeqLen=" + audioSeqLen);
+
+        // Create transformer with null StateDictionary (creates empty weights)
+        DiffusionTransformer transformer = new DiffusionTransformer(
+                ioChannels, embedDim, depth, numHeads, patchSize,
+                condTokenDim, globalCondDim, "rf_denoiser",
+                audioSeqLen, condSeqLen,
+                null,  // null StateDictionary creates empty weights
+                false);
+
+        log("DiffusionTransformer model built successfully");
+
+        // Create test inputs with appropriate shapes
+        int batchSize = DiffusionTransformer.batchSize;
+        PackedCollection input = new PackedCollection(shape(batchSize, ioChannels, audioSeqLen));
+        input.fill(pos -> Math.random());
+
+        PackedCollection timestep = new PackedCollection(shape(batchSize, 1));
+        timestep.fill(pos -> Math.random());
+
+        log("Running forward pass...");
+        PackedCollection output = transformer.forward(input, timestep, null, null);
+
+        log("Forward pass completed successfully");
+        log("Input shape: " + input.getShape());
+        log("Output shape: " + output.getShape());
+
+        // Verify output shape matches input shape
+        assertEquals("Output should have same shape as input",
+                input.getShape().getTotalSize(), output.getShape().getTotalSize());
+
+        // Cleanup
+        transformer.destroy();
+        log("Test completed successfully");
+    }
+
+    /**
+     * Tests DiffusionTransformer with cross-attention conditioning.
+     */
+    @Test
+    public void forwardPassWithCrossAttention() {
+        int ioChannels = 2;
+        int embedDim = 32;
+        int depth = 1;
+        int numHeads = 2;
+        int patchSize = 1;
+        int condTokenDim = 16;  // Enable cross-attention
+        int globalCondDim = 0;
+        int audioSeqLen = 8;
+        int condSeqLen = 4;
+
+        log("Creating DiffusionTransformer with cross-attention:");
+        log("  condTokenDim=" + condTokenDim + ", condSeqLen=" + condSeqLen);
+
+        DiffusionTransformer transformer = new DiffusionTransformer(
+                ioChannels, embedDim, depth, numHeads, patchSize,
+                condTokenDim, globalCondDim, "rf_denoiser",
+                audioSeqLen, condSeqLen,
+                null, false);
+
+        log("DiffusionTransformer model built successfully");
+
+        int batchSize = DiffusionTransformer.batchSize;
+        PackedCollection input = new PackedCollection(shape(batchSize, ioChannels, audioSeqLen));
+        input.fill(pos -> Math.random());
+
+        PackedCollection timestep = new PackedCollection(shape(batchSize, 1));
+        timestep.fill(pos -> Math.random());
+
+        // Cross-attention conditioning expects [condSeqLen, condTokenDim] shape
+        PackedCollection crossAttnCond = new PackedCollection(shape(condSeqLen, condTokenDim));
+        crossAttnCond.fill(pos -> Math.random());
+
+        log("Running forward pass with cross-attention...");
+        PackedCollection output = transformer.forward(input, timestep, crossAttnCond, null);
+
+        log("Forward pass completed successfully");
+        log("Output shape: " + output.getShape());
+
+        assertEquals("Output should have same shape as input",
+                input.getShape().getTotalSize(), output.getShape().getTotalSize());
+
+        transformer.destroy();
+        log("Test completed successfully");
+    }
+
+    /**
+     * Tests DiffusionTransformer with global conditioning.
+     */
+    @Test
+    public void forwardPassWithGlobalConditioning() {
+        int ioChannels = 2;
+        int embedDim = 32;
+        int depth = 1;
+        int numHeads = 2;
+        int patchSize = 1;
+        int condTokenDim = 0;
+        int globalCondDim = 16;  // Enable global conditioning
+        int audioSeqLen = 8;
+        int condSeqLen = 4;
+
+        log("Creating DiffusionTransformer with global conditioning:");
+        log("  globalCondDim=" + globalCondDim);
+
+        DiffusionTransformer transformer = new DiffusionTransformer(
+                ioChannels, embedDim, depth, numHeads, patchSize,
+                condTokenDim, globalCondDim, "rf_denoiser",
+                audioSeqLen, condSeqLen,
+                null, false);
+
+        log("DiffusionTransformer model built successfully");
+
+        int batchSize = DiffusionTransformer.batchSize;
+        PackedCollection input = new PackedCollection(shape(batchSize, ioChannels, audioSeqLen));
+        input.fill(pos -> Math.random());
+
+        PackedCollection timestep = new PackedCollection(shape(batchSize, 1));
+        timestep.fill(pos -> Math.random());
+
+        // Global conditioning expects [globalCondDim] shape
+        PackedCollection globalCond = new PackedCollection(shape(globalCondDim));
+        globalCond.fill(pos -> Math.random());
+
+        log("Running forward pass with global conditioning...");
+        PackedCollection output = transformer.forward(input, timestep, null, globalCond);
+
+        log("Forward pass completed successfully");
+        log("Output shape: " + output.getShape());
+
+        assertEquals("Output should have same shape as input",
+                input.getShape().getTotalSize(), output.getShape().getTotalSize());
+
+        transformer.destroy();
+        log("Test completed successfully");
+    }
 
     /**
     * Tests fourierFeatures against reference data generated from the actual
@@ -428,6 +669,8 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
      */
     @Test
     public void ditIntermediateStateCompare() throws Exception {
+        if (testDepth < 3) return;
+
         String referenceDir = "/Users/michael/Documents/AlmostRealism/models/dit_intermediate_state";
 
         // Load reference data using StateDictionary
@@ -530,6 +773,8 @@ public class DiffusionTransformerTests implements DiffusionTransformerFeatures, 
      */
     @Test
     public void ditPostTransformerStateCompare() throws Exception {
+        if (testDepth < 3) return;
+
         String referenceDir = "/Users/michael/Documents/AlmostRealism/models/dit_post_transformer_state";
 
         // Load reference data using StateDictionary

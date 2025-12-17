@@ -241,6 +241,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 		PackedCollection invFreq =
 				createWeight("model.model.transformer.rotary_pos_emb.inv_freq", dimHead / 4);
 
+		// Input projection
 		main.add(dense(transformerProjectInWeight));
 
 		boolean hasCrossAttention = condTokenDim > 0 && condEmbed != null;
@@ -325,6 +326,7 @@ public class DiffusionTransformer implements DitModel, DiffusionTransformerFeatu
 			));
 		}
 
+		// Output projection
 		main.add(dense(transformerProjectOutWeight));
 
 		// Capture state after transformer blocks for test validation
