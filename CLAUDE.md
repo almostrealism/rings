@@ -2,11 +2,29 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+---
+
+## ⚠️ CRITICAL: NEVER REFERENCE VERSION NUMBERS ⚠️
+
+**THIS IS AN ABSOLUTE RULE WITH NO EXCEPTIONS.**
+
+- **NEVER** include specific version numbers anywhere in CLAUDE.md files
+- **NEVER** mention library versions (e.g., "JavaFX 21", "gRPC 1.53.0")
+- **NEVER** mention project versions (e.g., "version 0.72")
+- **NEVER** reference artifact versions in documentation
+- Version numbers change constantly and become stale immediately
+- Always refer to pom.xml files as the single source of truth for versions
+- If you need to mention a dependency, use just its name without any version
+
+**Why this matters:** Hardcoded version numbers in documentation become outdated instantly, cause confusion, and lead to errors when developers trust stale documentation over actual build files.
+
+---
+
 ## Project Overview
 
 Rings is a multimedia generation framework that provides a compact and expressive language for defining multimedia generation pipelines using conventional DSP and machine learning. It functions as a headless Digital Audio Workstation (DAW) and rendering engine for visual and sonic media, targeting heterogeneous compute devices (CPU, GPU) locally and in the cloud.
 
-**Key Dependency**: This project depends heavily on [Almost Realism Common](https://github.com/almostrealism/common) (ar-common version 0.71), which provides core computational abstractions and hardware acceleration support.
+**Key Dependency**: This project depends heavily on [Almost Realism Common](https://github.com/almostrealism/common) (ar-common), which provides core computational abstractions and hardware acceleration support.
 
 ## Build System
 
@@ -255,14 +273,14 @@ Rings compiles signal processing operations to target CPU or GPU:
 
 ## Key Dependencies
 
-From pom.xml:
-- **ar-common** (0.71): Core computational abstractions
-- **ar-flowtree** (0.27): Flow tree processing
-- **JOGL** (2.3.2): OpenGL bindings
-- **Jackson** (2.16.1): JSON processing
-- **gRPC** (1.53.0): Remote procedure calls
-- **ONNX Runtime** (1.22.0): ML inference
-- **JUnit** (4.12): Testing
+See pom.xml for current versions. Key dependencies include:
+- **ar-common**: Core computational abstractions
+- **ar-flowtree**: Flow tree processing
+- **JOGL**: OpenGL bindings
+- **Jackson**: JSON processing
+- **gRPC**: Remote procedure calls
+- **ONNX Runtime**: ML inference
+- **JUnit**: Testing
 
 ## Development Patterns
 
