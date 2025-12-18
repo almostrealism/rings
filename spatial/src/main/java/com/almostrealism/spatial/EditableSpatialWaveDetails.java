@@ -142,4 +142,14 @@ public class EditableSpatialWaveDetails extends SpatialWaveDetails
 
 	@Override
 	public boolean isModified() { return modified; }
+
+	/**
+	 * Clears the modified flag without clearing the data.
+	 *
+	 * <p>Use this after the drawing has been captured as a condition
+	 * to prevent re-capturing on subsequent generation attempts.</p>
+	 */
+	public void clearModified() {
+		modified = false;
+	}
 }

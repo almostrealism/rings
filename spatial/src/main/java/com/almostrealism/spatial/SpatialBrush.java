@@ -88,4 +88,16 @@ public interface SpatialBrush {
 	 * @param density the density in points per second
 	 */
 	void setDensity(double density);
+
+	/**
+	 * Resets brush state for a new stroke.
+	 *
+	 * <p>Called when a new stroke begins (mouse down) to allow stateful
+	 * brushes to reset their internal tracking. Default implementation
+	 * does nothing, preserving backward compatibility for stateless brushes.</p>
+	 *
+	 * <p>Stateful brushes like {@link SampleBrush} use this to clear their
+	 * stroke start position and painted frame tracking.</p>
+	 */
+	default void reset() {}
 }
