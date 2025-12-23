@@ -18,12 +18,11 @@ package com.almostrealism.remote.ops;
 
 import com.almostrealism.remote.AccessManager;
 import com.almostrealism.remote.GenerationProviderQueue;
-import org.almostrealism.audio.notes.NoteAudio;
-import org.almostrealism.remote.api.Generation;
 import io.grpc.stub.StreamObserver;
-import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.audio.generative.GenerationProvider;
+import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.remote.api.Generation;
 import org.almostrealism.remote.ops.WaveDataPublisher;
 
 import java.util.List;
@@ -36,7 +35,7 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 	private final AccessManager accessManager;
 	private final GenerationProviderQueue queue;
 	private final StreamObserver<Generation.Output> reply;
-	private WaveDataPublisher publisher;
+	private final WaveDataPublisher publisher;
 
 	public RemoteGenerate(AccessManager accessManager,
 						  GenerationProviderQueue queue,
@@ -103,10 +102,10 @@ public class RemoteGenerate implements StreamObserver<Generation.GeneratorReques
 	}
 
 	public static class GenerationOperation implements Operation {
-		private String requestId;
-		private String generatorId;
-		private int count;
-		private Consumer<List<NoteAudio>> results;
+		private final String requestId;
+		private final String generatorId;
+		private final int count;
+		private final Consumer<List<NoteAudio>> results;
 
 		public GenerationOperation(String requestId, String generatorId, int count,
 								   Consumer<List<NoteAudio>> results) {

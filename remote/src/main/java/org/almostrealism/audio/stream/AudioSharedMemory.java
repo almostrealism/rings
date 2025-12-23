@@ -26,7 +26,7 @@ import org.almostrealism.audio.persistence.WaveDetailsOutputLine;
 import java.io.IOException;
 
 public class AudioSharedMemory implements CellFeatures {
-	public static void main(String args[]) throws InterruptedException, IOException {
+	public static void main(String[] args) throws InterruptedException, IOException {
 		new AudioSharedMemory().run();
 	}
 

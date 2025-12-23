@@ -17,9 +17,10 @@
 package com.almostrealism.geometry;
 
 import io.almostrealism.relation.Producer;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.space.Volume;
 import org.almostrealism.CodeFeatures;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.physics.Volume;
 
 /**
  * A {@link Sphere} represents a spherical volume in 3D space.
@@ -55,21 +56,21 @@ public class Sphere implements Volume<Object>, CodeFeatures {
 	/**
 	 * Returns a unit length vector in the direction from the origin of the
 	 * sphere to the specified vector.
-	 * 
+	 *
 	 * @param x  {x, y, z} - Position vector.
 	 */
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> x) {
+	public Producer<PackedCollection> getNormalAt(Producer<PackedCollection> x) {
 		return normalize(x);
 	}
-	
+
 	/**
 	 * Returns true if the specified vector is inside this sphere, false otherwise.
-	 * 
+	 *
 	 * @param x  {x, y, z} - Position vector.
 	 */
 	@Override
-	public boolean inside(Producer<Vector> x) { return (x.get().evaluate().length() <= this.radius); }
+	public boolean inside(Producer<PackedCollection> x) { return (new Vector(x.get().evaluate(), 0).length() <= this.radius); }
 
 	@Override
 	public double intersect(Vector p, Vector d) {
@@ -93,7 +94,7 @@ public class Sphere implements Volume<Object>, CodeFeatures {
 	}
 
 	@Override
-	public double[] getSpatialCoords(double uv[]) {
+	public double[] getSpatialCoords(double[] uv) {
 		double y = uv[0] * 2.0 * Math.PI;
 		double z = uv[1] * 2.0 * Math.PI;
 		
@@ -103,17 +104,17 @@ public class Sphere implements Volume<Object>, CodeFeatures {
 	}
 
 	@Override
-	public double[] getSurfaceCoords(Producer<Vector> v) {
-		double xyz[] = v.get().evaluate().toArray();
+	public double[] getSurfaceCoords(Producer<PackedCollection> v) {
+		double[] xyz = new Vector(v.get().evaluate(), 0).toArray();
 
 		double s = Math.sqrt(xyz[0] * xyz[0] + xyz[1] * xyz[1]);
-		double uv[] = {0.5 + Math.asin(xyz[2]) / Math.PI, 0};
-		
+		double[] uv = {0.5 + Math.asin(xyz[2]) / Math.PI, 0};
+
 		if (xyz[0] < 0)
 			uv[1] = 0.5 - Math.asin(xyz[1] / s) / Math.PI;
 		else
 			uv[1] = 0.5 + Math.asin(xyz[1] / s) / Math.PI;
-		
+
 		return uv;
 	}
 }

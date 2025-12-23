@@ -57,7 +57,7 @@ public class PatternElementTests implements CellFeatures, SamplingFeatures, Patt
 		sceneContext.setFrameForPosition(pos -> (int) (pos * sampleRate));
 		sceneContext.setTimeForDuration(pos -> duration);
 		sceneContext.setScaleForPosition(pos -> WesternScales.major(root, 1));
-		sceneContext.setDestination(new PackedCollection<>((int) (duration * sampleRate)));
+		sceneContext.setDestination(new PackedCollection((int) (duration * sampleRate)));
 
 		// Setup context for voicing the notes, including the library
 		// of samples to use (choiceNote will select from those)

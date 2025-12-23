@@ -16,17 +16,14 @@
 
 package com.almostrealism.renderable;
 
-import com.almostrealism.gl.GLPrintWriter;
-import com.almostrealism.gl.GLMaterial;
-import com.almostrealism.gl.TextureManager;
 import com.almostrealism.gl.GLDriver;
-
+import com.almostrealism.gl.GLMaterial;
+import com.almostrealism.gl.GLPrintWriter;
+import com.almostrealism.gl.TextureManager;
 import com.almostrealism.gl.shaders.FragmentShader;
 import com.almostrealism.gl.shaders.GLDiffuseShader;
 import com.almostrealism.gl.shaders.VertexShader;
-import com.almostrealism.shade.Colored;
 import io.almostrealism.lang.CodePrintWriter;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.geometry.Oriented;
@@ -36,9 +33,9 @@ import org.almostrealism.texture.ImageSource;
 public abstract class RenderableGLAdapter implements Renderable, Positioned, Oriented, Colored {
 	protected static final TextureManager textureManager = new TextureManager();
 	
-	private Vector position = new Vector(0.0, 0.0, 0.0);
+	private final Vector position = new Vector(0.0, 0.0, 0.0);
 	private double orientationAngle = 0.0;
-	private Vector orientationVector = Vector.zAxis();
+	private final Vector orientationVector = Vector.zAxis();
 	
 	private GLMaterial mat;
 	private ImageSource texture;
@@ -139,7 +136,15 @@ public abstract class RenderableGLAdapter implements Renderable, Positioned, Ori
 	}
 
 	@Override
-	public float[] getColor() { return Scalar.toFloat(mat.diffuse.toArray()); }
+	public float[] getColor() { return toFloat(mat.diffuse.toArray()); }
+
+	private static float[] toFloat(double[] d) {
+		float[] f = new float[d.length];
+		for (int i = 0; i < d.length; i++) {
+			f[i] = (float) d[i];
+		}
+		return f;
+	}
 	
 	public void setMaterial(GLMaterial m) { this.mat = m; }
 	public GLMaterial getMaterial() { return this.mat; }

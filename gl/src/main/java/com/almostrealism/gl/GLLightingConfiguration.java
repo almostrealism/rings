@@ -16,9 +16,9 @@
 
 package com.almostrealism.gl;
 
-import com.almostrealism.lighting.PointLight;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.Light;
+import org.almostrealism.color.PointLight;
 import org.almostrealism.color.RGB;
 
 public class GLLightingConfiguration {
@@ -50,7 +50,7 @@ public class GLLightingConfiguration {
 		int index = 0;
 
 		for (Light l : lights) {
-			if (l instanceof PointLight == false) return;
+			if (!(l instanceof PointLight)) return;
 			set(index, ((PointLight) l).getLocation());
 			set(index, l.getColor().multiply(l.getIntensity()));
 			index++;
@@ -66,7 +66,7 @@ public class GLLightingConfiguration {
 			case 4: light4Position = v; return;
 			case 5: light5Position = v; return;
 			case 6: light6Position = v; return;
-			case 7: light7Position = v; return;
+			case 7: light7Position = v;
 		}
 	}
 
@@ -79,7 +79,7 @@ public class GLLightingConfiguration {
 			case 4: light4Diffuse = c; return;
 			case 5: light5Diffuse = c; return;
 			case 6: light6Diffuse = c; return;
-			case 7: light7Diffuse = c; return;
+			case 7: light7Diffuse = c;
 		}
 	}
 

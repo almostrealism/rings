@@ -17,19 +17,19 @@
 package org.almostrealism.audio.notes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.relation.Factor;
 
 import java.util.Objects;
 import java.util.function.DoubleFunction;
 
 public class PatternNoteLayer extends PatternNoteAudioAdapter implements KeyboardTuned {
 
-	private PatternNoteAudio delegate;
-	private NoteAudioFilter filter;
+	private final PatternNoteAudio delegate;
+	private final NoteAudioFilter filter;
 
 	public PatternNoteLayer() { this(null, null); }
 
@@ -59,7 +59,7 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter implements Keyboar
 	}
 
 	@JsonIgnore
-	public PackedCollection<?> getAudio() {
+	public PackedCollection getAudio() {
 		if (delegate != null) {
 			warn("Attempting to get audio from a delegated PatternNote");
 		}
@@ -69,8 +69,7 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter implements Keyboar
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof PatternNoteLayer) {
-			PatternNoteLayer other = (PatternNoteLayer) obj;
+		if (obj instanceof PatternNoteLayer other) {
 
 			return Objects.equals(delegate, other.delegate) &&
 					Objects.equals(filter, other.filter);
@@ -88,7 +87,7 @@ public class PatternNoteLayer extends PatternNoteAudioAdapter implements Keyboar
 		return new PatternNoteLayer(delegate, filter);
 	}
 
-	public static PatternNoteLayer create(PatternNoteAudio delegate, Factor<PackedCollection<?>> factor) {
+	public static PatternNoteLayer create(PatternNoteAudio delegate, Factor<PackedCollection> factor) {
 		return new PatternNoteLayer(delegate, (audio, duration, automationLevel) -> factor.getResultant(audio));
 	}
 }

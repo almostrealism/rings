@@ -79,7 +79,7 @@ Load audio and apply a high pass filter.
 
 ```Java
     public class MyMultimediaPipeline implements CellFeatures {
-        public static void main(String args[]) {
+        public static void main(String[] args) {
             new MyMultimediaPipeline().filter();
         }
 	
@@ -110,7 +110,7 @@ A simple example of how to define, render, and save a pattern.
 ```Java
     public class MyMultimediaPipeline implements
             CellFeatures, SamplingFeatures, PatternFeatures {
-        public static void main(String args[]) {
+        public static void main(String[] args) {
             new MyMultimediaPipeline().sineAndSnare();
         }
 	
@@ -194,7 +194,7 @@ You can also create an **AudioScene** to generate audio in a more structured way
 
 ```Java
     public class MyMultimediaPipeline {
-	    public static void main(String args[]) {
+	    public static void main(String[] args) {
 			new MyMultimediaPipeline().runScene();
 		}
 

@@ -1,7 +1,8 @@
-import os
 import csv
 import numpy as np
+import os
 from PIL import Image, ImageDraw
+
 
 def generate_images(num_images, image_size, save_dir, csv_file):
     if not os.path.exists(save_dir):

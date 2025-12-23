@@ -16,11 +16,11 @@
 
 package org.almostrealism.swing.displays;
 
-import java.util.Date;
-
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Date;
 
 /**
  * A ProgressDisplay object can be used to detect and display internal progress.
@@ -28,14 +28,17 @@ import javax.swing.*;
  * @author Mike Murray
  */
 public class ProgressDisplay extends JPanel implements org.almostrealism.swing.ProgressMonitor {
-  private int incrementSize, totalSize, increment;
+  private final int incrementSize;
+	private final int totalSize;
+	private int increment;
   private boolean removeOnCompletion;
   
   private long startTime;
   private Timer timer;
   
-  private JProgressBar progressBar;
-  private JLabel timeLabel, incLabel;
+  private final JProgressBar progressBar;
+  private JLabel timeLabel;
+	private final JLabel incLabel;
 
 	/**
 	 * Constructs a new ProgressDisplay object using the specified increment size
@@ -120,11 +123,11 @@ public class ProgressDisplay extends JPanel implements org.almostrealism.swing.P
 		this.progressBar.setValue(this.increment);
 		this.incLabel.setText(this.increment * this.incrementSize + " of " + this.totalSize);
 		
-		if (this.isComplete() == true && this.timer != null) {
+		if (this.isComplete() && this.timer != null) {
 			this.timer.stop();
 		}
 		
-		if ((this.isComplete() == true && this.removeOnCompletion == true) && this.getParent() != null) {
+		if ((this.isComplete() && this.removeOnCompletion) && this.getParent() != null) {
 			this.getParent().remove(this);
 		}
 	}
@@ -133,10 +136,7 @@ public class ProgressDisplay extends JPanel implements org.almostrealism.swing.P
 	 * Returns true if the task being monitored is complete, false otherwise.
 	 */
 	public boolean isComplete() {
-		if (this.increment * this.incrementSize >= this.totalSize)
-			return true;
-		else
-			return false;
+		return this.increment * this.incrementSize >= this.totalSize;
 	}
 	
 	public void reset() {

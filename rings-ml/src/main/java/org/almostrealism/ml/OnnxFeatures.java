@@ -47,18 +47,18 @@ public interface OnnxFeatures extends CodeFeatures {
 	/**
 	 * Converts an {@link OnnxTensor} to a {@link PackedCollection}.
 	 */
-	default PackedCollection<?> pack(OnnxTensor tensor) {
+	default PackedCollection pack(OnnxTensor tensor) {
 		FloatBuffer buffer = tensor.getFloatBuffer();
 		float[] data = new float[buffer.capacity()];
 		buffer.get(data);
 
-		PackedCollection<?> result = new PackedCollection<>(shape(tensor.getInfo()));
+		PackedCollection result = new PackedCollection(shape(tensor.getInfo()));
 		result.setMem(0, data);
 		return result;
 	}
 
-	default Map<String, PackedCollection<?>> pack(Map<String, OnnxTensor> tensors) throws OrtException {
-		Map<String, PackedCollection<?>> result = new HashMap<>();
+	default Map<String, PackedCollection> pack(Map<String, OnnxTensor> tensors) throws OrtException {
+		Map<String, PackedCollection> result = new HashMap<>();
 		tensors.forEach((key, value) -> result.put(key, pack(value)));
 		return result;
 	}
@@ -71,7 +71,7 @@ public interface OnnxFeatures extends CodeFeatures {
 	 * @return An {@link OnnxTensor} representing the {@link PackedCollection}.
 	 * @throws HardwareException If there is an error creating the tensor.
 	 */
-	default OnnxTensor toOnnx(OrtEnvironment env, PackedCollection<?> collection) {
+	default OnnxTensor toOnnx(OrtEnvironment env, PackedCollection collection) {
 		try {
 			return OnnxTensor.createTensor(env,
 					FloatBuffer.wrap(Objects.requireNonNull(collection).toFloatArray()),
@@ -81,7 +81,7 @@ public interface OnnxFeatures extends CodeFeatures {
 		}
 	}
 
-	default OnnxTensor toOnnx(PackedCollection<?> collection) {
+	default OnnxTensor toOnnx(PackedCollection collection) {
 		return toOnnx(getOnnxEnvironment(), collection);
 	}
 

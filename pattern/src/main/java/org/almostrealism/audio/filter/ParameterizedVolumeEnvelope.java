@@ -63,8 +63,8 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 	}
 
 	public class Filter implements NoteAudioFilter {
-		private ParameterSet params;
-		private ChannelInfo.Voicing voicing;
+		private final ParameterSet params;
+		private final ChannelInfo.Voicing voicing;
 
 		public Filter(ParameterSet params, ChannelInfo.Voicing voicing) {
 			this.params = params;
@@ -92,18 +92,18 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 		}
 
 		@Override
-		public Producer<PackedCollection<?>> apply(Producer<PackedCollection<?>> audio,
-												   Producer<PackedCollection<?>> duration,
-												   Producer<PackedCollection<?>> automationLevel) {
-			PackedCollection<?> a = new PackedCollection<>(1);
-			PackedCollection<?> d = new PackedCollection<>(1);
-			PackedCollection<?> s = new PackedCollection<>(1);
-			PackedCollection<?> r = new PackedCollection<>(1);
+		public Producer<PackedCollection> apply(Producer<PackedCollection> audio,
+												   Producer<PackedCollection> duration,
+												   Producer<PackedCollection> automationLevel) {
+			PackedCollection a = new PackedCollection(1);
+			PackedCollection d = new PackedCollection(1);
+			PackedCollection s = new PackedCollection(1);
+			PackedCollection r = new PackedCollection(1);
 
 			return () -> args -> {
-				PackedCollection<?> audioData = audio.get().evaluate();
-				PackedCollection<?> dr = duration.get().evaluate();
-				PackedCollection<?> al = automationLevel.get().evaluate();
+				PackedCollection audioData = audio.get().evaluate();
+				PackedCollection dr = duration.get().evaluate();
+				PackedCollection al = automationLevel.get().evaluate();
 
 				double dv = dr.toDouble(0);
 				double adj = adjustmentBase + adjustmentAutomation * al.toDouble(0);
@@ -141,7 +141,7 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 				s.set(0, sustain);
 				r.set(0, release);
 
-				PackedCollection<?> out = AudioProcessingUtils.getVolumeEnv()
+				PackedCollection out = AudioProcessingUtils.getVolumeEnv()
 						.evaluate(audioData.traverse(1), dr, a, d, s, r);
 
 				if (out.getShape().getTotalSize() == 1) {
@@ -162,8 +162,7 @@ public class ParameterizedVolumeEnvelope extends ParameterizedEnvelopeAdapter {
 			if (filter.getAttack(10.0) != getAttack(10.0)) return false;
 			if (filter.getDecay() != getDecay()) return false;
 			if (filter.getSustain() != getSustain()) return false;
-			if (filter.getRelease(10.0) != getRelease(10.0)) return false;
-			return true;
+			return filter.getRelease(10.0) == getRelease(10.0);
 		}
 
 		@Override

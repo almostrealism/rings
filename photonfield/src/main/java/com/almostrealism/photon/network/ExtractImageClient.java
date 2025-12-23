@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class ExtractImageClient {
-	public static void main(String args[]) throws IOException, InterruptedException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		if (args.length < 2) {
 			throw new IllegalArgumentException("ExtractImageClient: Please supply configuration file and target task ID");
 		}

@@ -16,18 +16,15 @@
 
 package com.almostrealism.gl;
 
-import java.util.HashMap;
-
 import com.jogamp.opengl.GL;
-
 import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureData;
-import com.jogamp.opengl.util.texture.TextureIO;
 import org.almostrealism.texture.ImageSource;
+
+import java.util.HashMap;
 
 @Deprecated
 public class TextureManager {
-	private HashMap<ImageSource, Texture> textures;
+	private final HashMap<ImageSource, Texture> textures;
 	
 	public TextureManager() {
 		this.textures = new HashMap<>();
@@ -38,18 +35,18 @@ public class TextureManager {
 
 		Texture tex = put(gl, s);
 
-		int pixels[] = s.getPixels();
+		int[] pixels = s.getPixels();
 		int width = s.getWidth();
 		int height = s.getHeight();
 		
-		byte data[];
+		byte[] data;
 
 		if (!s.isAlpha()) {
 			data = new byte[pixels.length * 3];
 
 			for (int y = height - 1, pointer = 0; y >= 0; y--) {
 				for (int x = 0; x < width; x++, pointer += 3) {
-					data[pointer + 0] = (byte)((pixels[y * width + x] >> 16) & 0xFF);
+					data[pointer] = (byte)((pixels[y * width + x] >> 16) & 0xFF);
 					data[pointer + 1] = (byte)((pixels[y * width + x] >>  8) & 0xFF);
 					data[pointer + 2] = (byte) (pixels[y * width + x]        & 0xFF);
 				}
@@ -60,7 +57,7 @@ public class TextureManager {
 			for (int y = height - 1, pointer = 0; y >= 0; y--) {
 				for (int x = 0; x < width; x++,pointer += 4) {
 					data[pointer + 3] = (byte)((pixels[y * width + x] >> 24) & 0xFF);
-					data[pointer + 0] = (byte)((pixels[y * width + x] >> 16) & 0xFF);
+					data[pointer] = (byte)((pixels[y * width + x] >> 16) & 0xFF);
 					data[pointer + 1] = (byte)((pixels[y * width + x] >>  8) & 0xFF);
 					data[pointer + 2] = (byte) (pixels[y * width + x]        & 0xFF);
 				}

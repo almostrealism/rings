@@ -29,8 +29,8 @@ import io.almostrealism.resource.ResourceTranscoder;
  * @param <OUT>  Output resource type.
  */
 public class ResourceTranscoderFactory<IN extends Resource, OUT extends Resource> implements Factory<ResourceTranscoder<IN, OUT>> {
-	private Class<IN> inType;
-	private Class<OUT> outType;
+	private final Class<IN> inType;
+	private final Class<OUT> outType;
 
 	public ResourceTranscoderFactory(Class<IN> inputType, Class<OUT> outputType) {
 		this.inType = inputType;

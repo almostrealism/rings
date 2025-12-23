@@ -16,30 +16,31 @@
 
 package com.almostrealism.raytracer;
 
-import com.almostrealism.lighting.DirectionalAmbientLight;
-import com.almostrealism.lighting.StandardLightingRigs;
-import com.almostrealism.primitives.RigidPlane;
-import com.almostrealism.primitives.SphericalLight;
-import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.projection.ThinLensCamera;
-import com.almostrealism.rayshade.BlendingShader;
-import com.almostrealism.rayshade.DiffuseShader;
-import com.almostrealism.rayshade.ReflectionShader;
-import com.almostrealism.rayshade.RigidBodyStateShader;
-import com.almostrealism.primitives.RigidSphere;
-import com.almostrealism.raytrace.FogParameters;
-import com.almostrealism.raytrace.RenderParameters;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.BlendingShader;
+import org.almostrealism.color.DiffuseShader;
+import org.almostrealism.color.DirectionalAmbientLight;
 import org.almostrealism.color.Light;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBFeatures;
+import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.color.Shader;
 import org.almostrealism.physics.RigidBody;
+import org.almostrealism.physics.RigidBodyStateShader;
+import org.almostrealism.primitives.RigidPlane;
+import org.almostrealism.primitives.RigidSphere;
+import org.almostrealism.primitives.SphericalLight;
+import org.almostrealism.projection.PinholeCamera;
+import org.almostrealism.projection.ThinLensCamera;
+import org.almostrealism.rayshade.ReflectionShader;
+import org.almostrealism.raytrace.FogParameters;
+import org.almostrealism.raytrace.RenderParameters;
+import org.almostrealism.render.RayTracedScene;
 import org.almostrealism.space.AbstractSurface;
-import org.almostrealism.space.ShadableSurface;
+import org.almostrealism.space.Animation;
+import org.almostrealism.space.StandardLightingRigs;
 import org.almostrealism.swing.JTextAreaPrintWriter;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.space.Animation;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -59,7 +60,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 	private int imageWidth, imageHeight;
 	private Image image;
 
-	private List<File> inputFiles;
+	private final List<File> inputFiles;
 
 	public RayTracedAnimation() {
 		this.inputFiles = new ArrayList<>();
@@ -89,7 +90,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 			File f = new File(fn);
 
 			RenderParameters p = new RenderParameters(imageWidth, imageHeight, 1, 1);
-			RGB image[][] = new RayTracedScene(this, new FogParameters(), p).realize(p).get().evaluate();
+			RGB[][] image = new RayTracedScene(this, new FogParameters(), p).realize(p).get().evaluate();
 			this.image = GraphicsConverter.convertToAWTImage(image);
 
 			BufferedImage buff = new BufferedImage(this.imageWidth, this.imageHeight, BufferedImage.TYPE_INT_RGB);
@@ -157,7 +158,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 
 		p.setProperty("bodies.length", String.valueOf(size()));
 
-		if (LegacyRayTracingEngine.castShadows == false) p.setProperty("render.shadows", "false");
+		if (!LegacyRayTracingEngine.castShadows) p.setProperty("render.shadows", "false");
 
 		Vector cl = ((PinholeCamera) getCamera()).getLocation();
 		Vector cv = ((PinholeCamera) getCamera()).getViewingDirection();
@@ -182,8 +183,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 			AbstractSurface surface = null;
 			if (super.get(i) instanceof AbstractSurface) surface = (AbstractSurface) super.get(i);
 
-			if (surface instanceof RigidSphere) {
-				RigidSphere s = (RigidSphere) surface;
+			if (surface instanceof RigidSphere s) {
 
 				p.setProperty("bodies." + i + ".type", "sphere");
 				p.setProperty("bodies." + i + ".size", String.valueOf(s.getSize()));
@@ -191,7 +191,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 				SphericalLight light = s.getLight();
 
 				if (light != null) {
-					double at[] = light.getAttenuationCoefficients();
+					double[] at = light.getAttenuationCoefficients();
 
 					p.setProperty("bodies." + i + ".light.on", "true");
 					p.setProperty("bodies." + i + ".light.intensity", String.valueOf(light.getIntensity()));
@@ -200,8 +200,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 					p.setProperty("bodies." + i + ".light.atb", String.valueOf(at[1]));
 					p.setProperty("bodies." + i + ".light.atc", String.valueOf(at[2]));
 				}
-			} else if (surface instanceof RigidPlane) {
-				RigidPlane s = (RigidPlane) surface;
+			} else if (surface instanceof RigidPlane s) {
 
 				p.setProperty("bodies." + i + ".type", "plane");
 				p.setProperty("bodies." + i + ".size", String.valueOf(s.getSize()));
@@ -232,7 +231,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 				}
 			}
 
-			if (get(i) instanceof RigidBody == false) continue i;
+			if (!(get(i) instanceof RigidBody)) continue i;
 
 			p.setProperty("bodies." + i + ".mass", String.valueOf(((RigidBody) get(i)).getState().getMass()));
 
@@ -389,8 +388,7 @@ public class RayTracedAnimation<T extends ShadableSurface> extends Animation<T> 
 				}
 			}
 
-			if (b instanceof AbstractSurface) {
-				AbstractSurface s = (AbstractSurface)b;
+			if (b instanceof AbstractSurface s) {
 
 				String rbstate = p.getProperty("bodies." + i + ".shade.rbstate");
 

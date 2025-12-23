@@ -22,13 +22,13 @@ import io.almostrealism.code.Execution;
 import io.almostrealism.code.Precision;
 import io.almostrealism.lang.LanguageOperations;
 import io.almostrealism.scope.Scope;
-import org.almostrealism.algebra.Scalar;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.c.CLanguageOperations;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.tensorflow.TensorFlowArgument;
 import org.almostrealism.tensorflow.TensorFlowComputeContext;
 import org.almostrealism.tensorflow.TensorFlowConstant;
 import org.almostrealism.tensorflow.TensorFlowInstructionSet;
-import org.almostrealism.CodeFeatures;
 import org.junit.Test;
 
 import java.util.function.Supplier;
@@ -43,7 +43,7 @@ public class TFScopeTest implements CodeFeatures {
 		DefaultScopeInputManager manager = new DefaultScopeInputManager(lang,
 				(p, input) -> new TensorFlowArgument<>(p.getArgumentName(counter++), (Supplier) input));
 
-		Scalar s = new Scalar();
+		PackedCollection s = new PackedCollection(1);
 		TensorFlowArgument destination = (TensorFlowArgument) manager.argumentForInput(nameProvider).apply(p(s));
 		TensorFlowConstant v = new TensorFlowConstant(1.0);
 

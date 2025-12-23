@@ -18,10 +18,10 @@ package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.generative.NoOpGenerationProvider;
 import org.almostrealism.audio.health.AudioHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
 import org.almostrealism.collect.PackedCollection;
@@ -53,7 +53,7 @@ public class AudioSceneOptimizerTest implements CellFeatures, TestFeatures {
 		int cycles = 1;
 
 		int params = 8;
-		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+		List<Genome<PackedCollection>> genomes = new ArrayList<>();
 		genomes.add(new ProjectedGenome(params));
 		genomes.add(new ProjectedGenome(params));
 		genomes.add(new ProjectedGenome(params));
@@ -88,7 +88,7 @@ public class AudioSceneOptimizerTest implements CellFeatures, TestFeatures {
 		AtomicInteger index = new AtomicInteger();
 
 		int params = 8;
-		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+		List<Genome<PackedCollection>> genomes = new ArrayList<>();
 		genomes.add(new ProjectedGenome(params));
 		genomes.add(new ProjectedGenome(params));
 		genomes.add(new ProjectedGenome(params));

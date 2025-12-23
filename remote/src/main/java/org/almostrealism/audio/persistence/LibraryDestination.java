@@ -41,12 +41,12 @@ import java.util.function.Supplier;
 
 public class LibraryDestination implements ConsoleFeatures {
 	public static final String TEMP = "temp";
-	public static final String SAMPLES = "samples";
+	public static final String SAMPLES = "Samples";
 
-	private String prefix;
+	private final String prefix;
 	private int index;
-	private boolean append;
-	private List<String> temporaryFiles;
+	private final boolean append;
+	private final List<String> temporaryFiles;
 
 	public LibraryDestination(String prefix) {
 		this(prefix, false);
@@ -258,9 +258,22 @@ public class LibraryDestination implements ConsoleFeatures {
 		}
 	}
 
+	/**
+	 * Returns the default library root path.
+	 * On macOS: ~/Music/Samples
+	 * On other platforms: ~/RingsAudioLibrary
+	 *
+	 * @return the default library root path, creating it if necessary
+	 */
 	public static Path getDefaultLibraryRoot() {
-		Path p = SystemUtils.getLocalDestination().resolve(SAMPLES);
-		return SystemUtils.ensureDirectoryExists(p);
+		Path home = Path.of(SystemUtils.getHome());
+		Path libraryPath;
+		if (SystemUtils.isMacOS()) {
+			libraryPath = home.resolve("Music").resolve(SAMPLES);
+		} else {
+			libraryPath = home.resolve("RingsAudioLibrary");
+		}
+		return SystemUtils.ensureDirectoryExists(libraryPath);
 	}
 
 	public class Writer implements Supplier<OutputStream>, AutoCloseable {

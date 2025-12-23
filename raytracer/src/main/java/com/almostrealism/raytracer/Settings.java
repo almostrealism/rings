@@ -16,15 +16,12 @@
 
 package com.almostrealism.raytracer;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.util.Properties;
-
-import javax.swing.Icon;
-
 import io.almostrealism.util.NumberFormats;
 import org.almostrealism.io.PrintWriter;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Properties;
 
 /**
  * The {@link Settings} class provides access to settings that change the way the RayTracer and

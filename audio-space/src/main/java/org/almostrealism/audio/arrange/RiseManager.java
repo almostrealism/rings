@@ -16,9 +16,9 @@
 
 package org.almostrealism.audio.arrange;
 
+import io.almostrealism.cycle.Setup;
 import io.almostrealism.profile.OperationMetadata;
 import io.almostrealism.profile.OperationWithInfo;
-import io.almostrealism.cycle.Setup;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
@@ -44,14 +44,14 @@ import java.util.function.Supplier;
 public class RiseManager implements Setup, PatternFeatures, CellFeatures {
 	public static final double riseDuration = HealthComputationAdapter.standardDurationSeconds;
 
-	private ProjectedChromosome chromosome;
-	private int sampleRate;
+	private final ProjectedChromosome chromosome;
+	private final int sampleRate;
 
-	private AudioSynthesizer synth;
-	private NoiseGenerator noise;
-	private OperationList setup;
+	private final AudioSynthesizer synth;
+	private final NoiseGenerator noise;
+	private final OperationList setup;
 
-	private PackedCollection<?> destination;
+	private PackedCollection destination;
 
 	public RiseManager(ProjectedChromosome chromosome, Supplier<AudioSceneContext> context, int sampleRate) {
 		this.chromosome = chromosome;
@@ -69,8 +69,8 @@ public class RiseManager implements Setup, PatternFeatures, CellFeatures {
 		List<PatternElement> elements = new ArrayList<>();
 		elements.add(new PatternElement(riseNote, 0.0));
 		elements.add(new PatternElement(noiseNote, 0.0));
-		elements.get(0).setAutomationParameters(new PackedCollection<>(6).fill(0.5));
-		elements.get(1).setAutomationParameters(new PackedCollection<>(6).fill(0.5));
+		elements.get(0).setAutomationParameters(new PackedCollection(6).fill(0.5));
+		elements.get(1).setAutomationParameters(new PackedCollection(6).fill(0.5));
 
 		setup.add(OperationWithInfo.of(new OperationMetadata("RiseManager.render", "RiseManager.render"),
 				() -> () -> {
@@ -87,7 +87,7 @@ public class RiseManager implements Setup, PatternFeatures, CellFeatures {
 	public Supplier<Runnable> setup() { return setup; }
 
 	public CellList getRise(int frames) {
-		Producer<PackedCollection<?>> audio =
+		Producer<PackedCollection> audio =
 				func(shape(frames), args -> destination, false);
 		return w(PolymorphicAudioData.supply(PackedCollection.factory()),
 				sampleRate, frames, null, null, traverse(0, audio));

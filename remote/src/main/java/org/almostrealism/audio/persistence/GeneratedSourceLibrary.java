@@ -35,12 +35,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.stream.DoubleStream;
 
 public class GeneratedSourceLibrary {
-	private LibraryDestination library;
-	private Map<String, AudioSynthesisModel> models;
+	private final LibraryDestination library;
+	private final Map<String, AudioSynthesisModel> models;
 
 	public GeneratedSourceLibrary(LibraryDestination library) {
 		this.library = library;

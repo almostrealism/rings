@@ -20,13 +20,14 @@ import com.jogamp.opengl.glu.GLUnurbs;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 
 public class AnimatedNurbsSurface extends NurbsSurface {
-	private static final float defaultKnots[] = { 0.0f, 0.0f, 0.0f, 0.0f,
+	private static final float[] defaultKnots = { 0.0f, 0.0f, 0.0f, 0.0f,
 												0.0f, 0.0f, 0.0f, 0.0f,
 												1.0f, 1.0f, 1.0f, 1.0f,
 												1.0f, 1.0f, 1.0f, 1.0f };
 	
-	private int width, height;
-	private float[][][] points = new float[8][8][3];
+	private final int width;
+	private final int height;
+	private final float[][][] points = new float[8][8][3];
 	
 	public AnimatedNurbsSurface(int w, int h, GLUgl2 glu, GLUnurbs nurbs) {
 		super(defaultKnots, null, glu, nurbs);

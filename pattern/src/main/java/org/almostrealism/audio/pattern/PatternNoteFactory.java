@@ -24,7 +24,6 @@ import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
 import org.almostrealism.audio.notes.PatternNote;
 import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.audio.notes.PatternNoteAudioChoice;
-import org.almostrealism.audio.notes.PatternNoteLayer;
 
 import java.util.ArrayList;
 import java.util.List;

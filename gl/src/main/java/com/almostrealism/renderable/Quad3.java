@@ -62,7 +62,7 @@ public class Quad3 implements Renderable {
 
 	private static final int NUM_VECS = 4;
 
-	private Vector[] vecs;
+	private final Vector[] vecs;
 	private FloatBuffer vertBuf;
 
 	/**

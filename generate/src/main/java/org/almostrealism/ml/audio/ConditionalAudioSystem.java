@@ -113,7 +113,7 @@ public abstract class ConditionalAudioSystem implements Destroyable, OnnxFeature
 		return getTokenizer().tokenize(text).stream().mapToLong(getVocabulary()::getIndex).toArray();
 	}
 
-	protected Map<String, PackedCollection<?>> runConditioners(long[] ids, double seconds) {
+	protected Map<String, PackedCollection> runConditioners(long[] ids, double seconds) {
 		long[] paddedIds = new long[T5_SEQ_LENGTH];
 		long[] attentionMask = new long[T5_SEQ_LENGTH];
 

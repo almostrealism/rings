@@ -37,7 +37,7 @@ public class ChordProgressionManagerTest {
 		progression.setDuration(16);
 
 		IntStream.range(0, 10).forEach(i -> {
-			genome.assignTo(new PackedCollection<>(params).randFill());
+			genome.assignTo(new PackedCollection(params).randFill());
 			progression.refreshParameters();
 			System.out.println(progression.getRegionString());
 		});

@@ -16,30 +16,28 @@
 
 package com.almostrealism.photon.network;
 
+import org.almostrealism.physics.AbsorberSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
+import com.almostrealism.util.FileLoader;
+import io.almostrealism.resource.Resource;
+import io.flowtree.job.Job;
+import io.flowtree.job.JobFactory;
+import org.almostrealism.physics.Clock;
+import org.almostrealism.primitives.AbsorptionPlane;
+import org.almostrealism.util.KeyUtils;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import com.almostrealism.primitives.AbsorptionPlane;
-import io.almostrealism.resource.Resource;
-import org.almostrealism.physics.Clock;
-import org.almostrealism.util.KeyUtils;
-import org.xml.sax.SAXException;
-
-import com.almostrealism.physics.AbsorberSet;
-import com.almostrealism.physics.DefaultPhotonField;
-import com.almostrealism.util.FileLoader;
-
-import io.flowtree.job.Job;
-import io.flowtree.job.JobFactory;
-
 // TODO  Since both JobFactory and Job now require a getCompletableFuture, this class will have to be separated
 public class PhotonFieldJob implements JobFactory, Job {
 	public static double verbose = Math.pow(10.0, -3.0);
 	
-	private List running;
+	private final List running;
 	
 	private int tot;
 	private String taskid;
@@ -53,7 +51,7 @@ public class PhotonFieldJob implements JobFactory, Job {
 	
 	private boolean local;
 
-	private CompletableFuture<Void> future = new CompletableFuture<>();
+	private final CompletableFuture<Void> future = new CompletableFuture<>();
 	
 	public PhotonFieldJob() {
 		this.running = new ArrayList();
@@ -72,25 +70,24 @@ public class PhotonFieldJob implements JobFactory, Job {
 	}
 	
 	public String encode() {
-		StringBuffer b = new StringBuffer();
+
+		String b = this.getClass().getName() +
+				":id=" +
+				this.taskid +
+				":file=" +
+				this.file +
+				":tick=" +
+				this.tick +
+				":index=" +
+				this.index +
+				":tot=" +
+				this.tot +
+				":out=" +
+				this.outDir +
+				":lifetime=" +
+				this.lifetime;
 		
-		b.append(this.getClass().getName());
-		b.append(":id=");
-		b.append(this.taskid);
-		b.append(":file=");
-		b.append(this.file);
-		b.append(":tick=");
-		b.append(this.tick);
-		b.append(":index=");
-		b.append(this.index);
-		b.append(":tot=");
-		b.append(this.tot);
-		b.append(":out=");
-		b.append(this.outDir);
-		b.append(":lifetime=");
-		b.append(this.lifetime);
-		
-		return b.toString();
+		return b;
 	}
 
 	@Override
@@ -148,7 +145,7 @@ public class PhotonFieldJob implements JobFactory, Job {
 			
 			if (o instanceof AbsorptionPlane) {
 				plane = (AbsorptionPlane) o;
-				break w;
+				break;
 			}
 		}
 		

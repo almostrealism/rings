@@ -16,16 +16,15 @@
 
 package org.almostrealism.sound.util;
 
-import java.awt.BorderLayout;
-
-import javax.sound.sampled.SourceDataLine;
-import javax.swing.JFrame;
-
 import org.almostrealism.audio.line.LineUtilities;
 import org.almostrealism.audio.line.SourceDataOutputLine;
 import org.almostrealism.sound.Sample;
 import org.almostrealism.sound.SampleRowColumnDisplay;
 import org.almostrealism.sound.SampleRowDisplay;
+
+import javax.sound.sampled.SourceDataLine;
+import javax.swing.*;
+import java.awt.*;
 
 public class SampleDisplayUtilities {
 	public static void showSplit(Sample s) {

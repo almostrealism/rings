@@ -16,19 +16,7 @@
 
 package org.almostrealism.swing.panels;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.table.TableCellEditor;
-
+import io.almostrealism.relation.Editable;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.swing.DynamicDisplay;
@@ -36,7 +24,14 @@ import org.almostrealism.swing.dialogs.EditRGBDialog;
 import org.almostrealism.swing.dialogs.EditVectorDialog;
 import org.almostrealism.texture.GraphicsConverter;
 import org.almostrealism.texture.ImageTexture;
-import io.almostrealism.relation.Editable;
+
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 // TODO  Add support for File objects.
@@ -68,7 +63,7 @@ public class ExtendedCellEditor extends DefaultCellEditor implements TableCellEd
 		    try {
 		        return new URL(this.field.getText());
 		    } catch (MalformedURLException murl) {
-		        return (URL)this.currentValue;
+		        return this.currentValue;
 		    }
 		} else if (this.currentValue instanceof Editable.Selection) {
 			((Editable.Selection)this.currentValue).setSelected(this.combo.getSelectedIndex());
@@ -94,7 +89,7 @@ public class ExtendedCellEditor extends DefaultCellEditor implements TableCellEd
 				if (this.currentValueType.equals(Double.class))
 					return new Double((String)value);
 				else if (this.currentValueType.equals(Boolean.class))
-					return new Boolean((String)value);
+					return Boolean.valueOf((String) value);
 				else
 					return null;
 			} else {
@@ -147,7 +142,7 @@ public class ExtendedCellEditor extends DefaultCellEditor implements TableCellEd
 		//	DefaultCellEditor editor = new DefaultCellEditor(new JCheckBox());
 		//	return editor.getTableCellEditorComponent(table, value, isSelected, row, column);
 		} else if (this.currentValue instanceof URL) {
-		    this.field = new JTextField(((URL)this.currentValue).toString());
+		    this.field = new JTextField(this.currentValue.toString());
 		    return this.field;
 		} else if (this.currentValue instanceof Editable.Selection) {
 			this.combo = new JComboBox(((Editable.Selection)this.currentValue).getOptions());

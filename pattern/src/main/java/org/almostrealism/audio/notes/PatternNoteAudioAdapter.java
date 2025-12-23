@@ -48,14 +48,14 @@ public abstract class PatternNoteAudioAdapter implements
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel, double noteDuration,
-												  Factor<PackedCollection<?>> automationLevel,
+	public Producer<PackedCollection> getAudio(KeyPosition<?> target, int channel, double noteDuration,
+												  Factor<PackedCollection> automationLevel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		return computeAudio(target, channel, noteDuration, automationLevel, audioSelection);
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel,
+	public Producer<PackedCollection> getAudio(KeyPosition<?> target, int channel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() != null) {
 			warn("Loading audio from delegate without note duration, filter will be skipped");
@@ -65,9 +65,9 @@ public abstract class PatternNoteAudioAdapter implements
 		return getProvider(target, audioSelection).getAudio(target, channel, audioSelection);
 	}
 
-	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, int channel,
+	protected Producer<PackedCollection> computeAudio(KeyPosition<?> target, int channel,
 														 double noteDuration,
-														 Factor<PackedCollection<?>> automationLevel,
+														 Factor<PackedCollection> automationLevel,
 														 DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() == null) {
 			PatternNoteAudio p = getProvider(target, audioSelection);

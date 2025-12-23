@@ -16,25 +16,25 @@
 
 package org.almostrealism.remote.ops;
 
+import io.grpc.stub.StreamObserver;
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.remote.RemoteAccessKey;
 import org.almostrealism.remote.api.Generation;
 import org.almostrealism.remote.api.GeneratorGrpc;
-import io.grpc.stub.StreamObserver;
-import org.almostrealism.audio.data.WaveData;
 
 public class GenerateRequestor implements StreamObserver<Generation.Output> {
-	private RemoteAccessKey key;
-	private GeneratorGrpc.GeneratorStub generator;
+	private final RemoteAccessKey key;
+	private final GeneratorGrpc.GeneratorStub generator;
 	private StreamObserver<Generation.GeneratorRequest> requestStream;
-	private Runnable end;
+	private final Runnable end;
 
-	private WaveDataAccumulator accumulator;
+	private final WaveDataAccumulator accumulator;
 
 	public GenerateRequestor(RemoteAccessKey key, GeneratorGrpc.GeneratorStub generator, Receiver deliver, Runnable end) {
 		this.key = key;
 		this.generator = generator;
 		this.accumulator = new WaveDataAccumulator((id, data) -> {
-			String k[] = id.split(":");
+			String[] k = id.split(":");
 			deliver.receive(k[0], Integer.parseInt(k[1]), data);
 		});
 		this.end = end;

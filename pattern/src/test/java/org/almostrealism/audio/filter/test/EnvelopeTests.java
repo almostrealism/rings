@@ -56,7 +56,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 		EnvelopeSection env = envelope(attack(c(attack)));
 
-		PackedCollection<?> data = new PackedCollection<>(4 * 44100);
+		PackedCollection data = new PackedCollection(4 * 44100);
 		data = c(p(data.traverseEach())).add(c(1.0)).get().evaluate();
 
 		new WaveData(data, 44100)
@@ -77,7 +77,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 				.andThenRelease(c(duration), c(sustain), c(release), c(0.0));
 
 
-		PackedCollection<?> data = new PackedCollection<>(10 * 44100);
+		PackedCollection data = new PackedCollection(10 * 44100);
 		data = c(p(data.traverseEach())).add(c(1.0)).get().evaluate();
 
 		new WaveData(data, 44100)
@@ -100,7 +100,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 				.andThenRelease(c(d1), c(v2), c(d2).subtract(c(d1)), c(v3));
 
 
-		PackedCollection<?> data = new PackedCollection<>(7 * 44100);
+		PackedCollection data = new PackedCollection(7 * 44100);
 		data = c(p(data.traverseEach())).add(c(1.0)).get().evaluate();
 
 		new WaveData(data, 44100)
@@ -118,7 +118,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		EnvelopeSection env = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
 
 		TimeCell clock = new TimeCell();
-		Producer<PackedCollection<?>> freq = frames(clock.frame(), () -> env.get().getResultant(c(1000)));
+		Producer<PackedCollection> freq = frames(clock.frame(), () -> env.get().getResultant(c(1000)));
 
 		WaveData audio = WaveData.load(new File(TEST_INPUT));
 		cells(1, i -> audio.toCell(clock))
@@ -142,14 +142,14 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 		EnvelopeSection envelope = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
 
-		PackedCollection<?> data = new PackedCollection<>((int) (duration * sampleRate));
+		PackedCollection data = new PackedCollection((int) (duration * sampleRate));
 		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
 		data = new WaveData(data, sampleRate).sample(0, envelope).getChannelData(0);
 
 		MultiOrderFilter filter =
 				lowPass(p(audio.getChannelData(0)), cp(data.traverse(0)), audio.getSampleRate(), filterOrder);
 
-		PackedCollection<?> result = filter.get().evaluate();
+		PackedCollection result = filter.get().evaluate();
 		new WaveData(result, sampleRate)
 				.save(new File("results/adsr-multi-order-filter.wav"));
 	}
@@ -169,14 +169,14 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 		EnvelopeSection envelope = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
 
-		PackedCollection<?> data = new PackedCollection<>((int) (duration * sampleRate));
+		PackedCollection data = new PackedCollection((int) (duration * sampleRate));
 		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
 		data = new WaveData(data, sampleRate).sample(-1, envelope).getChannelData(0);
 
 		MultiOrderFilter filter =
 				lowPass(p(audio.getChannelData(0)), cv(shape(maxFrames), 0), audio.getSampleRate(), filterOrder);
 
-		PackedCollection<?> result = new PackedCollection<>(shape(frames)).traverse(1);
+		PackedCollection result = new PackedCollection(shape(frames)).traverse(1);
 		filter.get().into(result).evaluate(data);
 		new WaveData(result, sampleRate)
 				.save(new File("results/adsr-multi-order-filter-args1.wav"));
@@ -197,7 +197,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 		EnvelopeSection envelope = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
 
-		PackedCollection<?> data = new PackedCollection<>((int) (duration * sampleRate));
+		PackedCollection data = new PackedCollection((int) (duration * sampleRate));
 		data = c(p(data.traverseEach())).add(c(1000.0)).get().evaluate();
 		data = new WaveData(data, sampleRate).sample(0, envelope).getChannelData(0);
 
@@ -208,7 +208,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 						cv(shape(-1, maxFrames), 1),
 						audio.getSampleRate(), filterOrder);
 
-		PackedCollection<?> result = new PackedCollection<>(shape(frames)).traverse(1);
+		PackedCollection result = new PackedCollection(shape(frames)).traverse(1);
 		filter.get().into(result).evaluate(audio.getChannelData(0).traverse(inputAxis), data);
 		new WaveData(result, sampleRate)
 				.save(new File("results/adsr-multi-order-filter-args2.wav"));
@@ -228,14 +228,14 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		int frames = audio.getFrameCount();
 
 		EnvelopeSection envelope = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
-		Producer<PackedCollection<?>> env =
+		Producer<PackedCollection> env =
 				sampling(sampleRate, duration, () -> envelope.get().getResultant(c(1000)));
 
-		PackedCollection<?> coeff = new PackedCollection<>(shape(frames, filterOrder + 1));
+		PackedCollection coeff = new PackedCollection(shape(frames, filterOrder + 1));
 		lowPassCoefficients(env, audio.getSampleRate(), filterOrder)
 				.get().into(coeff.traverse(1)).evaluate();
 
-		PackedCollection<?> result = new PackedCollection<>(shape(frames)).traverse(1);
+		PackedCollection result = new PackedCollection(shape(frames)).traverse(1);
 
 		MultiOrderFilter filter = MultiOrderFilter.create(v(shape(maxFrames), 0),
 				v(shape(1, filterOrder + 1).traverse(1), 1));
@@ -284,7 +284,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 
 		EnvelopeSection env = envelope(c(duration), c(attack), c(decay), c(sustain), c(release));
 
-		PackedCollection<?> data = new PackedCollection<>(10 * 44100);
+		PackedCollection data = new PackedCollection(10 * 44100);
 		data = c(p(data.traverseEach())).add(c(1.0)).get().evaluate();
 
 		new WaveData(data, 44100)
@@ -296,7 +296,7 @@ public class EnvelopeTests implements CellFeatures, EnvelopeFeatures {
 		VolumeEnvelopeExtraction extraction = new VolumeEnvelopeExtraction();
 
 		WaveData audio = WaveData.load(new File("Library/Snare Gold 1.wav"));
-		PackedCollection<?> envelope = extraction
+		PackedCollection envelope = extraction
 				.filter(audio.getBufferDetails(), null, cp(audio.getChannelData(0))).evaluate();
 		new WaveData(envelope, audio.getSampleRate())
 				.save(new File("results/extract-envelope.wav"));

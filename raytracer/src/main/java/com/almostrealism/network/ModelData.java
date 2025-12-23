@@ -16,18 +16,18 @@
 
 package com.almostrealism.network;
 
+import io.almostrealism.resource.IOStreams;
+import org.almostrealism.algebra.Gradient;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.io.DecodePostProcessing;
+import org.almostrealism.space.Mesh;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.ShadableSurfaceWrapper;
+
 import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.almostrealism.io.DecodePostProcessing;
-import io.almostrealism.resource.IOStreams;
-import org.almostrealism.algebra.Gradient;
-import org.almostrealism.space.Mesh;
-import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.space.ShadableSurfaceWrapper;
 
 /**
  * @author  Michael Murray
@@ -61,7 +61,7 @@ public class ModelData {
 			Scene scene = (Scene) decoder.readObject();
 			
 			if (!ui) {
-				Gradient sr[] = scene.getSurfaces();
+				Gradient[] sr = scene.getSurfaces();
 				
 				for (int i = 0; i < sr.length; i++)
 					if (sr[i] instanceof ShadableSurfaceWrapper)
@@ -86,7 +86,7 @@ public class ModelData {
 
 			return scene;
 		} else if (encoding == FileDecoder.RAWEncoding) {
-			if (ui == true) {
+			if (ui) {
 				System.out.println("FileDecoder: UI mode no longer supported.");
 			}
 
@@ -95,7 +95,7 @@ public class ModelData {
 			RawResource.SceneReader reader = new RawResource.SceneReader();
 			return reader.transcode(r).getScene();
 		} else if (encoding == GTSEncoding) {
-			if (ui == true) {
+			if (ui) {
 				System.out.println("FileDecoder: UI mode no longer supported.");
 				//				AbstractSurfaceUI sr[] = {SurfaceUIFactory.createSurfaceUI(m)};
 				//				sr[0].setName("Mesh (" + m.getTriangles().length + " Triangles)");
@@ -108,7 +108,7 @@ public class ModelData {
 			if (s instanceof Mesh) reader.setInitialMesh((Mesh) s);
 			return new Scene(new ShadableSurface[] { reader.transcode(r).getMesh() });
 		} else if (encoding == PLYEncoding) {
-			if (ui == true) {
+			if (ui) {
 				System.out.println("SpatialData: UI mode no longer supported.");
 				//				AbstractSurfaceUI sr[] = {SurfaceUIFactory.createSurfaceUI(m)};
 				//				sr[0].setName("Mesh (" + m.getTriangles().length + " Triangles)");

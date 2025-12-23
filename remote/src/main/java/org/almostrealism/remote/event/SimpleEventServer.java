@@ -20,9 +20,9 @@ import com.sun.net.httpserver.HttpServer;
 import org.almostrealism.io.ConsoleFeatures;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class SimpleEventServer implements ConsoleFeatures {

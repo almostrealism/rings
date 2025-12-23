@@ -32,12 +32,12 @@ public class PatternLayerSeeds implements ConsoleFeatures {
 
 	private double position;
 	private double granularity;
-	private double minScale;
-	private double maxScale;
+	private final double minScale;
+	private final double maxScale;
 	private double bias;
 
-	private NoteAudioChoice choice;
-	private ParameterSet params;
+	private final NoteAudioChoice choice;
+	private final ParameterSet params;
 
 	public PatternLayerSeeds() {
 		this(0, 1.0, 0.0625, 64.0, 0.0, null, null);

@@ -3,12 +3,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<groupId>com.almostrealism</groupId>
+	<artifactId>rings</artifactId>
+	<version>0.43</version>
+
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 
-		<common.version>0.71</common.version>
-		<flowtree.version>0.27</flowtree.version>
+		<common.version>0.72</common.version>
+		<flowtree.version>0.28</flowtree.version>
 
 		<grpc.version>1.53.0</grpc.version>
 		<protobuf.version>3.21.7</protobuf.version>
@@ -18,32 +22,28 @@
 		<javafx.classifier>mac-aarch64</javafx.classifier>
 	</properties>
 
-	<groupId>com.almostrealism</groupId>
-	<artifactId>rings</artifactId>
-	<version>0.42</version>
-
 	<modules>
-		<module>audio</module>
 		<module>pattern</module>
 		<module>audio-space</module>
-		<module>visual</module>
-		<module>shading</module>
+
 		<module>treeview</module>
 		<module>swing</module>
-		<module>visual-space</module>
-		<module>absorption</module>
 		<module>gl</module>
 		<module>raytracer</module>
 		<module>photonfield</module>
 		<module>replicate</module>
+
 		<module>rings</module>
 		<module>tensorflow</module>
 		<module>torch</module>
 		<module>keyframing</module>
 		<module>rings-ml</module>
-		<module>remote</module>
-		<module>remote-server</module>
 		<module>generate</module>
+
+		<module>remote</module>
+		<module>spatial</module>
+
+		<module>remote-server</module>
 	</modules>
 
 	<packaging>pom</packaging>
@@ -53,7 +53,7 @@
 			<dependency>
 				<groupId>com.almostrealism</groupId>
 				<artifactId>ar-treeview</artifactId>
-				<version>0.42</version>
+				<version>0.43</version>
 			</dependency>
 
 			<dependency>
@@ -89,6 +89,18 @@
 			<dependency>
 				<groupId>org.almostrealism</groupId>
 				<artifactId>ar-utils</artifactId>
+				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-render</artifactId>
+				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-audio</artifactId>
 				<version>${common.version}</version>
 			</dependency>
 
@@ -133,19 +145,13 @@
 			<dependency>
 				<groupId>org.jogamp.gluegen</groupId>
 				<artifactId>gluegen-rt-main</artifactId>
-				<version>2.3.2</version>
+				<version>2.5.0</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.jogamp.jogl</groupId>
 				<artifactId>jogl-all-main</artifactId>
-				<version>2.3.2</version>
-			</dependency>
-
-			<dependency>
-				<groupId>commons-codec</groupId>
-				<artifactId>commons-codec</artifactId>
-				<version>1.16.1</version>
+				<version>2.5.0</version>
 			</dependency>
 
 			<dependency>
@@ -210,6 +216,22 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.2.5</version>
+					<configuration>
+						<!-- Timeout in seconds for forked test processes (2 minutes default) -->
+						<forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
 	<distributionManagement>
 		<repository>
 			<id>github</id>
@@ -224,11 +246,16 @@
 			<url>https://maven.google.com/</url>
 		</repository>
 
-<!--		<repository>-->
-<!--			<id>almostrealism</id>-->
-<!--			<url>https://maven.pkg.github.com/almostrealism/common</url>-->
-<!--			<releases><enabled>true</enabled></releases>-->
-<!--			<snapshots><enabled>true</enabled></snapshots>-->
-<!--		</repository>-->
+		<repository>
+			<id>jogamp</id>
+			<url>https://jogamp.org/deployment/maven/</url>
+		</repository>
+
+		<repository>
+			<id>almostrealism-common</id>
+			<url>https://maven.pkg.github.com/almostrealism/common</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>true</enabled></snapshots>
+		</repository>
 	</repositories>
 </project>

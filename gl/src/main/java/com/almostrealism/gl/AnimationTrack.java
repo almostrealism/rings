@@ -28,7 +28,7 @@ public class AnimationTrack {
 	 * Five parameters of src[5] and dest[5]:
 	 * eyeX, eyeY, eyeZ, viewAngle, viewHeightOffs
 	 */
-	public short src[], dest[];
+	public short[] src, dest;
 	public int dist;     // if >0, cam rotates around eye xy on dist * 0.1
 	public int len;      // length multiplier
 
@@ -37,14 +37,14 @@ public class AnimationTrack {
 		dest = new short[5];
 	}
 
-	public AnimationTrack(short s[], short d[], int dx, int l) {
+	public AnimationTrack(short[] s, short[] d, int dx, int l) {
 		src = s;
 		dest = d;
 		dist = dx;
 		len = l;
 	}
 
-	public static AnimationTrack tracks[] =
+	public static AnimationTrack[] tracks =
 			{
 //      new AnimationTrack( new short[] { 4500, 2700, 100, 70, -30 }, new short[] { 50, 50, -90, -100, 0 }, 20, 1 ),
 //      new AnimationTrack( new short[] { -1448, 4294, 25, 363, 0 }, new short[] { -136, 202, 125, -98, 100 }, 0, 1 ),

@@ -18,13 +18,46 @@ package com.almostrealism.renderable;
 
 import com.almostrealism.gl.DefaultGLCanvas;
 import com.almostrealism.gl.GLDriver;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.algebra.Vector;
 
 public class SuperShape extends GLSpatial {
+
+	/**
+	 * Supershape function based on Paul Bourke's formula.
+	 * params[offset+0] = m, params[offset+1] = a, params[offset+2] = b,
+	 * params[offset+3] = n1, params[offset+4] = n2, params[offset+5] = n3
+	 */
+	private static float ssFunc(float t, float[] p, int offset) {
+		float m = p[offset];
+		float a = p[offset + 1];
+		float b = p[offset + 2];
+		float n1 = p[offset + 3];
+		float n2 = p[offset + 4];
+		float n3 = p[offset + 5];
+
+		double r;
+		double t1 = Math.cos(m * t / 4) / a;
+		t1 = Math.abs(t1);
+		t1 = Math.pow(t1, n2);
+
+		double t2 = Math.sin(m * t / 4) / b;
+		t2 = Math.abs(t2);
+		t2 = Math.pow(t2, n3);
+
+		r = Math.pow(t1 + t2, 1 / n1);
+		if (Math.abs(r) == 0) {
+			return 0;
+		}
+		r = 1 / r;
+		return (float) r;
+	}
+
+	private static float ssFunc(float t, float[] p) {
+		return ssFunc(t, p, 0);
+	}
 	public static final int PARAMS = 15;
 
-	public static final float sParams[][] =
+	public static final float[][] sParams =
 			{
 					// m  a     b     n1      n2     n3     m     a     b     n1     n2      n3   res1 res2 scale  (org.res1,res2)
 					new float[]{10, 1, 2, 90, 1, -45, 8, 1, 1, -1, 1, -0.4f, 20, 30, 2}, // 40, 60
@@ -75,10 +108,10 @@ public class SuperShape extends GLSpatial {
 				float p2 = (float) (-Math.PI / 2 + (params.latitude + 1) * 2 * Math.PI / params.resol2);
 				float r0, r1, r2, r3;
 
-				r0 = Scalar.ssFunc(t1, params.params);
-				r1 = Scalar.ssFunc(p1, params.params, 6);
-				r2 = Scalar.ssFunc(t2, params.params);
-				r3 = Scalar.ssFunc(p2, params.params, 6);
+				r0 = ssFunc(t1, params.params);
+				r1 = ssFunc(p1, params.params, 6);
+				r2 = ssFunc(t2, params.params);
+				r3 = ssFunc(p2, params.params, 6);
 
 				if (r0 != 0 && r1 != 0 && r2 != 0 && r3 != 0) {
 					Vector pa = new Vector(), pb = new Vector(), pc = new Vector(), pd = new Vector();
@@ -140,7 +173,7 @@ public class SuperShape extends GLSpatial {
 						 	i < (params.currentVertex + 6) * DefaultGLCanvas.cComps;
 						 	i += DefaultGLCanvas.cComps) {
 						int j;
-						float color[] = new float[3];
+						float[] color = new float[3];
 						for (j = 0; j < 3; ++j) {
 							color[j] = (float) (ca * params.baseColor[j]);
 							if (color[j] > 1.0f) color[j] = 1.0f;
@@ -202,7 +235,7 @@ public class SuperShape extends GLSpatial {
 	}
 
 	public static class SuperShapeParams {
-		float params[];
+		float[] params;
 		int resol1;
 		int resol2;
 		// latitude 0 to pi/2 for no mirrored bottom
@@ -213,11 +246,11 @@ public class SuperShape extends GLSpatial {
 		int latitudeCount = latitudeEnd - latitudeBegin;
 		int triangleCount = longitudeCount * latitudeCount * 2;
 		int vertices = triangleCount * 3;
-		float baseColor[] = new float[3];
+		float[] baseColor = new float[3];
 		int a, longitude, latitude;
 		int currentVertex, currentQuad;
 
-		public SuperShapeParams(float params[]) {
+		public SuperShapeParams(float[] params) {
 			this.params = params;
 			resol1 = (int) params[SuperShape.PARAMS - 3];
 			resol2 = (int) params[SuperShape.PARAMS - 2];

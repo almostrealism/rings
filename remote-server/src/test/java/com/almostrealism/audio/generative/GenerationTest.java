@@ -17,18 +17,18 @@
 package com.almostrealism.audio.generative;
 
 import com.almostrealism.remote.AccessManager;
-import org.almostrealism.audio.notes.NoteAudio;
-import org.almostrealism.remote.RemoteAccessKey;
 import com.almostrealism.remote.RemoteGenerationServer;
-import org.almostrealism.remote.RemoteGenerationProvider;
 import com.almostrealism.remote.mgr.DefaultAccessManager;
 import com.almostrealism.remote.mgr.ManagerDatabase;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.audio.generative.LocalResourceManager;
+import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.audio.notes.NoteAudioChoice;
+import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.audio.pattern.NoteAudioChoiceList;
 import org.almostrealism.audioml.DiffusionGenerationProvider;
-import org.almostrealism.audio.generative.LocalResourceManager;
+import org.almostrealism.remote.RemoteAccessKey;
+import org.almostrealism.remote.RemoteGenerationProvider;
 import org.almostrealism.util.KeyUtils;
 import org.junit.Test;
 

@@ -6,16 +6,20 @@
 	<parent>
 		<groupId>com.almostrealism</groupId>
 		<artifactId>rings</artifactId>
-		<version>0.42</version>
+		<version>0.43</version>
 	</parent>
 
 	<artifactId>ar-pattern</artifactId>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.almostrealism</groupId>
+			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-audio</artifactId>
-			<version>0.42</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
 		<dependency>

@@ -143,7 +143,7 @@ public class PatternElementFactory implements ConsoleFeatures {
 		while (note > 1) note -= 1;
 		if (note < 0.0) return Optional.empty();
 
-		double noteLayers[] =
+		double[] noteLayers =
 				IntStream.range(0, getNoteFactory().getLayerCount())
 						.mapToDouble(i -> noteLayerSelections.get(i).apply(params, pos, scale))
 						.map(i -> i + bias)

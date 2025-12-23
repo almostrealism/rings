@@ -16,14 +16,14 @@
 
 package com.almostrealism.gl;
 
-import io.almostrealism.expression.Expression;
-import org.almostrealism.projection.OrthographicCamera;
 import com.almostrealism.renderable.Renderable;
 import com.almostrealism.renderable.RenderableSurfaceFactory;
+import io.almostrealism.expression.Expression;
 import io.almostrealism.lang.CodePrintWriter;
 import org.almostrealism.color.RGBA;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.projection.OrthographicCamera;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.List;
 public class GLScene extends ArrayList<Renderable> implements Renderable {
 	public static final boolean verbose = false;
 
-	private static String VERTEX_SHADER = "    precision mediump float;\n" +
+	private static final String VERTEX_SHADER = "    precision mediump float;\n" +
 			"\n" +
 			"    attribute vec3 pos;\n" +
 			"    attribute vec3 normal;\n" +
@@ -75,8 +75,8 @@ public class GLScene extends ArrayList<Renderable> implements Renderable {
 			"      gl_FragColor = vec4(col, 1.0);\n" +
 			"    }";
 
-	private Scene<ShadableSurface> scene;
-	private List<ShadableSurface> added;
+	private final Scene<ShadableSurface> scene;
+	private final List<ShadableSurface> added;
 
 	public GLScene(Scene<ShadableSurface> s) {
 		this.scene = s;

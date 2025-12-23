@@ -14,6 +14,8 @@ audio/Population.xml
 audio-space/results/**
 audio-space/Library/**
 
+raytracer/results/**
+
 results/**
 health/**
 pattern-factory.json

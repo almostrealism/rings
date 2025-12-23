@@ -16,6 +16,28 @@
 
 package com.almostrealism.photon.xml;
 
+import org.almostrealism.color.buffer.AveragedVectorMap2D;
+import org.almostrealism.physics.BufferListener;
+import org.almostrealism.color.buffer.ColorBuffer;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.physics.AbsorberSet;
+import com.almostrealism.raytracer.Settings;
+import io.almostrealism.uml.Nameable;
+import org.almostrealism.CodeFeatures;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.RGB;
+import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.Volume;
+import org.almostrealism.texture.ImageCanvas;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.swing.JFormattedTextField;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridLayout;
@@ -28,38 +50,16 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JFormattedTextField;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-
-import io.almostrealism.uml.Nameable;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.color.RGB;
-import org.almostrealism.physics.Absorber;
-import org.almostrealism.space.Volume;
-import org.almostrealism.texture.ImageCanvas;
-import org.almostrealism.CodeFeatures;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import com.almostrealism.physics.AbsorberHashSet;
-import com.almostrealism.physics.AbsorberSet;
-import com.almostrealism.buffers.AveragedVectorMap2D;
-import com.almostrealism.buffers.BufferListener;
-import com.almostrealism.buffers.ColorBuffer;
-import com.almostrealism.raytracer.Settings;
-
 public class AbsorberSetNode extends Node implements BufferListener, CodeFeatures {
 	public static int bufferDisplayDim = 100;
 	
 	public static class PositionPanel extends JPanel {
-		private JFormattedTextField xField, yField, zField;
-		private double value[];
+		private final JFormattedTextField xField;
+		private final JFormattedTextField yField;
+		private final JFormattedTextField zField;
+		private final double[] value;
 		
-		public PositionPanel(double value[]) {
+		public PositionPanel(double[] value) {
 			this.value = value;
 			
 			this.xField = new JFormattedTextField(Settings.decimalFormat);
@@ -87,9 +87,9 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 			this.yField.addFocusListener(listener);
 			this.zField.addFocusListener(listener);
 			
-			this.xField.setValue(new Double(value[0]));
-			this.yField.setValue(new Double(value[1]));
-			this.zField.setValue(new Double(value[2]));
+			this.xField.setValue(Double.valueOf(value[0]));
+			this.yField.setValue(Double.valueOf(value[1]));
+			this.zField.setValue(Double.valueOf(value[2]));
 			
 			super.add(new JLabel("X: "));
 			super.add(this.xField);
@@ -108,7 +108,9 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 	}
 	
 	public static class DimensionPanel extends JPanel {
-		private JFormattedTextField wField, hField, mField;
+		private final JFormattedTextField wField;
+		private final JFormattedTextField hField;
+		private final JFormattedTextField mField;
 		
 		public DimensionPanel(int w, int h, double m) {
 			this.wField = new JFormattedTextField(Settings.integerFormat);
@@ -119,9 +121,9 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 			this.hField.setColumns(6);
 			this.mField.setColumns(6);
 			
-			this.wField.setValue(new Integer(w));
-			this.hField.setValue(new Integer(h));
-			this.mField.setValue(new Double(m));
+			this.wField.setValue(Integer.valueOf(w));
+			this.hField.setValue(Integer.valueOf(h));
+			this.mField.setValue(Double.valueOf(m));
 			
 			super.add(new JLabel("W: "));
 			super.add(this.wField);
@@ -132,7 +134,7 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 		}
 		
 		public int[] getDimensions() {
-			int dim[] = new int[2];
+			int[] dim = new int[2];
 			dim[0] = ((Number)this.wField.getValue()).intValue();
 			dim[1] = ((Number)this.hField.getValue()).intValue();
 			return dim;
@@ -143,8 +145,13 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 		}
 	}
 	
-	private Hashtable absorbers, items, posPanels, dimPanels;
-	private Hashtable colorBufPanels, incBufPanels, exitBufPanels;
+	private final Hashtable absorbers;
+	private final Hashtable items;
+	private final Hashtable posPanels;
+	private final Hashtable dimPanels;
+	private final Hashtable colorBufPanels;
+	private final Hashtable incBufPanels;
+	private final Hashtable exitBufPanels;
 	
 	public AbsorberSetNode(AbsorberSet n) throws IntrospectionException,
 												IllegalArgumentException,
@@ -171,7 +178,7 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 		JInternalFrame frame = new JInternalFrame(name, true);
 		frame.getContentPane().setLayout(new BorderLayout());
 		
-		if (super.obj instanceof AbsorberHashSet == false)
+		if (!(super.obj instanceof AbsorberHashSet))
 			return frame;
 		
 		AbsorberHashSet set = (AbsorberHashSet) super.obj;
@@ -229,7 +236,7 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 			PositionPanel pp = (PositionPanel)this.posPanels.get(k);
 			
 			if (pp != null) {
-				double p[] = pp.getValue();
+				double[] p = pp.getValue();
 				e.setAttribute("x", String.valueOf(p[0]));
 				e.setAttribute("y", String.valueOf(p[1]));
 				e.setAttribute("z", String.valueOf(p[2]));
@@ -244,7 +251,7 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 			DimensionPanel dp = (DimensionPanel) this.dimPanels.get(k);
 			
 			if (dp != null) {
-				int dim[] = dp.getDimensions();
+				int[] dim = dp.getDimensions();
 				double m = dp.getScale();
 				
 				Element de = doc.createElement("call");
@@ -323,7 +330,7 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 				th = 0;
 			}
 			
-			if (d.getFrame() instanceof JInternalFrame == false) continue w;
+			if (!(d.getFrame() instanceof JInternalFrame)) continue w;
 			
 			JInternalFrame f = (JInternalFrame) d.getFrame();
 			f.setSize(w, h);
@@ -356,7 +363,7 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 	protected DimensionPanel getDimensionPanel(AbsorberHashSet.StoredItem it, Node n) {
 		if (this.dimPanels.containsKey(it)) return (DimensionPanel) this.dimPanels.get(it);
 		
-		int dim[] = it.getColorBufferDimensions();
+		int[] dim = it.getColorBufferDimensions();
 		double m = it.getColorBufferScale();
 		DimensionPanel panel = new DimensionPanel(dim[0], dim[1], m);
 		this.dimPanels.put(it, panel);
@@ -370,8 +377,8 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 		ImageCanvas c = (ImageCanvas) this.colorBufPanels.get(source);
 		if (c == null) return;
 		
-		c.setImageData((int) (u * this.bufferDisplayDim),
-						(int) (v * this.bufferDisplayDim),
+		c.setImageData((int) (u * bufferDisplayDim),
+						(int) (v * bufferDisplayDim),
 						target.getColorAt(u, v, front));
 		c.repaint();
 	}
@@ -380,10 +387,11 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 	public void updateExitanceBuffer(double u, double v, Volume<?> source, AveragedVectorMap2D target, boolean front) {
 		ImageCanvas c = (ImageCanvas) this.exitBufPanels.get(source);
 		if (c == null) return;
-		
-		double d = source.getNormalAt(vector(source.getSpatialCoords(new double[] {u, v})))
-							.get().evaluate().dotProduct(new Vector(target.getVector(u, v, front)));
-		
+
+		Vector normal = (Vector) source.getNormalAt(vector(source.getSpatialCoords(new double[] {u, v})))
+							.get().evaluate();
+		double d = normal.dotProduct(new Vector(target.getVector(u, v, front)));
+
 		c.setImageData((int) (u * AbsorberSetNode.bufferDisplayDim),
 						(int) (v * AbsorberSetNode.bufferDisplayDim),
 						new RGB(d, d, d));
@@ -394,10 +402,11 @@ public class AbsorberSetNode extends Node implements BufferListener, CodeFeature
 	public void updateIncidenceBuffer(double u, double v, Volume<?> source, AveragedVectorMap2D target, boolean front) {
 		ImageCanvas c = (ImageCanvas) this.incBufPanels.get(source);
 		if (c == null) return;
-		
-		double d = source.getNormalAt(vector(source.getSpatialCoords(new double[] {u, v})))
-							.get().evaluate().dotProduct(new Vector(target.getVector(u, v, front)));
-		
+
+		Vector normal = (Vector) source.getNormalAt(vector(source.getSpatialCoords(new double[] {u, v})))
+							.get().evaluate();
+		double d = normal.dotProduct(new Vector(target.getVector(u, v, front)));
+
 		c.setImageData((int) (u * AbsorberSetNode.bufferDisplayDim),
 						(int) (v * AbsorberSetNode.bufferDisplayDim),
 						new RGB(d, d, d));

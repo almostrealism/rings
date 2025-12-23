@@ -16,19 +16,17 @@
 
 package com.almostrealism.photon.ui.load;
 
-import io.almostrealism.tree.ui.ObjectTreeDisplay;
-
-import java.awt.Color;
-import java.util.Hashtable;
-
-import javax.swing.JFrame;
-
 import com.almostrealism.photon.ui.DefaultProbabilityDistributionConfigurationPanel;
 import com.almostrealism.photon.ui.DefaultProbabilityDistributionEditPanel;
 import com.almostrealism.photon.xml.ProbabilityDistributionDisplay;
+import io.almostrealism.tree.ui.ObjectTreeDisplay;
 import org.almostrealism.color.OverlayDistribution;
 import org.almostrealism.color.ProbabilityDistribution;
 import org.almostrealism.color.RangeSumDistribution;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Hashtable;
 
 /**
  * @author  Mike Murray
@@ -60,8 +58,8 @@ public class LoadPDFs extends TreeObjectLoader {
 		return d;
 	}
 	
-	public static void main(String args[]) {
-		ObjectTreeDisplay display = (ObjectTreeDisplay) new LoadPDFs().getUI();
+	public static void main(String[] args) {
+		ObjectTreeDisplay display = new LoadPDFs().getUI();
 		JFrame treeFrame = new JFrame("Spectrum Tree");
 		treeFrame.getContentPane().add(display);
 		treeFrame.setSize(450, 300);

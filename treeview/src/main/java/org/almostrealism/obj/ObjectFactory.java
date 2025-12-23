@@ -20,7 +20,7 @@ package org.almostrealism.obj;
  * @author  Mike Murray
  */
 public interface ObjectFactory {
-	public Object newInstance() throws InstantiationException, IllegalAccessException;
-	public Class getObjectType();
-	public Object overlay(Object values[]);
+	Object newInstance() throws InstantiationException, IllegalAccessException;
+	Class getObjectType();
+	Object overlay(Object[] values);
 }

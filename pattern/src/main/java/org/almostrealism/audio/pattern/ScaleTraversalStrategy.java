@@ -47,9 +47,9 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 			List<KeyPosition<?>> keys = new ArrayList<>();
 			context.getScaleForPosition().apply(actualPosition).forEach(keys::add);
 
-			Factor<PackedCollection<?>> automationLevel =
+			Factor<PackedCollection> automationLevel =
 					context.getAutomationLevel().apply(element.getAutomationParameters());
-			Factor<PackedCollection<?>> relativeAutomationLevel =
+			Factor<PackedCollection> relativeAutomationLevel =
 					time -> automationLevel.getResultant(c(actualTime).add(time));
 
 			if (!melodic) {
@@ -60,7 +60,7 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 				ElementVoicingDetails details =
 						audioContext.createVoicingDetails(melodic,
 								keys.get(0), relativePosition);
-				Producer<PackedCollection<?>> note =
+				Producer<PackedCollection> note =
 						element.getNoteAudio(
 								details, relativeAutomationLevel,
 								audioContext.getAudioSelection(),
@@ -69,13 +69,13 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 						context.frameForPosition(actualPosition)));
 			} else if (this == CHORD) {
 				p: for (double p : element.getScalePositions()) {
-					if (keys.isEmpty()) break p;
+					if (keys.isEmpty()) break;
 					int keyIndex = (int) (p * keys.size());
 
 					ElementVoicingDetails details =
 							audioContext.createVoicingDetails(melodic,
 								keys.get(keyIndex), relativePosition);
-					Producer<PackedCollection<?>> note =
+					Producer<PackedCollection> note =
 							element.getNoteAudio(
 									details, relativeAutomationLevel,
 									audioContext.getAudioSelection(),
@@ -93,7 +93,7 @@ public enum ScaleTraversalStrategy implements CodeFeatures, ConsoleFeatures {
 				ElementVoicingDetails details =
 						audioContext.createVoicingDetails(melodic,
 								keys.get(keyIndex), relativePosition);
-				Producer<PackedCollection<?>> note = element.getNoteAudio(
+				Producer<PackedCollection> note = element.getNoteAudio(
 							details, relativeAutomationLevel,
 							audioContext.getAudioSelection(),
 							context.getTimeForDuration());

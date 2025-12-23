@@ -89,6 +89,12 @@ public class AudioModel {
 		this.creativity = creativity;
 	}
 
+	public void addAudioCondition(String condition) {
+		if (audioConditions == null) audioConditions = new ArrayList<>();
+		if (audioConditions.contains(condition)) return;
+		audioConditions.add(condition);
+	}
+
 	public String conditionSummary(UnaryOperator<String> audioDescription) {
 		StringBuilder builder = new StringBuilder();
 

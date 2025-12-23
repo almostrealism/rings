@@ -26,7 +26,7 @@ public interface WebTreeNode<T> extends TreeNode, Iterable<T> {
 	 * children when children are already being mapped to a
 	 * JSON/XML field.
 	 */
-	public String getChildrenFieldName();
+	String getChildrenFieldName();
 	
-	public String getHREF();
+	String getHREF();
 }

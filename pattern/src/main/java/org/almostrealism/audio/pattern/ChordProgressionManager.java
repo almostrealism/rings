@@ -35,7 +35,7 @@ import java.util.stream.IntStream;
 public class ChordProgressionManager implements CodeFeatures {
 	public static final int MAX_SIZE = 64;
 
-	private ProjectedChromosome chromosome;
+	private final ProjectedChromosome chromosome;
 
 	private Scale<?> key;
 	private int chordDepth;
@@ -210,8 +210,9 @@ public class ChordProgressionManager implements CodeFeatures {
 	}
 
 	public class Region {
-		private double start, length;
-		private Scale<?> scale;
+		private final double start;
+		private final double length;
+		private final Scale<?> scale;
 
 		public Region(double start, double length, Scale<?> scale) {
 			this.start = start;
@@ -290,6 +291,6 @@ public class ChordProgressionManager implements CodeFeatures {
 	}
 
 	public enum ScaleType {
-		MAJOR, MINOR;
+		MAJOR, MINOR
 	}
 }

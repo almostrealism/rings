@@ -19,19 +19,17 @@ package com.almostrealism.network.test;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
 import org.almostrealism.algebra.Pair;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.AcceleratedComputationEvaluable;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class KernelizedIntersectionTest extends AbstractIntersectionTest {
-	public PackedCollection<Pair<?>> getInput() {
-		PackedCollection<Pair<?>> pixelLocations = Pair.bank(width * height);
+	public PackedCollection getInput() {
+		PackedCollection pixelLocations = Pair.bank(width * height);
 
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
-				Pair p = pixelLocations.get(j * width + i);
+				Pair p = new Pair(pixelLocations.get(j * width + i), 0);
 				p.setMem(new double[] { i, j });
 			}
 		}
@@ -41,12 +39,12 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 
 	@Test
 	public void intersectionKernel() {
-		Producer<PackedCollection<?>> combined = combined();
-		Evaluable<PackedCollection<?>> ev = combined.get();
+		Producer<PackedCollection> combined = combined();
+		Evaluable<PackedCollection> ev = combined.get();
 
-		PackedCollection<Pair<?>> input = getInput();
-		PackedCollection<Pair<?>> dim = bank(width * height, pair(width, height).get());
-		PackedCollection<Scalar> output = Scalar.scalarBank(input.getCount());
+		PackedCollection input = getInput();
+		PackedCollection dim = bank(width * height, pair(width, height).get());
+		PackedCollection output = new PackedCollection(input.getCount()).traverse(1);
 
 		System.out.println("KernelizedIntersectionTest: Invoking kernel...");
 		ev.into(output).evaluate(input, dim);
@@ -54,13 +52,13 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 		System.out.println("KernelizedIntersectionTest: Comparing...");
 		for (int i = 0; i < output.getCount(); i++) {
 			double value = ev.evaluate(input.get(i), dim.get(i)).toDouble();
-			Assert.assertEquals(value, output.get(i).getValue(), Math.pow(10, -10));
+			Assert.assertEquals(value, output.toDouble(i), Math.pow(10, -10));
 		}
 	}
 
 	@Deprecated
-	protected static PackedCollection<Pair<?>> bank(int count, Evaluable<Pair<?>> source) {
-		PackedCollection<Pair<?>> bank = Pair.bank(count);
+	protected static PackedCollection bank(int count, Evaluable<PackedCollection> source) {
+		PackedCollection bank = Pair.bank(count);
 		for (int i = 0; i < bank.getCount(); i++) {
 			bank.set(i, source.evaluate());
 		}

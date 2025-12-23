@@ -16,18 +16,6 @@
 
 package org.almostrealism.sound.test;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.IOException;
-
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-
 import org.almostrealism.audio.line.LineUtilities;
 import org.almostrealism.audio.line.SourceDataOutputLine;
 import org.almostrealism.sound.KeyBoardSampleDisplay;
@@ -35,8 +23,18 @@ import org.almostrealism.sound.Sample;
 import org.almostrealism.sound.SampleDisplayPane;
 import org.almostrealism.sound.util.SampleDisplayUtilities;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.IOException;
+
 public class SoundExperiment {
-	public static void main(String args[]) throws UnsupportedAudioFileException, IOException {
+	public static void main(String[] args) throws UnsupportedAudioFileException, IOException {
 		JFileChooser f = new JFileChooser();
 		f.showOpenDialog(null);
 		
@@ -58,7 +56,7 @@ public class SoundExperiment {
 		
 		System.out.println("Open");
 		
-		byte data[][] = new byte[(int) in.getFrameLength()][frameSize];
+		byte[][] data = new byte[(int) in.getFrameLength()][frameSize];
 		
 		for (int l = 0; l < in.getFrameLength(); l++) {
 			in.read(data[l]);

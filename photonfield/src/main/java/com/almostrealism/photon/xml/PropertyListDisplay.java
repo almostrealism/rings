@@ -16,23 +16,17 @@
 
 package com.almostrealism.photon.xml;
 
-import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Window;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 public class PropertyListDisplay implements NodeDisplay, ActionListener {
-	private Node node;
+	private final Node node;
 	private int width = 2, height = 0;
 	private Container container, frame;
-	private JPanel panel;
-	private GridBagConstraints cons;
+	private final JPanel panel;
+	private final GridBagConstraints cons;
 	
 	public PropertyListDisplay(Node n) {
 		this.node = n;
@@ -89,7 +83,7 @@ public class PropertyListDisplay implements NodeDisplay, ActionListener {
 		if (c != null) {
 			this.container.add(this.panel, args);
 			int i = 0;
-			while (c.getParent() instanceof Window == false && i++ < 5)
+			while (!(c.getParent() instanceof Window) && i++ < 5)
 				c = c.getParent();
 			this.setFrame(c);
 		}

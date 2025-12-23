@@ -28,9 +28,25 @@ public abstract class AudioPlayerBase implements AudioPlayer {
 	private List<String> stems;
 
 	protected AudioPlayerBase() {
-		this(null, null, null);
+		this(null, null);
 	}
 
+	/**
+	 * Creates an AudioPlayerBase with the specified file path and stems.
+	 *
+	 * @param file The file path
+	 * @param stems List of stem file paths for multi-track audio
+	 */
+	public AudioPlayerBase(String file, List<String> stems) {
+		this.file = file;
+		this.stems = stems;
+	}
+
+	/**
+	 * @deprecated URI support is no longer needed since FXMediaPlayer is deprecated.
+	 *             Use {@link #AudioPlayerBase(String, List)} instead.
+	 */
+	@Deprecated
 	public AudioPlayerBase(String file, String uri,
 						   List<String> stems) {
 		this.file = file;
@@ -38,10 +54,20 @@ public abstract class AudioPlayerBase implements AudioPlayer {
 		this.stems = stems;
 	}
 
+	/**
+	 * @deprecated URI support is no longer needed since FXMediaPlayer is deprecated.
+	 *             Audio is loaded via file path or WaveData.
+	 */
+	@Deprecated
 	public String getUri() {
 		return uri;
 	}
 
+	/**
+	 * @deprecated URI support is no longer needed since FXMediaPlayer is deprecated.
+	 *             Audio is loaded via file path or WaveData.
+	 */
+	@Deprecated
 	public void setUri(String uri) {
 		this.uri = uri;
 	}

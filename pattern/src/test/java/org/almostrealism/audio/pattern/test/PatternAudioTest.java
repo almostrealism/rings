@@ -17,7 +17,7 @@
 package org.almostrealism.audio.pattern.test;
 
 import io.almostrealism.relation.Evaluable;
-import org.almostrealism.audio.line.OutputLine;
+import io.almostrealism.relation.Factor;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterSet;
 import org.almostrealism.audio.data.WaveData;
@@ -25,6 +25,7 @@ import org.almostrealism.audio.filter.AudioProcessingUtils;
 import org.almostrealism.audio.filter.EnvelopeFeatures;
 import org.almostrealism.audio.filter.EnvelopeSection;
 import org.almostrealism.audio.filter.ParameterizedVolumeEnvelope;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.notes.NoteAudioProvider;
 import org.almostrealism.audio.notes.PatternNoteAudio;
 import org.almostrealism.audio.notes.PatternNoteAudioChoice;
@@ -34,7 +35,6 @@ import org.almostrealism.audio.notes.SimplePatternNote;
 import org.almostrealism.audio.tone.DefaultKeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
-import io.almostrealism.relation.Factor;
 import org.junit.Test;
 
 import java.io.File;
@@ -85,12 +85,12 @@ public class PatternAudioTest implements EnvelopeFeatures {
 
 	@Test
 	public void conditionalEnvelope() {
-		Factor<PackedCollection<?>> factor = in ->
+		Factor<PackedCollection> factor = in ->
 				greaterThanConditional(time(), c(1.0),
 						volume(c(0.5)).getResultant(in),
 						attack(c(0.5)).getResultant(in));
 
-		Evaluable<PackedCollection<?>> env =
+		Evaluable<PackedCollection> env =
 				sampling(OutputLine.sampleRate, AudioProcessingUtils.MAX_SECONDS,
 						() -> factor.getResultant(v(1, 0))).get();
 
@@ -99,8 +99,8 @@ public class PatternAudioTest implements EnvelopeFeatures {
 
 		PatternNoteLayer note = new PatternNoteLayer();
 		note = PatternNoteLayer.create(note, (audio, duration, automationLevel) -> () -> args -> {
-			PackedCollection<?> audioData = audio.get().evaluate();
-			PackedCollection<?> dr = duration.get().evaluate();
+			PackedCollection audioData = audio.get().evaluate();
+			PackedCollection dr = duration.get().evaluate();
 
 			return env.evaluate(audioData, dr);
 		});
@@ -115,9 +115,9 @@ public class PatternAudioTest implements EnvelopeFeatures {
 
 	@Test
 	public void envelopePassThrough() {
-		Factor<PackedCollection<?>> factor = envelope(attack(c(0.5)))
+		Factor<PackedCollection> factor = envelope(attack(c(0.5)))
 				.andThenDecay(c(0.5), c(1.0), c(0.0)).get();
-		Evaluable<PackedCollection<?>> env =
+		Evaluable<PackedCollection> env =
 				sampling(OutputLine.sampleRate, AudioProcessingUtils.MAX_SECONDS,
 					() -> factor.getResultant(v(1, 0))).get();
 
@@ -126,8 +126,8 @@ public class PatternAudioTest implements EnvelopeFeatures {
 
 		PatternNoteLayer note = new PatternNoteLayer();
 		note = PatternNoteLayer.create(note, (audio, duration, automationLevel) -> () -> args -> {
-			PackedCollection<?> audioData = audio.get().evaluate();
-			PackedCollection<?> dr = duration.get().evaluate();
+			PackedCollection audioData = audio.get().evaluate();
+			PackedCollection dr = duration.get().evaluate();
 
 			return env.evaluate(audioData, dr);
 		});

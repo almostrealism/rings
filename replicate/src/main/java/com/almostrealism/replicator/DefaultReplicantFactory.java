@@ -16,12 +16,12 @@
 
 package com.almostrealism.replicator;
 
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.geometry.BasicGeometry;
 import org.almostrealism.heredity.Chromosome;
 import org.almostrealism.heredity.Gene;
-import org.almostrealism.geometry.BasicGeometry;
-import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.CodeFeatures;
 
 public class DefaultReplicantFactory<S extends ShadableSurface> implements ReplicantFactory<Double, S>, CodeFeatures {
 	@Override

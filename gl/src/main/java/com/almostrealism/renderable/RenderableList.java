@@ -16,10 +16,10 @@
 
 package com.almostrealism.renderable;
 
-import java.util.ArrayList;
-
 import com.almostrealism.gl.GLDriver;
 import io.almostrealism.lang.CodePrintWriter;
+
+import java.util.ArrayList;
 
 public class RenderableList extends ArrayList<Renderable> implements Renderable {
 	@Override

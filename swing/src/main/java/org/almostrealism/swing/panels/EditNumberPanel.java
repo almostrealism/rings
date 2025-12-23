@@ -16,15 +16,12 @@
 
 package org.almostrealism.swing.panels;
 
-import java.awt.FlowLayout;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
+import java.awt.*;
 
 /** An EditNumberPanel object can be used to specify a number. */
 public class EditNumberPanel extends JPanel {
-  private JTextField numberField;
+  private final JTextField numberField;
 
 	/**
 	 * Consturcts an EditNumberPanel object labeled "Value" and initial value set to 0.0.
