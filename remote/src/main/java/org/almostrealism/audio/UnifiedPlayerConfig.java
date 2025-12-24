@@ -183,8 +183,6 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 
 		// Start the hardware line if it was stopped
 		direct.start();
-
-		log("Switched to DIRECT mode");
 	}
 
 	/**
