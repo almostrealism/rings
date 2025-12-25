@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>rings</artifactId>
 		<groupId>com.almostrealism</groupId>
-		<version>0.43</version>
+		<version>0.44</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -15,13 +15,13 @@
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-audio-space</artifactId>
-			<version>0.43</version>
+			<version>0.44</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-remote</artifactId>
-			<version>0.43</version>
+			<version>0.44</version>
 		</dependency>
 
 		<dependency>
