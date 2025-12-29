@@ -80,11 +80,6 @@ import java.util.Map;
 public class AudioStreamManager implements ConsoleFeatures {
 	public static final int PORT = 7799;
 
-	/**
-	 * Channel name reserved for direct hardware playback.
-	 */
-	public static final String DIRECT_CHANNEL = "direct";
-
 	public static double defaultLiveDuration = 180.0;
 
 	private final Map<String, BufferedAudioPlayer> players;
@@ -163,37 +158,6 @@ public class AudioStreamManager implements ConsoleFeatures {
 											 OutputLine inputRecord) {
 		players.put(channel, player);
 		return player.deliver(out, inputRecord);
-	}
-
-	/**
-	 * Adds a player for direct hardware playback using a {@link DelegatedAudioLine}
-	 * with a {@link SourceDataOutputLine} as the output delegate.
-	 * <p>
-	 * This creates a {@link BufferedAudioPlayer} connected directly to the system's
-	 * audio output device, bypassing the streaming server. The use of
-	 * {@link DelegatedAudioLine} allows future addition of an {@link InputLine} delegate
-	 * for audio input support.
-	 *
-	 * @param channel The channel name (use {@link #DIRECT_CHANNEL} for standard direct playback)
-	 * @param playerCount Number of audio sources this player can mix
-	 * @param inputRecord Optional output line for recording the mixed output
-	 * @return The created BufferedAudioPlayer
-	 * @throws IllegalStateException if no audio output line could be obtained
-	 */
-	public BufferedAudioPlayer addDirectPlayer(String channel, int playerCount,
-											   OutputLine inputRecord) {
-		OutputLine outputLine = LineUtilities.getLine();
-		if (outputLine == null) {
-			throw new IllegalStateException("Could not obtain audio output line");
-		}
-
-		// Wrap in DelegatedAudioLine for consistency and future input support
-		DelegatedAudioLine delegated = new DelegatedAudioLine(
-				null,  // No input delegate yet - can be added later
-				outputLine,
-				outputLine.getBufferSize());
-
-		return addPlayer(channel, playerCount, delegated, inputRecord);
 	}
 
 	/**

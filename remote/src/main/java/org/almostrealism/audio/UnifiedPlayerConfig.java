@@ -228,6 +228,32 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	}
 
 	/**
+	 * Resets the direct output line to recover from audio issues.
+	 * <p>
+	 * This method is useful when switching audio destinations (e.g., Bluetooth
+	 * devices) causes the SourceDataLine to enter a corrupted state. It closes
+	 * the current line and creates a new one with the same configuration.
+	 * <p>
+	 * This only affects direct mode. In DAW mode, this method has no effect
+	 * since the DAW manages its own audio output.
+	 *
+	 * @return true if the reset was performed, false if not in direct mode
+	 *         or no direct output exists
+	 */
+	public synchronized boolean resetOutputLine() {
+		if (activeMode != OutputMode.DIRECT || directOutput == null) {
+			log("Cannot reset output line: " +
+					(activeMode != OutputMode.DIRECT ? "not in direct mode" : "no direct output"));
+			return false;
+		}
+
+		log("Resetting direct output line...");
+		directOutput.reset();
+		log("Direct output line reset complete");
+		return true;
+	}
+
+	/**
 	 * Destroys all resources associated with this configuration.
 	 */
 	public void destroy() {
