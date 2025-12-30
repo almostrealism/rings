@@ -13,7 +13,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>io.flowtree</groupId>
+			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-flowtree</artifactId>
 		</dependency>
 

@@ -24,12 +24,12 @@
 		</dependency>
 
 		<dependency>
-			<groupId>io.flowtree</groupId>
+			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-graphpersist</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>io.flowtree</groupId>
+			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-flowtreeapi</artifactId>
 		</dependency>
 
