@@ -208,6 +208,7 @@ public class AudioStreamManager implements ConsoleFeatures {
 
 		BufferedOutputScheduler scheduler = player.deliver(delegatedLine, inputRecord);
 		schedulers.put(channel, scheduler);
+		config.setScheduler(scheduler);
 
 		// Set initial mode (this will set the appropriate output delegate)
 		if (initialMode == UnifiedPlayerConfig.OutputMode.DIRECT) {

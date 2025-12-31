@@ -16,6 +16,7 @@
 
 package org.almostrealism.audio;
 
+import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.audio.line.DelegatedAudioLine;
 import org.almostrealism.audio.line.LineUtilities;
 import org.almostrealism.audio.line.OutputLine;
@@ -62,6 +63,7 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	private SourceDataOutputLine directOutput;
 	private SharedMemoryAudioLine dawOutput;
 	private OutputMode activeMode;
+	private BufferedOutputScheduler scheduler;
 
 	/**
 	 * Creates a new unified player configuration.
@@ -225,6 +227,57 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 */
 	public boolean hasDawConnection() {
 		return dawOutput != null;
+	}
+
+	/**
+	 * Sets the scheduler for this configuration.
+	 * <p>
+	 * This should be called by {@link AudioStreamManager} after creating
+	 * the scheduler, since the scheduler is created after the config.
+	 *
+	 * @param scheduler the scheduler to associate with this config
+	 */
+	public void setScheduler(BufferedOutputScheduler scheduler) {
+		this.scheduler = scheduler;
+	}
+
+	/**
+	 * Returns the scheduler associated with this configuration.
+	 *
+	 * @return the scheduler, or null if not yet set
+	 */
+	public BufferedOutputScheduler getScheduler() {
+		return scheduler;
+	}
+
+	/**
+	 * Returns the buffer gap in frames between write and read positions.
+	 * <p>
+	 * Only meaningful in direct mode when the player is actively running.
+	 *
+	 * @return the buffer gap, or 0 if no scheduler is active
+	 */
+	public int getBufferGap() {
+		return scheduler != null ? scheduler.getBufferGap() : 0;
+	}
+
+	/**
+	 * Returns the buffer gap as a percentage of total buffer size.
+	 *
+	 * @return the buffer gap percentage (0.0-100.0)
+	 */
+	public double getBufferGapPercent() {
+		return scheduler != null ? scheduler.getBufferGapPercent() : 0.0;
+	}
+
+	/**
+	 * Returns whether the player is in degraded mode (unable to keep up
+	 * with real-time audio generation).
+	 *
+	 * @return true if in degraded mode
+	 */
+	public boolean isDegradedMode() {
+		return scheduler != null && scheduler.isDegradedMode();
 	}
 
 	/**
