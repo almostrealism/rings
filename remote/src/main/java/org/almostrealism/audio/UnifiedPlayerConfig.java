@@ -44,6 +44,7 @@ import org.almostrealism.io.ConsoleFeatures;
  * @see AudioStreamManager#createUnifiedPlayer
  * @see BufferedAudioPlayer
  */
+// TODO  This class is poorly named
 public class UnifiedPlayerConfig implements ConsoleFeatures {
 
 	/**
@@ -56,14 +57,13 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 		DAW
 	}
 
-	private final BufferedAudioPlayer player;
+	private final ScheduledOutputAudioPlayer scheduledPlayer;
 	private final DelegatedAudioLine outputLine;
 	private final OutputLine recordingLine;
 
 	private SourceDataOutputLine directOutput;
 	private SharedMemoryAudioLine dawOutput;
 	private OutputMode activeMode;
-	private BufferedOutputScheduler scheduler;
 
 	/**
 	 * Creates a new unified player configuration.
@@ -72,24 +72,31 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 * The caller must call {@link #setDirectMode()} or {@link #setDawMode()}
 	 * after construction to properly initialize the output delegate.
 	 *
-	 * @param player        the audio player instance
-	 * @param outputLine    the delegated audio line for output switching
-	 * @param recordingLine optional line for recording (may be null)
+	 * @param scheduledPlayer the scheduled audio player instance (wraps player and scheduler)
+	 * @param outputLine      the delegated audio line for output switching
+	 * @param recordingLine   optional line for recording (may be null)
 	 */
-	public UnifiedPlayerConfig(BufferedAudioPlayer player,
+	public UnifiedPlayerConfig(ScheduledOutputAudioPlayer scheduledPlayer,
 							   DelegatedAudioLine outputLine,
 							   OutputLine recordingLine) {
-		this.player = player;
+		this.scheduledPlayer = scheduledPlayer;
 		this.outputLine = outputLine;
 		this.recordingLine = recordingLine;
 		this.activeMode = null;
 	}
 
 	/**
-	 * Returns the audio player instance.
+	 * Returns the scheduled audio player instance.
+	 */
+	public ScheduledOutputAudioPlayer getScheduledPlayer() {
+		return scheduledPlayer;
+	}
+
+	/**
+	 * Returns the underlying {@link BufferedAudioPlayer} instance.
 	 */
 	public BufferedAudioPlayer getPlayer() {
-		return player;
+		return scheduledPlayer.getPlayer();
 	}
 
 	/**
@@ -230,24 +237,12 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	}
 
 	/**
-	 * Sets the scheduler for this configuration.
-	 * <p>
-	 * This should be called by {@link AudioStreamManager} after creating
-	 * the scheduler, since the scheduler is created after the config.
-	 *
-	 * @param scheduler the scheduler to associate with this config
-	 */
-	public void setScheduler(BufferedOutputScheduler scheduler) {
-		this.scheduler = scheduler;
-	}
-
-	/**
 	 * Returns the scheduler associated with this configuration.
 	 *
-	 * @return the scheduler, or null if not yet set
+	 * @return the scheduler
 	 */
 	public BufferedOutputScheduler getScheduler() {
-		return scheduler;
+		return scheduledPlayer.getScheduler();
 	}
 
 	/**
@@ -255,10 +250,10 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 * <p>
 	 * Only meaningful in direct mode when the player is actively running.
 	 *
-	 * @return the buffer gap, or 0 if no scheduler is active
+	 * @return the buffer gap
 	 */
 	public int getBufferGap() {
-		return scheduler != null ? scheduler.getBufferGap() : 0;
+		return scheduledPlayer.getBufferGap();
 	}
 
 	/**
@@ -267,7 +262,7 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 * @return the buffer gap percentage (0.0-100.0)
 	 */
 	public double getBufferGapPercent() {
-		return scheduler != null ? scheduler.getBufferGapPercent() : 0.0;
+		return scheduledPlayer.getBufferGapPercent();
 	}
 
 	/**
@@ -277,7 +272,7 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 * @return true if in degraded mode
 	 */
 	public boolean isDegradedMode() {
-		return scheduler != null && scheduler.isDegradedMode();
+		return scheduledPlayer.isDegradedMode();
 	}
 
 	/**
@@ -310,8 +305,8 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 * Destroys all resources associated with this configuration.
 	 */
 	public void destroy() {
-		if (player != null) {
-			player.destroy();
+		if (scheduledPlayer != null) {
+			scheduledPlayer.destroy();
 		}
 		if (directOutput != null) {
 			directOutput.destroy();

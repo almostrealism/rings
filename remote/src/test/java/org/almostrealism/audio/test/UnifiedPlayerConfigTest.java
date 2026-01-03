@@ -17,6 +17,7 @@
 package org.almostrealism.audio.test;
 
 import org.almostrealism.audio.BufferedAudioPlayer;
+import org.almostrealism.audio.ScheduledOutputAudioPlayer;
 import org.almostrealism.audio.UnifiedPlayerConfig;
 import org.almostrealism.audio.UnifiedPlayerConfig.OutputMode;
 import org.almostrealism.audio.line.DelegatedAudioLine;
@@ -49,9 +50,19 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 		delegatedLine = new DelegatedAudioLine();
 	}
 
+	/**
+	 * Helper to create a UnifiedPlayerConfig for testing.
+	 * Wraps the player with a ScheduledOutputAudioPlayer.
+	 */
+	private UnifiedPlayerConfig createConfig(OutputLine recordingLine) {
+		ScheduledOutputAudioPlayer scheduledPlayer =
+				new ScheduledOutputAudioPlayer(player, delegatedLine, recordingLine);
+		return new UnifiedPlayerConfig(scheduledPlayer, delegatedLine, recordingLine);
+	}
+
 	@Test
 	public void testInitialDirectMode() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDirectMode(); // Must explicitly set mode after construction
 
 		assertEquals(OutputMode.DIRECT, config.getActiveMode());
@@ -62,7 +73,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testInitialDawMode() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDawMode(); // Must explicitly set mode after construction
 
 		assertEquals(OutputMode.DAW, config.getActiveMode());
@@ -73,7 +84,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testSwitchFromDirectToDaw() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDirectMode(); // Initialize mode
 		assertTrue(config.isDirectMode());
 
@@ -86,7 +97,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testSwitchFromDawToDirect() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDawMode(); // Initialize mode
 		assertTrue(config.isDawMode());
 
@@ -99,7 +110,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testSetDirectModeIdempotent() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDirectMode(); // Initialize mode
 
 		// Multiple calls should not cause issues
@@ -112,7 +123,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testSetDawModeIdempotent() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDawMode(); // Initialize mode
 
 		// Multiple calls should not cause issues
@@ -125,7 +136,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testDawConnectionStoredButNotActivatedInDirectMode() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDirectMode(); // Initialize mode
 
 		// Capture initial delegate state
@@ -150,7 +161,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testDawConnectionActivatedWhenSwitchingToDaw() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDirectMode(); // Initialize mode
 
 		// Set DAW connection while in Direct mode
@@ -167,7 +178,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testDawConnectionImmediatelyActiveInDawMode() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDawMode(); // Initialize mode
 
 		// Set DAW connection while already in DAW mode
@@ -181,7 +192,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testDawConnectionReplacedProperly() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDawMode(); // Initialize mode
 
 		// First DAW connection
@@ -199,7 +210,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testNullDawConnectionHandled() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDawMode(); // Initialize mode
 
 		// Set a DAW connection
@@ -216,7 +227,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testSwitchToDawWithNoConnection() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDirectMode(); // Initialize mode
 
 		// Switch to DAW mode without any DAW connection
@@ -230,7 +241,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testModePreservedAcrossDawConnections() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 		config.setDirectMode(); // Initialize mode
 
 		// First DAW connection (stored, not activated)
@@ -262,7 +273,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testGetterMethods() {
-		config = new UnifiedPlayerConfig(player, delegatedLine, null);
+		config = createConfig(null);
 
 		assertSame(player, config.getPlayer());
 		assertSame(delegatedLine, config.getOutputLine());
@@ -272,7 +283,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 	@Test
 	public void testWithRecordingLine() {
 		OutputLine recordingLine = createMockOutputLine();
-		config = new UnifiedPlayerConfig(player, delegatedLine, recordingLine);
+		config = createConfig(recordingLine);
 
 		assertSame(recordingLine, config.getRecordingLine());
 	}

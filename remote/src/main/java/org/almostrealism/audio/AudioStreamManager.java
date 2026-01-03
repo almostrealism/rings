@@ -19,8 +19,6 @@ package org.almostrealism.audio;
 import org.almostrealism.audio.line.AudioLine;
 import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.audio.line.DelegatedAudioLine;
-import org.almostrealism.audio.line.InputLine;
-import org.almostrealism.audio.line.LineUtilities;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.line.SourceDataOutputLine;
 import org.almostrealism.audio.stream.AudioLineDelegationHandler;
@@ -43,16 +41,6 @@ import java.util.Map;
  *   <li>A {@link BufferedOutputScheduler} that manages timing and buffered writes</li>
  *   <li>An output line - either {@link DelegatedAudioLine} for streaming or
  *       {@link SourceDataOutputLine} for direct hardware playback</li>
- * </ul>
- * <p>
- * The manager supports two primary playback modes:
- * <ul>
- *   <li><b>DAW Integration Mode:</b> Use {@link #addPlayer(String, int, OutputLine)} to create
- *       a player with a {@link DelegatedAudioLine} that streams audio to external DAW software
- *       via the {@link AudioServer}.</li>
- *   <li><b>Direct Playback Mode:</b> Use {@link #addDirectPlayer(String, int, OutputLine)} to create
- *       a player with a {@link DelegatedAudioLine} wrapping a {@link SourceDataOutputLine} for direct
- *       hardware playback through the Java Sound API.</li>
  * </ul>
  * <p>
  * Usage example for DAW integration:
@@ -82,16 +70,10 @@ public class AudioStreamManager implements ConsoleFeatures {
 
 	public static double defaultLiveDuration = 180.0;
 
-	private final Map<String, BufferedAudioPlayer> players;
-	private final Map<String, BufferedOutputScheduler> schedulers;
-	private final Map<String, DelegatedAudioLine> audioLines;
 	private final Map<String, UnifiedPlayerConfig> unifiedConfigs;
 	public AudioServer server;
 
 	public AudioStreamManager() throws IOException {
-		this.players = new HashMap<>();
-		this.schedulers = new HashMap<>();
-		this.audioLines = new HashMap<>();
 		this.unifiedConfigs = new HashMap<>();
 		this.server = new AudioServer(PORT);
 	}
@@ -108,7 +90,7 @@ public class AudioStreamManager implements ConsoleFeatures {
 	}
 
 	public BufferedAudioPlayer getPlayer(String channel) {
-		return players.get(channel);
+		return unifiedConfigs.get(channel).getPlayer();
 	}
 
 	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
@@ -144,11 +126,7 @@ public class AudioStreamManager implements ConsoleFeatures {
 
 	public void addPlayerScheduler(String channel, BufferedAudioPlayer player,
 								   AudioLine out, OutputLine inputRecord) {
-		if (out instanceof DelegatedAudioLine) {
-			audioLines.put(channel, (DelegatedAudioLine) out);
-		}
 		BufferedOutputScheduler scheduler = addPlayer(channel, player, out, inputRecord);
-		schedulers.put(channel, scheduler);
 		scheduler.start();
 	}
 
@@ -156,7 +134,6 @@ public class AudioStreamManager implements ConsoleFeatures {
 											 BufferedAudioPlayer player,
 											 AudioLine out,
 											 OutputLine inputRecord) {
-		players.put(channel, player);
 		return player.deliver(out, inputRecord);
 	}
 
@@ -189,26 +166,22 @@ public class AudioStreamManager implements ConsoleFeatures {
 		int maxFrames = (int) (OutputLine.sampleRate * defaultLiveDuration);
 		maxFrames = (maxFrames / bufferSize) * bufferSize;
 
-		// Create the player
+		// Create the player and wrap with scheduled output
 		BufferedAudioPlayer player = new BufferedAudioPlayer(playerCount,
 				OutputLine.sampleRate, maxFrames);
+		ScheduledOutputAudioPlayer scheduledPlayer =
+				new ScheduledOutputAudioPlayer(player, delegatedLine, inputRecord);
 
 		// Create the unified config
-		UnifiedPlayerConfig config = new UnifiedPlayerConfig(player, delegatedLine,
-				inputRecord);
+		UnifiedPlayerConfig config = new UnifiedPlayerConfig(scheduledPlayer,
+				delegatedLine, inputRecord);
 
 		// Register with AudioServer for DAW connections
 		server.addStream(channel,
 				new AudioLineDelegationHandler(delegatedLine, config));
 
-		// Set up the scheduler
-		players.put(channel, player);
-		audioLines.put(channel, delegatedLine);
+		// Store references
 		unifiedConfigs.put(channel, config);
-
-		BufferedOutputScheduler scheduler = player.deliver(delegatedLine, inputRecord);
-		schedulers.put(channel, scheduler);
-		config.setScheduler(scheduler);
 
 		// Set initial mode (this will set the appropriate output delegate)
 		if (initialMode == UnifiedPlayerConfig.OutputMode.DIRECT) {
@@ -217,58 +190,10 @@ public class AudioStreamManager implements ConsoleFeatures {
 			config.setDawMode();
 		}
 
-		scheduler.start();
+		// Start the scheduler
+		scheduledPlayer.start();
 
 		return config;
-	}
-
-	/**
-	 * Gets the unified player configuration for the specified channel.
-	 *
-	 * @param channel The channel name
-	 * @return The unified player config, or null if not a unified player
-	 */
-	public UnifiedPlayerConfig getUnifiedConfig(String channel) {
-		return unifiedConfigs.get(channel);
-	}
-
-	/**
-	 * Gets the scheduler for the specified channel.
-	 *
-	 * @param channel The channel name
-	 * @return The scheduler, or null if no player exists for the channel
-	 */
-	public BufferedOutputScheduler getScheduler(String channel) {
-		return schedulers.get(channel);
-	}
-
-	/**
-	 * Gets the audio line for the specified channel.
-	 *
-	 * @param channel The channel name
-	 * @return The audio line, or null if no player exists for the channel
-	 */
-	public DelegatedAudioLine getAudioLine(String channel) {
-		return audioLines.get(channel);
-	}
-
-	/**
-	 * Removes a player and releases its resources.
-	 *
-	 * @param channel The channel name
-	 */
-	public void removePlayer(String channel) {
-		BufferedOutputScheduler scheduler = schedulers.remove(channel);
-		if (scheduler != null) {
-			scheduler.stop();
-		}
-		BufferedAudioPlayer player = players.remove(channel);
-		if (player != null) {
-			player.destroy();
-		}
-		// Note: DelegatedAudioLine doesn't own the underlying lines,
-		// so we don't destroy it here
-		audioLines.remove(channel);
 	}
 
 	@Override
