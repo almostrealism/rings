@@ -267,6 +267,10 @@ public class StreamingAudioPlayer implements ConsoleFeatures {
 	 * <p>
 	 * This only affects direct mode. In DAW mode, this method has no effect
 	 * since the DAW manages its own audio output.
+	 * <p>
+	 * If the scheduler is currently suspended, the new line
+	 * will be stopped immediately after creation to maintain
+	 * the suspended state.
 	 *
 	 * @return true if the reset was performed, false if not in direct mode
 	 *         or no direct output exists
@@ -278,9 +282,7 @@ public class StreamingAudioPlayer implements ConsoleFeatures {
 			return false;
 		}
 
-		log("Resetting direct output line...");
 		directOutput.reset();
-		log("Direct output line reset complete");
 		return true;
 	}
 
