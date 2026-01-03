@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Michael Murray
+ * Copyright 2026 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.almostrealism.audio;
 
-import org.almostrealism.audio.line.BufferedOutputScheduler;
 import org.almostrealism.audio.line.DelegatedAudioLine;
 import org.almostrealism.audio.line.LineUtilities;
 import org.almostrealism.audio.line.OutputLine;
@@ -41,11 +40,11 @@ import org.almostrealism.io.ConsoleFeatures;
  * connections are established in the background and only activated when
  * the user switches to DAW mode.</p>
  *
- * @see AudioStreamManager#createUnifiedPlayer
+ * @see AudioStreamManager#createStream
  * @see BufferedAudioPlayer
  */
 // TODO  This class is poorly named
-public class UnifiedPlayerConfig implements ConsoleFeatures {
+public class StreamingAudioPlayer implements ConsoleFeatures {
 
 	/**
 	 * The output mode for the unified player.
@@ -57,7 +56,7 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 		DAW
 	}
 
-	private final ScheduledOutputAudioPlayer scheduledPlayer;
+	private final ScheduledOutputAudioPlayer player;
 	private final DelegatedAudioLine outputLine;
 	private final OutputLine recordingLine;
 
@@ -72,14 +71,14 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 * The caller must call {@link #setDirectMode()} or {@link #setDawMode()}
 	 * after construction to properly initialize the output delegate.
 	 *
-	 * @param scheduledPlayer the scheduled audio player instance (wraps player and scheduler)
+	 * @param player the scheduled audio player instance (wraps buffered player with scheduler)
 	 * @param outputLine      the delegated audio line for output switching
 	 * @param recordingLine   optional line for recording (may be null)
 	 */
-	public UnifiedPlayerConfig(ScheduledOutputAudioPlayer scheduledPlayer,
-							   DelegatedAudioLine outputLine,
-							   OutputLine recordingLine) {
-		this.scheduledPlayer = scheduledPlayer;
+	public StreamingAudioPlayer(ScheduledOutputAudioPlayer player,
+								DelegatedAudioLine outputLine,
+								OutputLine recordingLine) {
+		this.player = player;
 		this.outputLine = outputLine;
 		this.recordingLine = recordingLine;
 		this.activeMode = null;
@@ -88,15 +87,8 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	/**
 	 * Returns the scheduled audio player instance.
 	 */
-	public ScheduledOutputAudioPlayer getScheduledPlayer() {
-		return scheduledPlayer;
-	}
-
-	/**
-	 * Returns the underlying {@link BufferedAudioPlayer} instance.
-	 */
-	public BufferedAudioPlayer getPlayer() {
-		return scheduledPlayer.getPlayer();
+	public ScheduledOutputAudioPlayer getPlayer() {
+		return player;
 	}
 
 	/**
@@ -121,7 +113,7 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	}
 
 	/**
-	 * Returns the SourceDataOutputLine for direct playback, creating it lazily if needed.
+	 * Returns the {@link SourceDataOutputLine} for direct playback, creating it lazily if needed.
 	 *
 	 * @return the direct output line
 	 * @throws IllegalStateException if no audio output line could be obtained
@@ -237,15 +229,6 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	}
 
 	/**
-	 * Returns the scheduler associated with this configuration.
-	 *
-	 * @return the scheduler
-	 */
-	public BufferedOutputScheduler getScheduler() {
-		return scheduledPlayer.getScheduler();
-	}
-
-	/**
 	 * Returns the buffer gap in frames between write and read positions.
 	 * <p>
 	 * Only meaningful in direct mode when the player is actively running.
@@ -253,7 +236,7 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 * @return the buffer gap
 	 */
 	public int getBufferGap() {
-		return scheduledPlayer.getBufferGap();
+		return player.getBufferGap();
 	}
 
 	/**
@@ -262,7 +245,7 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 * @return the buffer gap percentage (0.0-100.0)
 	 */
 	public double getBufferGapPercent() {
-		return scheduledPlayer.getBufferGapPercent();
+		return player.getBufferGapPercent();
 	}
 
 	/**
@@ -272,7 +255,7 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 * @return true if in degraded mode
 	 */
 	public boolean isDegradedMode() {
-		return scheduledPlayer.isDegradedMode();
+		return player.isDegradedMode();
 	}
 
 	/**
@@ -305,8 +288,8 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 * Destroys all resources associated with this configuration.
 	 */
 	public void destroy() {
-		if (scheduledPlayer != null) {
-			scheduledPlayer.destroy();
+		if (player != null) {
+			player.destroy();
 		}
 		if (directOutput != null) {
 			directOutput.destroy();

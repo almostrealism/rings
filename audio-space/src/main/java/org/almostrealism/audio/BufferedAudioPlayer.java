@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Michael Murray
+ * Copyright 2026 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -111,7 +111,7 @@ import java.util.stream.IntStream;
  * @see SourceDataOutputLine for direct hardware playback
  * @see DelegatedAudioLine for streaming/DAW integration
  */
-public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures {
+public class BufferedAudioPlayer implements AudioPlayer, CellFeatures {
 	public static boolean enableUnifiedClock = false;
 
 	private final int sampleRate;
@@ -271,7 +271,7 @@ public class BufferedAudioPlayer extends AudioPlayerBase implements CellFeatures
 				getData(player).getChannelData(c).setMem(result[c], 0, frames);
 			}
 		} catch (IOException e) {
-			warn("Could not load " + getFileString() + " to player", e);
+			warn("Could not load " + file + " to player", e);
 		}
 	}
 

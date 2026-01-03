@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Michael Murray
+ * Copyright 2026 Michael Murray
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.almostrealism.audio.stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
-import org.almostrealism.audio.UnifiedPlayerConfig;
+import org.almostrealism.audio.StreamingAudioPlayer;
 import org.almostrealism.audio.line.DelegatedAudioLine;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.line.SharedMemoryAudioLine;
@@ -36,7 +36,7 @@ import java.util.Objects;
  * <p>When a DAW client sends a POST request, this handler creates a {@link SharedMemoryAudioLine}
  * and either:</p>
  * <ul>
- *   <li>If a {@link UnifiedPlayerConfig} is provided: calls {@code setDawConnection()} which
+ *   <li>If a {@link StreamingAudioPlayer} is provided: calls {@code setDawConnection()} which
  *       stores the connection but only activates it if the player is in DAW mode. This ensures
  *       the UI widget remains the sole authority for which output is active.</li>
  *   <li>Otherwise: directly sets the delegate on the {@link DelegatedAudioLine} (legacy behavior)</li>
@@ -44,7 +44,7 @@ import java.util.Objects;
  */
 public class AudioLineDelegationHandler implements HttpAudioHandler, ConsoleFeatures {
 	private final DelegatedAudioLine line;
-	private final UnifiedPlayerConfig playerConfig;
+	private final StreamingAudioPlayer playerConfig;
 
 	/**
 	 * Creates a handler for legacy (non-unified) player configurations.
@@ -58,13 +58,13 @@ public class AudioLineDelegationHandler implements HttpAudioHandler, ConsoleFeat
 
 	/**
 	 * Creates a handler for unified player configurations.
-	 * DAW connections will be registered via {@link UnifiedPlayerConfig#setDawConnection}
+	 * DAW connections will be registered via {@link StreamingAudioPlayer#setDawConnection}
 	 * and only activated if the player is in DAW mode.
 	 *
 	 * @param line the delegated audio line
 	 * @param playerConfig the unified player config (may be null for legacy behavior)
 	 */
-	public AudioLineDelegationHandler(DelegatedAudioLine line, UnifiedPlayerConfig playerConfig) {
+	public AudioLineDelegationHandler(DelegatedAudioLine line, StreamingAudioPlayer playerConfig) {
 		this.line = line;
 		this.playerConfig = playerConfig;
 	}

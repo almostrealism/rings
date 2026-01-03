@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Michael Murray
+ * Copyright 2026 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -70,11 +70,11 @@ public class AudioStreamManager implements ConsoleFeatures {
 
 	public static double defaultLiveDuration = 180.0;
 
-	private final Map<String, UnifiedPlayerConfig> unifiedConfigs;
+	private final Map<String, StreamingAudioPlayer> audioStreams;
 	public AudioServer server;
 
 	public AudioStreamManager() throws IOException {
-		this.unifiedConfigs = new HashMap<>();
+		this.audioStreams = new HashMap<>();
 		this.server = new AudioServer(PORT);
 	}
 
@@ -90,17 +90,17 @@ public class AudioStreamManager implements ConsoleFeatures {
 	}
 
 	public BufferedAudioPlayer getPlayer(String channel) {
-		return unifiedConfigs.get(channel).getPlayer();
+		return audioStreams.get(channel).getPlayer().getPlayer();
 	}
 
 	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
 										 OutputLine inputRecord) {
 		DelegatedAudioLine line = new DelegatedAudioLine();
 		server.addStream(channel, new AudioLineDelegationHandler(line));
-		return addPlayer(channel, playerCount, line, inputRecord);
+		return addPlayer(playerCount, line, inputRecord);
 	}
 
-	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
+	public BufferedAudioPlayer addPlayer(int playerCount,
 										 AudioLine out, OutputLine inputRecord) {
 		int maxFrames = (int) (out.getSampleRate() * defaultLiveDuration);
 
@@ -109,32 +109,14 @@ public class AudioStreamManager implements ConsoleFeatures {
 		maxFrames = maxFrames / out.getBufferSize();
 		maxFrames *= out.getBufferSize();
 
-		return addPlayer(channel, playerCount, maxFrames, out, inputRecord);
-	}
-
-	public BufferedAudioPlayer addPlayer(String channel, int playerCount,
-										 int maxFrames,
-										 AudioLine out, OutputLine inputRecord) {
 		if (maxFrames % out.getBufferSize() != 0) {
 			throw new IllegalArgumentException();
 		}
 
 		BufferedAudioPlayer player = new BufferedAudioPlayer(playerCount, out.getSampleRate(), maxFrames);
-		addPlayerScheduler(channel, player, out, inputRecord);
-		return player;
-	}
-
-	public void addPlayerScheduler(String channel, BufferedAudioPlayer player,
-								   AudioLine out, OutputLine inputRecord) {
-		BufferedOutputScheduler scheduler = addPlayer(channel, player, out, inputRecord);
+		BufferedOutputScheduler scheduler = player.deliver(out, inputRecord);
 		scheduler.start();
-	}
-
-	public BufferedOutputScheduler addPlayer(String channel,
-											 BufferedAudioPlayer player,
-											 AudioLine out,
-											 OutputLine inputRecord) {
-		return player.deliver(out, inputRecord);
+		return player;
 	}
 
 	/**
@@ -143,7 +125,7 @@ public class AudioStreamManager implements ConsoleFeatures {
 	 * whose output delegate can be switched based on the active mode.
 	 *
 	 * <p>The created player starts in the specified initial mode. Use
-	 * {@link UnifiedPlayerConfig#setDirectMode()} and {@link UnifiedPlayerConfig#setDawMode()}
+	 * {@link StreamingAudioPlayer#setDirectMode()} and {@link StreamingAudioPlayer#setDawMode()}
 	 * to switch modes at runtime.</p>
 	 *
 	 * <p>For DAW mode, this also registers the channel with the {@link AudioServer} so that
@@ -155,9 +137,9 @@ public class AudioStreamManager implements ConsoleFeatures {
 	 * @param initialMode The initial output mode (DIRECT or DAW)
 	 * @return The unified player configuration
 	 */
-	public UnifiedPlayerConfig createUnifiedPlayer(String channel, int playerCount,
-												   OutputLine inputRecord,
-												   UnifiedPlayerConfig.OutputMode initialMode) {
+	public StreamingAudioPlayer createStream(String channel, int playerCount,
+											 OutputLine inputRecord,
+											 StreamingAudioPlayer.OutputMode initialMode) {
 		// Create a DelegatedAudioLine that will switch between outputs
 		DelegatedAudioLine delegatedLine = new DelegatedAudioLine();
 
@@ -173,18 +155,18 @@ public class AudioStreamManager implements ConsoleFeatures {
 				new ScheduledOutputAudioPlayer(player, delegatedLine, inputRecord);
 
 		// Create the unified config
-		UnifiedPlayerConfig config = new UnifiedPlayerConfig(scheduledPlayer,
-				delegatedLine, inputRecord);
+		StreamingAudioPlayer config =
+				new StreamingAudioPlayer(scheduledPlayer, delegatedLine, inputRecord);
 
 		// Register with AudioServer for DAW connections
 		server.addStream(channel,
 				new AudioLineDelegationHandler(delegatedLine, config));
 
 		// Store references
-		unifiedConfigs.put(channel, config);
+		audioStreams.put(channel, config);
 
 		// Set initial mode (this will set the appropriate output delegate)
-		if (initialMode == UnifiedPlayerConfig.OutputMode.DIRECT) {
+		if (initialMode == StreamingAudioPlayer.OutputMode.DIRECT) {
 			config.setDirectMode();
 		} else {
 			config.setDawMode();

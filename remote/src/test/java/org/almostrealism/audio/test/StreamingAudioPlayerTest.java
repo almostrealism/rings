@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Michael Murray
+ * Copyright 2026 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.almostrealism.audio.test;
 
 import org.almostrealism.audio.BufferedAudioPlayer;
 import org.almostrealism.audio.ScheduledOutputAudioPlayer;
-import org.almostrealism.audio.UnifiedPlayerConfig;
-import org.almostrealism.audio.UnifiedPlayerConfig.OutputMode;
+import org.almostrealism.audio.StreamingAudioPlayer;
+import org.almostrealism.audio.StreamingAudioPlayer.OutputMode;
 import org.almostrealism.audio.line.DelegatedAudioLine;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.line.SharedMemoryAudioLine;
@@ -31,18 +31,18 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for {@link UnifiedPlayerConfig} mode switching behavior.
+ * Unit tests for {@link StreamingAudioPlayer} mode switching behavior.
  * Verifies that the unified player correctly manages switching between
  * Direct (hardware) and DAW (streaming) modes.
  */
-public class UnifiedPlayerConfigTest implements TestFeatures {
+public class StreamingAudioPlayerTest implements TestFeatures {
 	private static final int PLAYER_COUNT = 4;
 	private static final int SAMPLE_RATE = 44100;
 	private static final int MAX_FRAMES = 44100 * 180;
 
 	private BufferedAudioPlayer player;
 	private DelegatedAudioLine delegatedLine;
-	private UnifiedPlayerConfig config;
+	private StreamingAudioPlayer config;
 
 	@Before
 	public void setUp() {
@@ -54,15 +54,15 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 	 * Helper to create a UnifiedPlayerConfig for testing.
 	 * Wraps the player with a ScheduledOutputAudioPlayer.
 	 */
-	private UnifiedPlayerConfig createConfig(OutputLine recordingLine) {
+	private StreamingAudioPlayer createPlayer(OutputLine recordingLine) {
 		ScheduledOutputAudioPlayer scheduledPlayer =
 				new ScheduledOutputAudioPlayer(player, delegatedLine, recordingLine);
-		return new UnifiedPlayerConfig(scheduledPlayer, delegatedLine, recordingLine);
+		return new StreamingAudioPlayer(scheduledPlayer, delegatedLine, recordingLine);
 	}
 
 	@Test
 	public void testInitialDirectMode() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDirectMode(); // Must explicitly set mode after construction
 
 		assertEquals(OutputMode.DIRECT, config.getActiveMode());
@@ -73,7 +73,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testInitialDawMode() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDawMode(); // Must explicitly set mode after construction
 
 		assertEquals(OutputMode.DAW, config.getActiveMode());
@@ -84,7 +84,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testSwitchFromDirectToDaw() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDirectMode(); // Initialize mode
 		assertTrue(config.isDirectMode());
 
@@ -97,7 +97,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testSwitchFromDawToDirect() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDawMode(); // Initialize mode
 		assertTrue(config.isDawMode());
 
@@ -110,7 +110,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testSetDirectModeIdempotent() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDirectMode(); // Initialize mode
 
 		// Multiple calls should not cause issues
@@ -123,7 +123,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testSetDawModeIdempotent() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDawMode(); // Initialize mode
 
 		// Multiple calls should not cause issues
@@ -136,7 +136,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testDawConnectionStoredButNotActivatedInDirectMode() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDirectMode(); // Initialize mode
 
 		// Capture initial delegate state
@@ -161,7 +161,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testDawConnectionActivatedWhenSwitchingToDaw() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDirectMode(); // Initialize mode
 
 		// Set DAW connection while in Direct mode
@@ -178,7 +178,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testDawConnectionImmediatelyActiveInDawMode() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDawMode(); // Initialize mode
 
 		// Set DAW connection while already in DAW mode
@@ -192,7 +192,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testDawConnectionReplacedProperly() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDawMode(); // Initialize mode
 
 		// First DAW connection
@@ -210,7 +210,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testNullDawConnectionHandled() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDawMode(); // Initialize mode
 
 		// Set a DAW connection
@@ -227,7 +227,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testSwitchToDawWithNoConnection() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDirectMode(); // Initialize mode
 
 		// Switch to DAW mode without any DAW connection
@@ -241,7 +241,7 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 
 	@Test
 	public void testModePreservedAcrossDawConnections() {
-		config = createConfig(null);
+		config = createPlayer(null);
 		config.setDirectMode(); // Initialize mode
 
 		// First DAW connection (stored, not activated)
@@ -272,25 +272,17 @@ public class UnifiedPlayerConfigTest implements TestFeatures {
 	}
 
 	@Test
-	public void testGetterMethods() {
-		config = createConfig(null);
-
-		assertSame(player, config.getPlayer());
-		assertSame(delegatedLine, config.getOutputLine());
-		assertNull(config.getRecordingLine());
-	}
-
-	@Test
 	public void testWithRecordingLine() {
 		OutputLine recordingLine = createMockOutputLine();
-		config = createConfig(recordingLine);
+		config = createPlayer(recordingLine);
 
 		assertSame(recordingLine, config.getRecordingLine());
 	}
 
 	/**
-	 * Creates a mock SharedMemoryAudioLine for testing.
-	 * In real usage, this would be created by AudioLineDelegationHandler
+	 * Creates a mock {@link SharedMemoryAudioLine} for testing.
+	 * In real usage, this would be created by
+	 * {@link org.almostrealism.audio.stream.AudioLineDelegationHandler}
 	 * when a DAW client connects.
 	 */
 	private SharedMemoryAudioLine createMockSharedMemoryLine() {

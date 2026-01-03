@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Michael Murray
+ * Copyright 2026 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ import java.util.function.DoubleConsumer;
  * @see BufferedAudioPlayer for the underlying player
  * @see BufferedOutputScheduler for the scheduling mechanism
  */
-public class ScheduledOutputAudioPlayer implements AudioPlayer {
+public class ScheduledOutputAudioPlayer extends AudioPlayerBase {
 	private final BufferedAudioPlayer player;
 	private final BufferedOutputScheduler scheduler;
 
