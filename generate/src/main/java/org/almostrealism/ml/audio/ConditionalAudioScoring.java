@@ -16,7 +16,6 @@
 
 package org.almostrealism.ml.audio;
 
-import ai.onnxruntime.OrtException;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
@@ -40,7 +39,7 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 	double[] timesteps = {0.0, 0.25, 0.5, 0.75, 1.0};
 	double[] timestepWeights = {0.1, 0.25, 0.3, 0.25, 0.1};
 
-	public ConditionalAudioScoring(String modelsPath) throws OrtException, IOException {
+	public ConditionalAudioScoring(String modelsPath) throws IOException {
 		this(new AssetGroup(new Asset(new File(modelsPath + "/conditioners.onnx")),
 						new Asset(new File(modelsPath + "/encoder.onnx")),
 						new Asset(new File(modelsPath + "/decoder.onnx")),
@@ -49,7 +48,7 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 	}
 
 	public ConditionalAudioScoring(AssetGroup onnxAssets, StateDictionary ditStates)
-			throws OrtException, IOException {
+			throws IOException {
 		super(onnxAssets, ditStates, true);
 	}
 
@@ -254,7 +253,7 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		return validPositions > 0 ? totalScore / validPositions : 0.0;
 	}
 
-	public static void main(String[] args) throws IOException, OrtException {
+	public static void main(String[] args) throws IOException {
 		if (args.length < 3) {
 			System.out.println("Usage: java AudioGenerator <models_path> <prompt> <input_file> [additional_inputs...]");
 			return;

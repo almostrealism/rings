@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class ConditionalAudioSystem implements Destroyable, OnnxFeatures {
-	public static boolean enableOnnxDit = false;
 
 	public static double MAX_DURATION = 11.0;
 
@@ -59,32 +58,30 @@ public abstract class ConditionalAudioSystem implements Destroyable, OnnxFeature
 	private final DitModel ditModel;
 
 	public ConditionalAudioSystem(AssetGroup onnxAssets, StateDictionary ditStates)
-			throws IOException, OrtException {
+			throws IOException {
 		this(onnxAssets, ditStates, false);
 	}
 
 	public ConditionalAudioSystem(AssetGroup onnxAssets, StateDictionary ditStates,
 								  boolean captureAttentionScores)
-			throws OrtException, IOException {
-		tokenizer = new SpTokenizer(
-				ConditionalAudioSystem.class.getClassLoader()
-					.getResourceAsStream("spiece.model"));
-		vocabulary = SpVocabulary.from(tokenizer);
+			throws IOException {
+		try {
+			tokenizer = new SpTokenizer(
+					ConditionalAudioSystem.class.getClassLoader()
+							.getResourceAsStream("spiece.model"));
+			vocabulary = SpVocabulary.from(tokenizer);
 
-		env = OrtEnvironment.getEnvironment();
+			env = OrtEnvironment.getEnvironment();
 
-		OrtSession.SessionOptions options = new OrtSession.SessionOptions();
-		options.setIntraOpNumThreads(Runtime.getRuntime().availableProcessors());
-		options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
+			OrtSession.SessionOptions options = new OrtSession.SessionOptions();
+			options.setIntraOpNumThreads(Runtime.getRuntime().availableProcessors());
+			options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
 
-		conditionersSession = env.createSession(onnxAssets.getAssetPath("conditioners.onnx"), options);
-		autoencoder = new OnnxAutoEncoder(env, options,
-				onnxAssets.getAssetPath("encoder.onnx"),
-				onnxAssets.getAssetPath("decoder.onnx"));
+			conditionersSession = env.createSession(onnxAssets.getAssetPath("conditioners.onnx"), options);
+			autoencoder = new OnnxAutoEncoder(env, options,
+					onnxAssets.getAssetPath("encoder.onnx"),
+					onnxAssets.getAssetPath("decoder.onnx"));
 
-		if (enableOnnxDit) {
-			ditModel = new OnnxDitModel(env, options, onnxAssets.getAssetPath("dit.onnx"));
-		} else {
 			ditModel = new DiffusionTransformer(
 					64,
 					1024,
@@ -96,6 +93,8 @@ public abstract class ConditionalAudioSystem implements Destroyable, OnnxFeature
 					"rf_denoiser",
 					ditStates, captureAttentionScores
 			);
+		} catch (OrtException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
