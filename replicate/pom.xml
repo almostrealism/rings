@@ -13,9 +13,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-generate</artifactId>
-			<version>0.44</version>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-compose</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.almostrealism</groupId>
