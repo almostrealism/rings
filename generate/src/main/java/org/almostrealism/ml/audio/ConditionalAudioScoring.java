@@ -19,19 +19,18 @@ package org.almostrealism.ml.audio;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.io.Console;
 import org.almostrealism.ml.StateDictionary;
-import org.almostrealism.persistence.Asset;
-import org.almostrealism.persistence.AssetGroup;
+import org.almostrealism.ml.Tokenizer;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Scoring system for evaluating alignment between audio and text prompts
+ * using conditional audio generation models.
+ */
 public class ConditionalAudioScoring extends ConditionalAudioSystem {
 
 //	double[] timesteps = {0.25, 0.5, 0.75};
@@ -39,21 +38,23 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 	double[] timesteps = {0.0, 0.25, 0.5, 0.75, 1.0};
 	double[] timestepWeights = {0.1, 0.25, 0.3, 0.25, 0.1};
 
-	public ConditionalAudioScoring(String modelsPath) throws IOException {
-		this(new AssetGroup(new Asset(new File(modelsPath + "/conditioners.onnx")),
-						new Asset(new File(modelsPath + "/encoder.onnx")),
-						new Asset(new File(modelsPath + "/decoder.onnx")),
-						new Asset(new File(modelsPath + "/dit.onnx"))),
-				new StateDictionary(modelsPath + "/weights"));
-	}
-
-	public ConditionalAudioScoring(AssetGroup onnxAssets, StateDictionary ditStates)
-			throws IOException {
-		super(onnxAssets, ditStates, true);
+	/**
+	 * Creates a ConditionalAudioScoring with the provided components.
+	 *
+	 * @param tokenizer the tokenizer for text processing
+	 * @param conditioner the conditioner for generating attention inputs
+	 * @param autoencoder the audio encoder/decoder for latent space operations
+	 * @param ditStates state dictionary for the diffusion transformer weights
+	 */
+	public ConditionalAudioScoring(Tokenizer tokenizer,
+								   AudioAttentionConditioner conditioner,
+								   AutoEncoder autoencoder,
+								   StateDictionary ditStates) {
+		super(tokenizer, conditioner, autoencoder, ditStates, true);
 	}
 
 	public double computeScore(String prompt, WaveData audio) {
-		long[] tokens = tokenize(prompt);
+		long[] tokens = getTokenizer().encodeAsLong(prompt);
 		log("\t\"" + prompt + "\" (" + tokens.length + " tokens)");
 		return computeScore(tokens, audio);
 	}
@@ -69,7 +70,8 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 	 * Lower loss = better alignment between audio and text.
 	 */
 	public double computeDenoisingScore(long[] promptTokenIds, PackedCollection audio, double duration) {
-		Map<String, PackedCollection> conditionerOutputs = runConditioners(promptTokenIds, duration);
+		AudioAttentionConditioner.ConditionerOutput conditionerOutputs =
+				getConditioner().runConditioners(promptTokenIds, duration);
 		PackedCollection audioLatent = getAutoencoder().encode(cp(audio)).evaluate();
 
 		double totalScore = 0.0;
@@ -84,8 +86,8 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 			PackedCollection predictedNoise = getDitModel().forward(
 					noisyLatent,
 					pack(sigma),
-					conditionerOutputs.get("cross_attention_input"),
-					conditionerOutputs.get("global_cond")
+					conditionerOutputs.getCrossAttentionInput(),
+					conditionerOutputs.getGlobalCond()
 			);
 
 			// Compute MSE between predicted and actual noise
@@ -106,7 +108,8 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		// This would require full generation capability
 		// For now, we'll compute a proxy using partial diffusion
 
-		Map<String, PackedCollection> conditionerOutputs = runConditioners(promptTokenIds, duration);
+		AudioAttentionConditioner.ConditionerOutput conditionerOutputs =
+				getConditioner().runConditioners(promptTokenIds, duration);
 		PackedCollection audioLatent = getAutoencoder().encode(cp(audio)).evaluate();
 
 		// Start from noise and denoise partially
@@ -119,8 +122,8 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 			current = getDitModel().forward(
 					current,
 					pack(sigma),
-					conditionerOutputs.get("cross_attention_input"),
-					conditionerOutputs.get("global_cond")
+					conditionerOutputs.getCrossAttentionInput(),
+					conditionerOutputs.getGlobalCond()
 			);
 		}
 
@@ -138,7 +141,8 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 
 	public double computeScore(long[] promptTokenIds, PackedCollection audio, double duration) {
 		// 1. Process tokens through conditioners
-		Map<String, PackedCollection> conditionerOutputs = runConditioners(promptTokenIds, duration);
+		AudioAttentionConditioner.ConditionerOutput conditionerOutputs =
+				getConditioner().runConditioners(promptTokenIds, duration);
 
 		// 2. Get audio latent
 		PackedCollection audioLatent = getAutoencoder().encode(cp(audio)).evaluate();
@@ -149,8 +153,8 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		for (double t : timesteps) {
 			PackedCollection output = getDitModel().forward(
 					audioLatent, pack(t),
-					conditionerOutputs.get("cross_attention_input"),
-					conditionerOutputs.get("global_cond"));
+					conditionerOutputs.getCrossAttentionInput(),
+					conditionerOutputs.getGlobalCond());
 
 			allAttentions.add(getDitModel().getAttentionActivations().entrySet().stream()
 					.collect(Collectors.toMap(
@@ -158,7 +162,7 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		}
 
 		// 4. Extract attention mask from conditioner outputs
-		PackedCollection attentionMask = conditionerOutputs.get("cross_attention_masks");
+		PackedCollection attentionMask = conditionerOutputs.getCrossAttentionMask();
 
 		// 5. Compute scores with mask-aware aggregation
 		int audioSeqLen = (int) Math.ceil(getAutoencoder().getLatentSampleRate() * duration);
@@ -253,31 +257,4 @@ public class ConditionalAudioScoring extends ConditionalAudioSystem {
 		return validPositions > 0 ? totalScore / validPositions : 0.0;
 	}
 
-	public static void main(String[] args) throws IOException {
-		if (args.length < 3) {
-			System.out.println("Usage: java AudioGenerator <models_path> <prompt> <input_file> [additional_inputs...]");
-			return;
-		}
-
-		String modelsPath = args[0];
-		String prompt = args[1];
-
-		List<String> inputs = new ArrayList<>();
-		inputs.addAll(Arrays.asList(args).subList(2, args.length));
-
-		try (ConditionalAudioScoring scoring = new ConditionalAudioScoring(modelsPath)) {
-			for (String in : inputs) {
-				try (WaveData wave = WaveData.load(new File(in))) {
-					if (wave.getSampleRate() != scoring.getAutoencoder().getSampleRate()) {
-						throw new IllegalArgumentException();
-					}
-
-					Console.root().features(ConditionalAudioScoring.class)
-							.log(in + " ->");
-					Console.root().features(ConditionalAudioScoring.class)
-							.log("\tscore = " + scoring.computeScore(prompt, wave));
-				}
-			}
-		}
-	}
 }

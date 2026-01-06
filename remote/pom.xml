@@ -87,6 +87,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.almostrealism</groupId>
+			<artifactId>ar-rings-ml</artifactId>
+			<version>0.44</version>
+		</dependency>
+
+		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-stub</artifactId>
 		</dependency>

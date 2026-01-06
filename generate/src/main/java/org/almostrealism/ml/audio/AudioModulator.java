@@ -16,50 +16,55 @@
 
 package org.almostrealism.ml.audio;
 
-import ai.onnxruntime.OrtException;
 import io.almostrealism.collect.TraversalPolicy;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.io.Console;
-import org.almostrealism.persistence.Asset;
-import org.almostrealism.persistence.AssetGroup;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
+/**
+ * Audio modulation utility that uses latent space interpolation to create
+ * variations of audio samples.
+ * <p>
+ * This class wraps an {@link AudioComposer} to provide a simple API for
+ * loading audio samples and generating interpolated variations.
+ */
 public class AudioModulator implements AutoCloseable, CodeFeatures {
 	public static final int DIM = 8;
 
 	private final AudioComposer composer;
 	private double audioDuration;
 
-	public AudioModulator(String modelsPath) throws OrtException {
-		this(modelsPath, System.currentTimeMillis());
+	/**
+	 * Creates an AudioModulator with the provided autoencoder.
+	 *
+	 * @param autoencoder the audio encoder/decoder for latent space operations
+	 */
+	public AudioModulator(AutoEncoder autoencoder) {
+		this(autoencoder, DIM, System.currentTimeMillis());
 	}
 
-	public AudioModulator(String modelsPath, long seed) throws OrtException {
-		this(new AssetGroup(
-				new Asset(new File(modelsPath + "/encoder.onnx")),
-				new Asset(new File(modelsPath + "/decoder.onnx"))), seed);
+	/**
+	 * Creates an AudioModulator with the provided autoencoder and seed.
+	 *
+	 * @param autoencoder the audio encoder/decoder for latent space operations
+	 * @param seed random seed for the audio composer
+	 */
+	public AudioModulator(AutoEncoder autoencoder, long seed) {
+		this(autoencoder, DIM, seed);
 	}
 
-	public AudioModulator(AssetGroup onnxAssets) throws OrtException {
-		this(onnxAssets, System.currentTimeMillis());
-	}
-
-	public AudioModulator(AssetGroup onnxAssets, long seed) throws OrtException {
-		this(onnxAssets, DIM, seed);
-	}
-
-	public AudioModulator(AssetGroup onnxAssets, int dim, long seed) throws OrtException {
-		composer = new AudioComposer(new OnnxAutoEncoder(
-				onnxAssets.getAssetPath("encoder.onnx"),
-				onnxAssets.getAssetPath("decoder.onnx")), dim, seed);
+	/**
+	 * Creates an AudioModulator with the provided autoencoder, dimension, and seed.
+	 *
+	 * @param autoencoder the audio encoder/decoder for latent space operations
+	 * @param dim dimension of the latent interpolation space
+	 * @param seed random seed for the audio composer
+	 */
+	public AudioModulator(AutoEncoder autoencoder, int dim, long seed) {
+		composer = new AudioComposer(autoencoder, dim, seed);
 		audioDuration = composer.getMaximumAudioDuration();
 	}
 
@@ -101,60 +106,6 @@ public class AudioModulator implements AutoCloseable, CodeFeatures {
 		PackedCollection result = project(position);
 		WaveData out = new WaveData(result, (int) composer.getSampleRate());
 		out.save(destination);
-	}
-
-	public static void main(String[] args) throws Exception {
-		if (args.length < 3) {
-			System.out.println("Usage: java AudioModulator <models_path> <output_path> <input1> [additional_inputs...]");
-			return;
-		}
-
-		int sampleRate = 44100;
-		boolean noise = false;
-		boolean empty = false;
-
-		String modelsPath = args[0];
-		String outputPath = args[1];
-
-		List<String> inputs = new ArrayList<>();
-		inputs.addAll(Arrays.asList(args).subList(2, args.length));
-
-		long seed = 79;
-		Random rand = new Random(seed + 1000);
-
-		try (AudioModulator modulator = new AudioModulator(modelsPath, seed)) {
-			for (String in : inputs) {
-				WaveData wave = WaveData.load(new File(in));
-				if (wave.getSampleRate() != sampleRate) {
-					throw new IllegalArgumentException();
-				}
-
-				modulator.addAudio(wave.getData());
-			}
-
-			if (noise) {
-				modulator.addFeatures(
-						new PackedCollection(new TraversalPolicy(64, 256))
-								.randnFill());
-			}
-
-			if (empty) {
-				modulator.addFeatures(new PackedCollection(new TraversalPolicy(64, 256)));
-			}
-
-			int count = 8;
-
-			for (int i = 0; i < count; i++) {
-				PackedCollection position =
-						new PackedCollection(new TraversalPolicy(DIM))
-								.fill(rand::nextGaussian);
-
-				Path op = Path.of(outputPath).resolve("modulated_" + i + ".wav");
-				modulator.generateAudio(position, op.toFile());
-				Console.root().features(AudioModulator.class)
-						.log("Saved modulated audio to " + op);
-			}
-		}
 	}
 
 	@Override

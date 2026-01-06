@@ -16,25 +16,33 @@
 
 package org.almostrealism.ml.audio;
 
-import ai.djl.sentencepiece.SpTokenizer;
-import ai.djl.sentencepiece.SpVocabulary;
-import ai.onnxruntime.OnnxTensor;
-import ai.onnxruntime.OrtEnvironment;
-import ai.onnxruntime.OrtException;
-import ai.onnxruntime.OrtSession;
 import io.almostrealism.collect.TraversalPolicy;
 import io.almostrealism.lifecycle.Destroyable;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.hardware.HardwareException;
-import org.almostrealism.ml.OnnxFeatures;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.ml.StateDictionary;
-import org.almostrealism.persistence.AssetGroup;
+import org.almostrealism.ml.Tokenizer;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-public abstract class ConditionalAudioSystem implements Destroyable, OnnxFeatures {
+/**
+ * Base class for conditional audio generation systems that combine text conditioning
+ * with diffusion-based audio synthesis.
+ * <p>
+ * This class coordinates the interaction between:
+ * <ul>
+ *   <li>{@link Tokenizer} - text tokenization</li>
+ *   <li>{@link AudioAttentionConditioner} - conditioning from token IDs</li>
+ *   <li>{@link AutoEncoder} - audio encoding/decoding to/from latent space</li>
+ *   <li>{@link DitModel} - diffusion transformer for latent generation</li>
+ * </ul>
+ * <p>
+ * Implementations can use different backends (ONNX, native, etc.) by providing
+ * appropriate implementations of these interfaces.
+ *
+ * @see Tokenizer
+ * @see AudioAttentionConditioner
+ * @see AutoEncoder
+ * @see DitModel
+ */
+public abstract class ConditionalAudioSystem implements Destroyable, CodeFeatures {
 
 	public static double MAX_DURATION = 11.0;
 
@@ -44,118 +52,90 @@ public abstract class ConditionalAudioSystem implements Destroyable, OnnxFeature
 	protected static final float SIGMA_MIN = 0.0f;
 	protected static final float SIGMA_MAX = 1.0f;
 
+	/** Standard latent dimensions for audio diffusion models. */
+	public static final int LATENT_DIMENSIONS = 64;
+
+	/** Standard latent time steps for audio diffusion models. */
+	public static final int LATENT_TIME_STEPS = 256;
+
 	// Model dimensions
-	protected static final TraversalPolicy DIT_X_SHAPE = new TraversalPolicy(1, 64, 256);
-	protected static final int DIT_X_SIZE = 64 * 256;
-	protected static final int T5_SEQ_LENGTH = 128;
+	protected static final TraversalPolicy DIT_X_SHAPE = new TraversalPolicy(1, LATENT_DIMENSIONS, LATENT_TIME_STEPS);
+	protected static final int DIT_X_SIZE = LATENT_DIMENSIONS * LATENT_TIME_STEPS;
 
-	private final SpTokenizer tokenizer;
-	private final SpVocabulary vocabulary;
-
-	private final OrtEnvironment env;
-	private final OrtSession conditionersSession;
+	private final Tokenizer tokenizer;
+	private final AudioAttentionConditioner conditioner;
 	private final AutoEncoder autoencoder;
 	private final DitModel ditModel;
 
-	public ConditionalAudioSystem(AssetGroup onnxAssets, StateDictionary ditStates)
-			throws IOException {
-		this(onnxAssets, ditStates, false);
+	/**
+	 * Creates a ConditionalAudioSystem with the provided components.
+	 *
+	 * @param tokenizer the tokenizer for text processing
+	 * @param conditioner the conditioner for generating attention inputs
+	 * @param autoencoder the audio encoder/decoder for latent space operations
+	 * @param ditStates state dictionary for the diffusion transformer weights
+	 */
+	public ConditionalAudioSystem(Tokenizer tokenizer,
+								  AudioAttentionConditioner conditioner,
+								  AutoEncoder autoencoder,
+								  StateDictionary ditStates) {
+		this(tokenizer, conditioner, autoencoder, ditStates, false);
 	}
 
-	public ConditionalAudioSystem(AssetGroup onnxAssets, StateDictionary ditStates,
-								  boolean captureAttentionScores)
-			throws IOException {
-		try {
-			tokenizer = new SpTokenizer(
-					ConditionalAudioSystem.class.getClassLoader()
-							.getResourceAsStream("spiece.model"));
-			vocabulary = SpVocabulary.from(tokenizer);
-
-			env = OrtEnvironment.getEnvironment();
-
-			OrtSession.SessionOptions options = new OrtSession.SessionOptions();
-			options.setIntraOpNumThreads(Runtime.getRuntime().availableProcessors());
-			options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
-
-			conditionersSession = env.createSession(onnxAssets.getAssetPath("conditioners.onnx"), options);
-			autoencoder = new OnnxAutoEncoder(env, options,
-					onnxAssets.getAssetPath("encoder.onnx"),
-					onnxAssets.getAssetPath("decoder.onnx"));
-
-			ditModel = new DiffusionTransformer(
-					64,
-					1024,
-					16,
-					8,
-					1,
-					768,
-					768,
-					"rf_denoiser",
-					ditStates, captureAttentionScores
-			);
-		} catch (OrtException e) {
-			throw new RuntimeException(e);
-		}
+	/**
+	 * Creates a ConditionalAudioSystem with the provided components.
+	 *
+	 * @param tokenizer the tokenizer for text processing
+	 * @param conditioner the conditioner for generating attention inputs
+	 * @param autoencoder the audio encoder/decoder for latent space operations
+	 * @param ditStates state dictionary for the diffusion transformer weights
+	 * @param captureAttentionScores whether to capture attention scores during inference
+	 */
+	public ConditionalAudioSystem(Tokenizer tokenizer,
+								  AudioAttentionConditioner conditioner,
+								  AutoEncoder autoencoder,
+								  StateDictionary ditStates,
+								  boolean captureAttentionScores) {
+		this.tokenizer = tokenizer;
+		this.conditioner = conditioner;
+		this.autoencoder = autoencoder;
+		this.ditModel = new DiffusionTransformer(
+				64,
+				1024,
+				16,
+				8,
+				1,
+				768,
+				768,
+				"rf_denoiser",
+				ditStates, captureAttentionScores
+		);
 	}
 
-	public SpTokenizer getTokenizer() { return tokenizer; }
-	public SpVocabulary getVocabulary() { return vocabulary; }
+	/**
+	 * Returns the tokenizer used for text processing.
+	 */
+	public Tokenizer getTokenizer() { return tokenizer; }
 
-	@Override
-	public OrtEnvironment getOnnxEnvironment() { return env; }
-	public OrtSession getConditionersSession() { return conditionersSession; }
+	/**
+	 * Returns the audio attention conditioner.
+	 */
+	public AudioAttentionConditioner getConditioner() { return conditioner; }
+
+	/**
+	 * Returns the autoencoder used for audio latent space operations.
+	 */
 	public AutoEncoder getAutoencoder() { return autoencoder; }
 
+	/**
+	 * Returns the diffusion transformer model.
+	 */
 	public DitModel getDitModel() { return ditModel; }
-
-	public long[] tokenize(String text) {
-		return getTokenizer().tokenize(text).stream().mapToLong(getVocabulary()::getIndex).toArray();
-	}
-
-	protected Map<String, PackedCollection> runConditioners(long[] ids, double seconds) {
-		long[] paddedIds = new long[T5_SEQ_LENGTH];
-		long[] attentionMask = new long[T5_SEQ_LENGTH];
-
-		int tokenCount = Math.min(ids.length, T5_SEQ_LENGTH);
-		System.arraycopy(ids, 0, paddedIds, 0, tokenCount);
-		for (int i = 0; i < tokenCount; i++) {
-			attentionMask[i] = 1;
-		}
-
-		Map<String, OnnxTensor> inputs = new HashMap<>();
-		inputs.put("input_ids", packOnnx(shape(1, T5_SEQ_LENGTH), paddedIds));
-		inputs.put("attention_mask", packOnnx(shape(1, T5_SEQ_LENGTH), attentionMask));
-		inputs.put("seconds_total", packOnnx(shape(1), (float) seconds));
-
-
-		Map<String, OnnxTensor> outputs = new HashMap<>();
-
-		try {
-			OrtSession.Result result =
-					getConditionersSession().run(inputs);
-			outputs.put("cross_attention_input", (OnnxTensor) result.get(0));
-			outputs.put("cross_attention_masks", (OnnxTensor) result.get(1));
-			outputs.put("global_cond", (OnnxTensor) result.get(2));
-			return pack(outputs);
-		} catch (OrtException e) {
-			throw new RuntimeException(e);
-		} finally {
-			inputs.forEach((key, tensor) -> tensor.close());
-			outputs.forEach((key, tensor) -> tensor.close());
-		}
-	}
 
 	@Override
 	public void destroy() {
-		if (conditionersSession != null) {
-			try {
-				conditionersSession.close();
-			} catch (OrtException e) {
-				throw new HardwareException("Unable to close conditioner session", e);
-			}
-		}
+		if (conditioner != null) conditioner.destroy();
 		if (autoencoder != null) autoencoder.destroy();
 		if (ditModel != null) ditModel.destroy();
-		if (env != null) env.close();
 	}
 }

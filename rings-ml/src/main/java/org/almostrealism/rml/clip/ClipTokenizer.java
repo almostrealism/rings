@@ -114,7 +114,7 @@ public class ClipTokenizer implements Tokenizer {
 	}
 
 	@Override
-	public int[] encodeAsInt(String text) {
+	public long[] encodeAsLong(String text) {
 		List<Integer> bpeTokens = new ArrayList<>();
 		text = Bpe.whitespaceClean(text.toLowerCase());
 
@@ -144,11 +144,11 @@ public class ClipTokenizer implements Tokenizer {
 			bpeTokens.add(49407);
 		}
 
-		return bpeTokens.stream().mapToInt(Integer::intValue).toArray();
+		return bpeTokens.stream().mapToLong(Integer::longValue).toArray();
 	}
 
 	@Override
-	public String decodeAsInt(int[] tokens) {
+	public String decodeAsLong(long[] tokens) {
 		throw new UnsupportedOperationException();
 	}
 

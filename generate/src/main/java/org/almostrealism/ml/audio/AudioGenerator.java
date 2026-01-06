@@ -16,22 +16,35 @@
 
 package org.almostrealism.ml.audio;
 
-import ai.onnxruntime.OrtException;
-import io.almostrealism.profile.OperationProfile;
-import io.almostrealism.profile.OperationProfileNode;
 import org.almostrealism.audio.WavFile;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.HardwareFeatures;
 import org.almostrealism.ml.StateDictionary;
-import org.almostrealism.persistence.Asset;
-import org.almostrealism.persistence.AssetGroup;
+import org.almostrealism.ml.Tokenizer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Random;
 import java.util.function.DoubleConsumer;
 
+/**
+ * Audio generation system that combines text conditioning with diffusion-based synthesis.
+ * <p>
+ * This class extends {@link ConditionalAudioSystem} to provide complete audio generation
+ * from text prompts, optionally incorporating sample-based initialization for style transfer.
+ * <p>
+ * To create an instance, you must provide:
+ * <ul>
+ *   <li>{@link Tokenizer} - for text tokenization (e.g., SentencePieceTokenizer)</li>
+ *   <li>{@link AudioAttentionConditioner} - for conditioning (e.g., OnnxAudioConditioner)</li>
+ *   <li>{@link AutoEncoder} - for audio latent space operations (e.g., OnnxAutoEncoder)</li>
+ *   <li>{@link StateDictionary} - weights for the diffusion transformer</li>
+ * </ul>
+ *
+ * @see Tokenizer
+ * @see AudioAttentionConditioner
+ * @see AutoEncoder
+ */
 public class AudioGenerator extends ConditionalAudioSystem {
 
 	private double audioDurationSeconds;
@@ -40,29 +53,38 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	private final AudioComposer composer;
 	private double strength;
 
-	public AudioGenerator(String modelsPath) throws OrtException, IOException {
-		this(new AssetGroup(new Asset(new File(modelsPath + "/conditioners.onnx")),
-				new Asset(new File(modelsPath + "/encoder.onnx")),
-				new Asset(new File(modelsPath + "/decoder.onnx")),
-				new Asset(new File(modelsPath + "/dit.onnx"))),
-				new StateDictionary(modelsPath + "/weights"));
+	/**
+	 * Creates an AudioGenerator with the provided components.
+	 *
+	 * @param tokenizer the tokenizer for text processing
+	 * @param conditioner the conditioner for generating attention inputs
+	 * @param autoencoder the audio encoder/decoder for latent space operations
+	 * @param ditStates state dictionary for the diffusion transformer weights
+	 */
+	public AudioGenerator(Tokenizer tokenizer,
+						  AudioAttentionConditioner conditioner,
+						  AutoEncoder autoencoder,
+						  StateDictionary ditStates) {
+		this(tokenizer, conditioner, autoencoder, ditStates, 8, System.currentTimeMillis());
 	}
 
-	public AudioGenerator(String modelsPath, long composerSeed) throws OrtException, IOException {
-		this(new AssetGroup(new Asset(new File(modelsPath + "/conditioners.onnx")),
-				new Asset(new File(modelsPath + "/encoder.onnx")),
-				new Asset(new File(modelsPath + "/decoder.onnx")),
-				new Asset(new File(modelsPath + "/dit.onnx"))),
-				new StateDictionary(modelsPath + "/weights"), 8, composerSeed);
-	}
-
-	public AudioGenerator(AssetGroup onnxAssets, StateDictionary ditStates) throws OrtException, IOException {
-		this(onnxAssets, ditStates, 8, System.currentTimeMillis());
-	}
-
-	public AudioGenerator(AssetGroup onnxAssets, StateDictionary ditStates,
-						  int composerDim, long composerSeed) throws OrtException, IOException {
-		super(onnxAssets, ditStates);
+	/**
+	 * Creates an AudioGenerator with the provided components and composer configuration.
+	 *
+	 * @param tokenizer the tokenizer for text processing
+	 * @param conditioner the conditioner for generating attention inputs
+	 * @param autoencoder the audio encoder/decoder for latent space operations
+	 * @param ditStates state dictionary for the diffusion transformer weights
+	 * @param composerDim dimension of the latent interpolation space
+	 * @param composerSeed random seed for the audio composer
+	 */
+	public AudioGenerator(Tokenizer tokenizer,
+						  AudioAttentionConditioner conditioner,
+						  AutoEncoder autoencoder,
+						  StateDictionary ditStates,
+						  int composerDim,
+						  long composerSeed) {
+		super(tokenizer, conditioner, autoencoder, ditStates);
 		composer = new AudioComposer(getAutoencoder(), composerDim, composerSeed);
 		audioDurationSeconds = 10.0;
 		strength = 0.5;
@@ -145,7 +167,7 @@ public class AudioGenerator extends ConditionalAudioSystem {
 	 */
 	public double[][] generateAudio(PackedCollection position, String prompt, long seed) {
 		try {
-			return generateAudio(position, tokenize(prompt), seed);
+			return generateAudio(position, getTokenizer().encodeAsLong(prompt), seed);
 		} finally {
 			if (progressMonitor != null) {
 				progressMonitor.accept(1.0);
@@ -178,7 +200,8 @@ public class AudioGenerator extends ConditionalAudioSystem {
 			}
 
 			// 1. Process tokens through conditioners
-			Map<String, PackedCollection> conditionerOutputs = runConditioners(tokenIds);
+			AudioAttentionConditioner.ConditionerOutput conditionerOutputs =
+					getConditioner().runConditioners(tokenIds, getAudioDuration());
 
 			// 2. Generate interpolated latent from samples (if position provided)
 			PackedCollection interpolatedLatent = null;
@@ -188,15 +211,15 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 			// 3. Run diffusion (with or without sample initialization)
 			PackedCollection finalLatent = runDiffusionSteps(
-					conditionerOutputs.get("cross_attention_input"),
-					conditionerOutputs.get("global_cond"),
+					conditionerOutputs.getCrossAttentionInput(),
+					conditionerOutputs.getGlobalCond(),
 					interpolatedLatent,
 					seed
 			);
 
 			// 4. Decode audio
 			long start = System.currentTimeMillis();
-			double[][] audio = decodeAudio(finalLatent.reshape(OnnxAutoEncoder.LATENT_DIMENSIONS, -1));
+			double[][] audio = decodeAudio(finalLatent.reshape(LATENT_DIMENSIONS, -1));
 			log((System.currentTimeMillis() - start) + "ms for autoencoder");
 			return audio;
 		} finally {
@@ -204,10 +227,6 @@ public class AudioGenerator extends ConditionalAudioSystem {
 				progressMonitor.accept(1.0);
 			}
 		}
-	}
-
-	protected Map<String, PackedCollection> runConditioners(long[] ids) {
-		return runConditioners(ids, getAudioDuration());
 	}
 
 	/**
@@ -426,36 +445,6 @@ public class AudioGenerator extends ConditionalAudioSystem {
 
 			if (nanCount > 0) {
 				warn(nanCount + " NaN values detected at " + context);
-			}
-		}
-	}
-
-	public static void main(String[] args) throws Exception {
-		if (args.length < 3) {
-			System.out.println("Usage: java AudioGenerator <models_path> <output_path> <prompt> <duration>");
-			return;
-		}
-
-		String modelsPath = args[0];
-		String outputPath = args[1];
-		String prompt = args[2];
-		double duration = Double.parseDouble(args[3]);
-
-		Random rand = new Random();
-
-		try (AudioGenerator generator = new AudioGenerator(modelsPath)) {
-			generator.setAudioDurationSeconds(duration);
-
-			for (int i = 0; i < 10; i++) {
-				long seed = rand.nextLong();
-				System.out.println("AudioGenerator: Generating audio with seed " + seed);
-				generator.generateAudio(prompt, seed, outputPath + "/output_" + seed + ".wav");
-			}
-
-			OperationProfile profile = generator.getDitModel().getProfile();
-
-			if (profile instanceof OperationProfileNode) {
-				((OperationProfileNode) profile).save("results/dit.xml");
 			}
 		}
 	}

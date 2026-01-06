@@ -36,8 +36,8 @@
 		<module>tensorflow</module>
 		<module>torch</module>
 		<module>keyframing</module>
-		<module>rings-ml</module>
 		<module>generate</module>
+		<module>rings-ml</module>
 
 		<module>remote</module>
 		<module>spatial</module>
