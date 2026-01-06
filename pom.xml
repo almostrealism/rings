@@ -22,8 +22,6 @@
 	</properties>
 
 	<modules>
-		<module>audio-space</module>
-
 		<module>treeview</module>
 		<module>swing</module>
 		<module>gl</module>
