@@ -1,11 +1,20 @@
-# Multi-architecture base image (supports ARM64/AMD64)
+# ARM64 base image
 FROM --platform=linux/arm64 ubuntu:22.04
 
 # Avoid interactive prompts during build
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Workaround for Ubuntu ARM ports GPG signature issues
+# This is a known intermittent issue with the ports.ubuntu.com mirror
+# TODO  This concerns me as I believe it makes it easy to install hacked images
+RUN apt-get update --allow-insecure-repositories || true && \
+    apt-get install -y --allow-unauthenticated ca-certificates gnupg && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get update
+
 # Install base dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get install -y \
     # Build tools
     build-essential \
     gcc \
@@ -15,6 +24,10 @@ RUN apt-get update && apt-get install -y \
     # Java 17
     openjdk-17-jdk \
     maven \
+    # Python and pip
+    python3 \
+    python3-pip \
+    python3-venv \
     # Version control
     git \
     # Utilities
@@ -43,9 +56,6 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Claude Code CLI via npm
-RUN npm install -g @anthropic-ai/claude-code
-
 # Create workspace directory
 WORKDIR /workspace
 
@@ -73,10 +83,23 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 USER developer
 WORKDIR /home/developer
 
+# Configure npm to use user-local prefix (avoids permission issues with global installs)
+RUN mkdir -p ~/.npm-global && \
+    npm config set prefix ~/.npm-global
+
+# Add npm global bin to PATH
+ENV PATH="/home/developer/.npm-global/bin:${PATH}"
+
+# Install Claude Code CLI as developer user (allows auto-updates without permission issues)
+RUN npm install -g @anthropic-ai/claude-code
+
 # Set up bash prompt and environment
 RUN echo 'export PS1="\u@\h:\w$ "' >> ~/.bashrc && \
     echo 'alias ll="ls -alh"' >> ~/.bashrc && \
-    echo 'export EDITOR=vim' >> ~/.bashrc
+    echo 'alias pip=pip3' >> ~/.bashrc && \
+    echo 'alias python=python3' >> ~/.bashrc && \
+    echo 'export EDITOR=vim' >> ~/.bashrc && \
+    echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
 
 # Configure tmux for better usability
 RUN echo '# Enable mouse support' >> ~/.tmux.conf && \
@@ -95,6 +118,8 @@ RUN echo '# Enable mouse support' >> ~/.tmux.conf && \
 RUN java -version && \
     mvn -version && \
     gcc --version && \
+    python3 --version && \
+    pip3 --version && \
     node --version && \
     npm --version && \
     claude --version && \

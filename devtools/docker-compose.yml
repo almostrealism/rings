@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   rings-dev-sandbox-a:
     build:
@@ -8,7 +6,7 @@ services:
     container_name: dev-sandbox-a
     volumes:
       - /Users/michael/AlmostRealism/sandboxA/:/workspace/project
-      - claude-config:/home/developer/.config/claude
+      - /Users/michael/AlmostRealism/sandboxA/.claude:/home/developer/.claude
     working_dir: /workspace/project
     stdin_open: true
     tty: true
@@ -23,7 +21,7 @@ services:
     container_name: dev-sandbox-b
     volumes:
       - /Users/michael/AlmostRealism/sandboxB/:/workspace/project
-      - claude-config:/home/developer/.config/claude
+      - /Users/michael/AlmostRealism/sandboxB/.claude:/home/developer/.claude
     working_dir: /workspace/project
     stdin_open: true
     tty: true
@@ -38,7 +36,7 @@ services:
     container_name: dev-sandbox-c
     volumes:
       - /Users/michael/AlmostRealism/sandboxC/:/workspace/project
-      - claude-config:/home/developer/.config/claude
+      - /Users/michael/AlmostRealism/sandboxC/.claude:/home/developer/.claude
     working_dir: /workspace/project
     stdin_open: true
     tty: true
@@ -53,7 +51,7 @@ services:
     container_name: dev-sandbox-d
     volumes:
       - /Users/michael/AlmostRealism/sandboxD/:/workspace/project
-      - claude-config:/home/developer/.config/claude
+      - /Users/michael/AlmostRealism/sandboxD/.claude:/home/developer/.claude
     working_dir: /workspace/project
     stdin_open: true
     tty: true
@@ -61,7 +59,3 @@ services:
       - TERM=xterm-256color
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
     network_mode: host
-
-volumes:
-  claude-config:
-    driver: local
