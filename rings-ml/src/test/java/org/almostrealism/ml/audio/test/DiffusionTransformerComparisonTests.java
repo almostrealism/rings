@@ -7,10 +7,10 @@ import org.almostrealism.ml.audio.DiffusionTransformerFeatures;
 import org.almostrealism.model.CompiledModel;
 import org.almostrealism.model.Model;
 import org.almostrealism.model.SequentialBlock;
-import org.almostrealism.util.TestFeatures;
+import org.almostrealism.util.TestSuiteBase;
 import org.junit.Test;
 
-public class DiffusionTransformerComparisonTests implements DiffusionTransformerFeatures, TestFeatures {
+public class DiffusionTransformerComparisonTests extends TestSuiteBase implements DiffusionTransformerFeatures {
 	/**
 	 * Tests fourierFeatures against reference data generated from the actual
 	 * stable-audio-tools FourierFeatures class. This ensures our Java implementation

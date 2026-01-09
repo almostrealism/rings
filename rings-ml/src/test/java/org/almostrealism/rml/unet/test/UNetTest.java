@@ -25,9 +25,6 @@ import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.collect.computations.Random;
 import org.almostrealism.color.RGBFeatures;
-import org.almostrealism.hardware.metal.MetalMemoryProvider;
-import org.almostrealism.io.Console;
-import org.almostrealism.io.OutputFeatures;
 import org.almostrealism.layers.CellularLayer;
 import org.almostrealism.ml.AttentionFeatures;
 import org.almostrealism.ml.DiffusionFeatures;
@@ -40,9 +37,7 @@ import org.almostrealism.optimize.Dataset;
 import org.almostrealism.optimize.ModelOptimizer;
 import org.almostrealism.optimize.ValueTarget;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.util.SignalWireDeliveryProvider;
-import org.almostrealism.util.TestFeatures;
-import org.almostrealism.util.TestUtils;
+import org.almostrealism.util.TestSuiteBase;
 import org.junit.Test;
 
 import java.io.File;
@@ -53,17 +48,7 @@ import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Function;
 
-public class UNetTest implements AttentionFeatures, DiffusionFeatures, RGBFeatures, TestFeatures {
-
-	static {
-		if (TestUtils.getTrainTests()) {
-			MetalMemoryProvider.enableLargeAllocationLogging = true;
-
-			Console.root().addListener(OutputFeatures.fileOutput("results/logs/train.out"));
-
-			SignalWireDeliveryProvider.attachDefault();
-		}
-	}
+public class UNetTest extends TestSuiteBase implements AttentionFeatures, DiffusionFeatures, RGBFeatures {
 
 	int batchSize = 1;
 	int channels = 1;

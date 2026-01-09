@@ -23,14 +23,14 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.ml.audio.AutoEncoder;
 import org.almostrealism.ml.audio.AutoEncoderFeatureProvider;
 import org.almostrealism.ml.audio.OnnxAutoEncoder;
-import org.almostrealism.util.TestFeatures;
+import org.almostrealism.util.TestSuiteBase;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.stream.IntStream;
 
-public class AutoEncoderFeatureProviderTests implements TestFeatures {
+public class AutoEncoderFeatureProviderTests extends TestSuiteBase {
 	String modelsDirectory = "/Users/michael/Documents/AlmostRealism/models/";
 
 	protected AutoEncoderFeatureProvider provider() {

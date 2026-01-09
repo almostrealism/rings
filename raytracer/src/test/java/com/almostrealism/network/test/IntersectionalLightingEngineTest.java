@@ -33,12 +33,12 @@ import org.almostrealism.geometry.Intersectable;
 import org.almostrealism.primitives.Sphere;
 import org.almostrealism.raytrace.IntersectionalLightingEngine;
 import org.almostrealism.space.AbstractSurface;
-import org.almostrealism.util.TestFeatures;
+import org.almostrealism.util.TestSuiteBase;
 import org.junit.Test;
 
 import java.util.ArrayList;
 
-public class IntersectionalLightingEngineTest implements TestFeatures {
+public class IntersectionalLightingEngineTest extends TestSuiteBase {
 	protected IntersectionalLightingEngine engine() {
 		CollectionProducer r = ray(0.0, 0.0, 10.0, 0.0, 0.0, -1.0);
 		Light l = new PointLight(new Vector(0.0, 10.0, 10.0));

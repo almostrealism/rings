@@ -34,12 +34,12 @@ import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.audio.tone.KeyboardTuning;
 import org.almostrealism.audio.tone.WesternChromatic;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.util.TestFeatures;
+import org.almostrealism.util.TestSuiteBase;
 import org.junit.Test;
 
 import java.io.File;
 
-public class AudioSynthesizerTests implements TestFeatures {
+public class AudioSynthesizerTests extends TestSuiteBase {
 	private final LibraryDestination library = new LibraryDestination("model");
 
 	@Test

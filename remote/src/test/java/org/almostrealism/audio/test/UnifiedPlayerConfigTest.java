@@ -23,18 +23,19 @@ import org.almostrealism.audio.line.DelegatedAudioLine;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.line.SharedMemoryAudioLine;
 import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.util.TestFeatures;
+import org.almostrealism.util.TestSuiteBase;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 /**
  * Unit tests for {@link UnifiedPlayerConfig} mode switching behavior.
  * Verifies that the unified player correctly manages switching between
  * Direct (hardware) and DAW (streaming) modes.
  */
-public class UnifiedPlayerConfigTest implements TestFeatures {
+public class UnifiedPlayerConfigTest extends TestSuiteBase {
 	private static final int PLAYER_COUNT = 4;
 	private static final int SAMPLE_RATE = 44100;
 	private static final int MAX_FRAMES = 44100 * 180;

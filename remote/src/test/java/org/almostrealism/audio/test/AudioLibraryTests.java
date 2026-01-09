@@ -29,7 +29,7 @@ import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.ml.audio.AutoEncoder;
 import org.almostrealism.ml.audio.AutoEncoderFeatureProvider;
 import org.almostrealism.ml.audio.OnnxAutoEncoder;
-import org.almostrealism.util.TestFeatures;
+import org.almostrealism.util.TestSuiteBase;
 import org.junit.Test;
 
 import java.io.File;
@@ -39,7 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class AudioLibraryTests implements TestFeatures {
+public class AudioLibraryTests extends TestSuiteBase {
 	public static String LIBRARY = "Library";
 
 	public static String resources;

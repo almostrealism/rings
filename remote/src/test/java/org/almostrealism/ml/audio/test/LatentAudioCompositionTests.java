@@ -24,13 +24,13 @@ import org.almostrealism.ml.audio.AutoEncoder;
 import org.almostrealism.ml.audio.OnnxAutoEncoder;
 import org.almostrealism.persistence.AssetGroup;
 import org.almostrealism.persistence.AssetGroupInfo;
-import org.almostrealism.util.TestFeatures;
+import org.almostrealism.util.TestSuiteBase;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-public class LatentAudioCompositionTests implements TestFeatures {
+public class LatentAudioCompositionTests extends TestSuiteBase {
 	@Test
 	public void attract() throws IOException, OrtException {
 		int sampleRate = 44100;

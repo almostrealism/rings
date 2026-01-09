@@ -22,12 +22,12 @@ import org.almostrealism.ml.audio.AutoEncoder;
 import org.almostrealism.ml.audio.OnnxAutoEncoder;
 import org.almostrealism.persistence.AssetGroup;
 import org.almostrealism.persistence.AssetGroupInfo;
-import org.almostrealism.util.TestFeatures;
+import org.almostrealism.util.TestSuiteBase;
 import org.junit.Test;
 
 import java.io.File;
 
-public class OnnxAutoEncoderTests implements TestFeatures {
+public class OnnxAutoEncoderTests extends TestSuiteBase {
 	@Test
 	public void encode() throws OrtException {
 		AssetGroup assets = new AssetGroup(AssetGroupInfo
