@@ -75,20 +75,17 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.almostrealism</groupId>
-			<artifactId>ar-ml</artifactId>
-			<classifier>proto</classifier>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.almostrealism</groupId>
 			<artifactId>ar-compose</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>com.almostrealism</groupId>
-			<artifactId>ar-rings-ml</artifactId>
-			<version>0.44</version>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-ml-onnx</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.almostrealism</groupId>
+			<artifactId>ar-ml-djl</artifactId>
 		</dependency>
 
 		<dependency>
