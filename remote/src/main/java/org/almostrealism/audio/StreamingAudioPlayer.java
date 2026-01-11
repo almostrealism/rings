@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Michael Murray
+ * Copyright 2026 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,10 +40,11 @@ import org.almostrealism.io.ConsoleFeatures;
  * connections are established in the background and only activated when
  * the user switches to DAW mode.</p>
  *
- * @see AudioStreamManager#createUnifiedPlayer
+ * @see AudioStreamManager#createStream
  * @see BufferedAudioPlayer
  */
-public class UnifiedPlayerConfig implements ConsoleFeatures {
+// TODO  This class is poorly named
+public class StreamingAudioPlayer implements ConsoleFeatures {
 
 	/**
 	 * The output mode for the unified player.
@@ -55,7 +56,7 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 		DAW
 	}
 
-	private final BufferedAudioPlayer player;
+	private final ScheduledOutputAudioPlayer player;
 	private final DelegatedAudioLine outputLine;
 	private final OutputLine recordingLine;
 
@@ -70,13 +71,13 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 * The caller must call {@link #setDirectMode()} or {@link #setDawMode()}
 	 * after construction to properly initialize the output delegate.
 	 *
-	 * @param player        the audio player instance
-	 * @param outputLine    the delegated audio line for output switching
-	 * @param recordingLine optional line for recording (may be null)
+	 * @param player the scheduled audio player instance (wraps buffered player with scheduler)
+	 * @param outputLine      the delegated audio line for output switching
+	 * @param recordingLine   optional line for recording (may be null)
 	 */
-	public UnifiedPlayerConfig(BufferedAudioPlayer player,
-							   DelegatedAudioLine outputLine,
-							   OutputLine recordingLine) {
+	public StreamingAudioPlayer(ScheduledOutputAudioPlayer player,
+								DelegatedAudioLine outputLine,
+								OutputLine recordingLine) {
 		this.player = player;
 		this.outputLine = outputLine;
 		this.recordingLine = recordingLine;
@@ -84,9 +85,9 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	}
 
 	/**
-	 * Returns the audio player instance.
+	 * Returns the scheduled audio player instance.
 	 */
-	public BufferedAudioPlayer getPlayer() {
+	public ScheduledOutputAudioPlayer getPlayer() {
 		return player;
 	}
 
@@ -112,7 +113,7 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	}
 
 	/**
-	 * Returns the SourceDataOutputLine for direct playback, creating it lazily if needed.
+	 * Returns the {@link SourceDataOutputLine} for direct playback, creating it lazily if needed.
 	 *
 	 * @return the direct output line
 	 * @throws IllegalStateException if no audio output line could be obtained
@@ -183,8 +184,6 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 
 		// Start the hardware line if it was stopped
 		direct.start();
-
-		log("Switched to DIRECT mode");
 	}
 
 	/**
@@ -227,6 +226,64 @@ public class UnifiedPlayerConfig implements ConsoleFeatures {
 	 */
 	public boolean hasDawConnection() {
 		return dawOutput != null;
+	}
+
+	/**
+	 * Returns the buffer gap in frames between write and read positions.
+	 * <p>
+	 * Only meaningful in direct mode when the player is actively running.
+	 *
+	 * @return the buffer gap
+	 */
+	public int getBufferGap() {
+		return player.getBufferGap();
+	}
+
+	/**
+	 * Returns the buffer gap as a percentage of total buffer size.
+	 *
+	 * @return the buffer gap percentage (0.0-100.0)
+	 */
+	public double getBufferGapPercent() {
+		return player.getBufferGapPercent();
+	}
+
+	/**
+	 * Returns whether the player is in degraded mode (unable to keep up
+	 * with real-time audio generation).
+	 *
+	 * @return true if in degraded mode
+	 */
+	public boolean isDegradedMode() {
+		return player.isDegradedMode();
+	}
+
+	/**
+	 * Resets the direct output line to recover from audio issues.
+	 * <p>
+	 * This method is useful when switching audio destinations (e.g., Bluetooth
+	 * devices) causes the SourceDataLine to enter a corrupted state. It closes
+	 * the current line and creates a new one with the same configuration.
+	 * <p>
+	 * This only affects direct mode. In DAW mode, this method has no effect
+	 * since the DAW manages its own audio output.
+	 * <p>
+	 * If the scheduler is currently suspended, the new line
+	 * will be stopped immediately after creation to maintain
+	 * the suspended state.
+	 *
+	 * @return true if the reset was performed, false if not in direct mode
+	 *         or no direct output exists
+	 */
+	public synchronized boolean resetOutputLine() {
+		if (activeMode != OutputMode.DIRECT || directOutput == null) {
+			log("Cannot reset output line: " +
+					(activeMode != OutputMode.DIRECT ? "not in direct mode" : "no direct output"));
+			return false;
+		}
+
+		directOutput.reset();
+		return true;
 	}
 
 	/**
