@@ -36,7 +36,7 @@ import static org.junit.Assert.assertSame;
  * Verifies that the unified player correctly manages switching between
  * Direct (hardware) and DAW (streaming) modes.
  */
-public class UnifiedPlayerConfigTest extends TestSuiteBase {
+public class StreamingAudioPlayerTest extends TestSuiteBase {
 	private static final int PLAYER_COUNT = 4;
 	private static final int SAMPLE_RATE = 44100;
 	private static final int MAX_FRAMES = 44100 * 180;
