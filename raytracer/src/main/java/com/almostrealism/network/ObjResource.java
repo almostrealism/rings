@@ -1,20 +1,34 @@
 package com.almostrealism.network;
 
-import org.almostrealism.algebra.Vector;
 import io.almostrealism.resource.ResourceTranscoder;
 import io.almostrealism.resource.UnicodeResource;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Mesh;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class ObjResource extends UnicodeResource {
+	private InputStream inputStream;
+
 	public ObjResource() { }
 
 	public ObjResource(File f) throws IOException { super(f); }
+
+	public ObjResource(InputStream in) throws IOException {
+		super("");
+		this.inputStream = in;
+	}
+
+	@Override
+	public InputStream getInputStream() {
+		if (inputStream != null) return inputStream;
+		return super.getInputStream();
+	}
 
 	public static class MeshTranscoder implements ResourceTranscoder<MeshResource, ObjResource> {
 		@Override
@@ -38,24 +52,24 @@ public class ObjResource extends UnicodeResource {
 			w: while (true) {
 				String line = reader.readLine();
 				lineNumber++;
-				if (line == null) break w;
+				if (line == null) break;
 				
 				if (line.startsWith("v ")) {
-					String s[] = line.split(" ");
-					float f[] = new float[3];
+					String[] s = line.split(" ");
+					float[] f = new float[3];
 					f[0] = Float.parseFloat(s[1]);
 					f[1] = Float.parseFloat(s[2]);
 					f[2] = Float.parseFloat(s[3]);
 					vertices.add(f);
 				} else if (line.startsWith("vt ")) {
-					String s[] = line.split(" ");
-					float f[] = new float[3];
+					String[] s = line.split(" ");
+					float[] f = new float[3];
 					f[0] = Float.parseFloat(s[1]);
 					f[1] = Float.parseFloat(s[2]);
 					texCoords.add(f);
 				} else if (line.startsWith("f ")) {
-					String s[] = line.split(" ");
-					int t[] = new int[3];
+					String[] s = line.split(" ");
+					int[] t = new int[3];
 					
 					ArrayList faceVerts = new ArrayList();
 					ArrayList faceTexCoords = new ArrayList();
@@ -63,7 +77,7 @@ public class ObjResource extends UnicodeResource {
 					i: for (int i = 1; i < s.length; i++) {
 						if (s[i].trim().length() <= 0) continue i;
 
-						String l[] = s[i].split("/");
+						String[] l = s[i].split("/");
 
 						int vertIndex;
 
@@ -80,14 +94,14 @@ public class ObjResource extends UnicodeResource {
 							t[i - 1] = vertIndex;
 						}
 						
-						float vertex[] = vertices.get(vertIndex);
+						float[] vertex = vertices.get(vertIndex);
 						faceVerts.add(vertex);
 						
 						if (l.length > 1 && l[1].length() > 0) {
-							float texCoord[] = texCoords.get(Integer.parseInt(l[1]) - 1);
+							float[] texCoord = texCoords.get(Integer.parseInt(l[1]) - 1);
 							faceTexCoords.add(texCoord);
 						} else {
-							float texCoord[] = new float[] {0.0f, 0.0f};
+							float[] texCoord = new float[] {0.0f, 0.0f};
 							faceTexCoords.add(texCoord);
 						}
 					}
@@ -101,9 +115,9 @@ public class ObjResource extends UnicodeResource {
 				}
 			}
 			
-			Vector v[] = new Vector[vertices.size()];
+			Vector[] v = new Vector[vertices.size()];
 			for (int i = 0; i < v.length; i++) {
-				float f[] = vertices.get(i);
+				float[] f = vertices.get(i);
 				v[i] = new Vector(f);
 			}
 			

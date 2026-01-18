@@ -7,9 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ImageDisplay extends JPanel {
-	private Image displayableImage;
+	private final Image displayableImage;
 
-	public ImageDisplay(RGB image[][]) {
+	public ImageDisplay(RGB[][] image) {
 		displayableImage = GraphicsConverter.convertToAWTImage(image);
 	}
 

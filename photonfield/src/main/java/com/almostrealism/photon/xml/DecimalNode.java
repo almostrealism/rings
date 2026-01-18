@@ -16,19 +16,17 @@
 
 package com.almostrealism.photon.xml;
 
-import java.awt.Container;
-import java.util.List;
-
-import javax.swing.JFormattedTextField;
-
+import com.almostrealism.raytracer.Settings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.almostrealism.raytracer.Settings;
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
 
 public class DecimalNode extends Node {
 	private Number value;
-	private JFormattedTextField field;
+	private final JFormattedTextField field;
 	
 	public DecimalNode() {
 		this.field = new JFormattedTextField(Settings.decimalFormat);

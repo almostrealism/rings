@@ -20,23 +20,23 @@ import io.almostrealism.relation.Producer;
 import org.almostrealism.collect.PackedCollection;
 
 public class RenderedNoteAudio {
-	private Producer<PackedCollection<?>> producer;
+	private Producer<PackedCollection> producer;
 	private int offset;
 
 	public RenderedNoteAudio() {
 		this(null, 0);
 	}
 
-	public RenderedNoteAudio(Producer<PackedCollection<?>> producer, int offset) {
+	public RenderedNoteAudio(Producer<PackedCollection> producer, int offset) {
 		this.producer = producer;
 		this.offset = offset;
 	}
 
-	public Producer<PackedCollection<?>> getProducer() {
+	public Producer<PackedCollection> getProducer() {
 		return producer;
 	}
 
-	public void setProducer(Producer<PackedCollection<?>> producer) {
+	public void setProducer(Producer<PackedCollection> producer) {
 		this.producer = producer;
 	}
 

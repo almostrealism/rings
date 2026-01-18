@@ -16,10 +16,10 @@
 
 package org.almostrealism.remote.ops;
 
+import org.almostrealism.audio.data.WaveData;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.io.ConsoleFeatures;
 import org.almostrealism.remote.api.Generation;
-import org.almostrealism.audio.data.WaveData;
 
 import java.util.function.Consumer;
 
@@ -38,8 +38,8 @@ public class WaveDataPublisher implements ConsoleFeatures {
 			throw new IllegalArgumentException();
 		}
 
-		PackedCollection<?> cd = data.getChannelData(0);
-		double samples[] = cd.toArray(0, cd.getMemLength());
+		PackedCollection cd = data.getChannelData(0);
+		double[] samples = cd.toArray(0, cd.getMemLength());
 
 		log("Publishing " + samples.length + " samples");
 

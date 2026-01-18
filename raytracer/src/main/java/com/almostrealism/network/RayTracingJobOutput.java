@@ -16,6 +16,10 @@
 
 package com.almostrealism.network;
 
+import io.flowtree.job.JobFactory;
+import org.almostrealism.color.RGB;
+import org.almostrealism.io.JobOutput;
+
 import java.io.EOFException;
 import java.io.Externalizable;
 import java.io.IOException;
@@ -25,17 +29,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import io.flowtree.job.JobFactory;
-import org.almostrealism.color.RGB;
-import org.almostrealism.io.JobOutput;
-
 /**
  * A {@link RayTracingJobOutput} stores
  * 
  * @author Mike Murray
  */
 public class RayTracingJobOutput extends JobOutput implements Externalizable {
-	private List data;
+	private final List data;
 
 	private int x, y, dx, dy;
 	
@@ -98,7 +98,7 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 			else
 				value = data.substring(0, index);
 			
-			if (value.length() <= 0) break j;
+			if (value.length() <= 0) break;
 			
 			if (j == 0) {
 				setTaskId(value);
@@ -114,7 +114,7 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 				this.data.add(RGB.parseRGB(value));
 			}
 			
-			if (value == data) break j;
+			if (value == data) break;
 			
 			data = data.substring(index + JobFactory.ENTRY_SEPARATOR.length());
 			index = data.indexOf(JobFactory.ENTRY_SEPARATOR);
@@ -191,13 +191,13 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 				RGB rgb = (RGB) in.readObject();
 				
 				if (rgb == null)
-					break w;
+					break;
 				else
 					this.data.add(rgb);
-			} catch (EOFException eof) { break w; }
+			} catch (EOFException eof) { break; }
 		}
 		
-		String originalData = data.toString();
+		String originalData = data;
 		
 		int index = data.indexOf(JobFactory.ENTRY_SEPARATOR);
 		
@@ -211,7 +211,7 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 			else
 				value = data.substring(0, index);
 			
-			if (value.length() <= 0) break j;
+			if (value.length() <= 0) break;
 			
 			if (j == 0) {
 				this.setTaskId(value);
@@ -224,7 +224,7 @@ public class RayTracingJobOutput extends JobOutput implements Externalizable {
 			} else if (j == 4) {
 				this.dy = Integer.parseInt(value);
 			} else {
-				break j;
+				break;
 			}
 			
 			data = data.substring(index + JobFactory.ENTRY_SEPARATOR.length());

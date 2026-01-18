@@ -17,18 +17,18 @@
 package com.almostrealism.stats;
 
 import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.VectorMath;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.space.Length;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
-import org.almostrealism.CodeFeatures;
-import io.almostrealism.relation.Evaluable;
 
 public class ReflectiveProbabilityDistribution implements SphericalProbabilityDistribution, Length, CodeFeatures {
 	private double m = 1.0;
 
 	@Override
-	public Producer<Vector> getSample(double[] in, double[] orient) {
+	public Producer<PackedCollection> getSample(double[] in, double[] orient) {
 		orient = VectorMath.multiply(orient, new Vector(in).dotProduct(new Vector(orient)) * 2.0, true);
 		Vector r = new Vector(orient).subtract(new Vector(in));
 		r.normalize();

@@ -50,7 +50,7 @@ public class Word {
 	}
 
 	public boolean equals(Object o) {
-		if (o instanceof Word == false) return false;
+		if (!(o instanceof Word)) return false;
 		return getText().equals(((Word) o).getText());
 	}
 

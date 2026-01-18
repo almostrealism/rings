@@ -2,11 +2,29 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+---
+
+## ⚠️ CRITICAL: NEVER REFERENCE VERSION NUMBERS ⚠️
+
+**THIS IS AN ABSOLUTE RULE WITH NO EXCEPTIONS.**
+
+- **NEVER** include specific version numbers anywhere in CLAUDE.md files
+- **NEVER** mention library versions (e.g., "JavaFX 21", "gRPC 1.53.0")
+- **NEVER** mention project versions (e.g., "version 0.72")
+- **NEVER** reference artifact versions in documentation
+- Version numbers change constantly and become stale immediately
+- Always refer to pom.xml files as the single source of truth for versions
+- If you need to mention a dependency, use just its name without any version
+
+**Why this matters:** Hardcoded version numbers in documentation become outdated instantly, cause confusion, and lead to errors when developers trust stale documentation over actual build files.
+
+---
+
 ## Project Overview
 
 Rings is a multimedia generation framework that provides a compact and expressive language for defining multimedia generation pipelines using conventional DSP and machine learning. It functions as a headless Digital Audio Workstation (DAW) and rendering engine for visual and sonic media, targeting heterogeneous compute devices (CPU, GPU) locally and in the cloud.
 
-**Key Dependency**: This project depends heavily on [Almost Realism Common](https://github.com/almostrealism/common) (ar-common version 0.71), which provides core computational abstractions and hardware acceleration support.
+**Key Dependency**: This project depends heavily on [Almost Realism Common](https://github.com/almostrealism/common) (ar-common), which provides core computational abstractions and hardware acceleration support.
 
 ## Build System
 
@@ -42,15 +60,118 @@ mvn test -pl audio-space
 mvn test -pl audio -Dtest=CellListTests
 ```
 
-**Run a single test method:**
+**CRITICAL: NEVER RUN SINGLE TEST METHODS:**
+
+**❌ NEVER DO THIS:**
 ```bash
-mvn test -pl audio -Dtest=CellListTests#export
+# WRONG - Contains pound sign (#) which causes shell approval requirement
+mvn test -pl audio -Dtest=CellListTests#testMethod
+mvn test -Dtest=SomeTest#method1,SomeTest#method2
 ```
+
+**✅ ONLY RUN ENTIRE TEST CLASSES:**
+```bash
+# CORRECT - Run entire test class
+mvn test -pl audio -Dtest=CellListTests
+mvn test -Dtest=SphereTest
+```
+
+**Why:** The Maven syntax for running single test methods uses the pound sign (`#`) to separate the class name from the method name. In bash, `#` starts a comment, which causes the shell to require user approval before executing. This interrupts automated workflows and is not allowed.
+
+**Workaround:** If you need to test a specific method:
+1. Run the entire test class (it's fast enough)
+2. Create a dedicated test class with only that method
+3. Temporarily comment out other `@Test` methods in the class
 
 **Skip tests during build:**
 ```bash
 mvn clean install -DskipTests
 ```
+
+### Build Verification Requirements
+
+**CRITICAL**: Before declaring any task complete, you MUST verify the full build succeeds:
+
+```bash
+export AR_HARDWARE_LIBS=/tmp/ar_libs/ && \
+export AR_HARDWARE_DRIVER=native && \
+mvn clean install -DskipTests
+```
+
+**This command must complete with BUILD SUCCESS.** Do not rely on:
+- `mvn compile` alone (misses test compilation and packaging)
+- `mvn compile -q` (suppresses errors that may appear later)
+- Building individual modules (misses cross-module dependencies)
+
+The full `mvn clean install -DskipTests` command:
+- Compiles all main sources
+- Compiles all test sources
+- Packages all modules
+- Installs to local repository
+- Verifies all inter-module dependencies
+
+**Only after this command succeeds** should you report that the build is working.
+
+### Maven Errors vs Warnings
+
+**CRITICAL: Distinguish between Maven errors and warnings**
+
+Maven output includes both errors (which block the build) and warnings (which do not):
+
+**Warnings (DO NOT block the build):**
+```
+[WARNING] Using platform encoding (ANSI_X3.4-1968 actually) to copy filtered resources
+[WARNING] File encoding has not been set, using platform encoding ANSI_X3.4-1968
+[INFO] /path/to/file.java: Some input files use unchecked or unsafe operations
+[INFO] /path/to/file.java: Some input files use or override a deprecated API
+```
+
+**Errors (BLOCK the build):**
+```
+[ERROR] /path/to/file.java:[line,col] cannot find symbol
+[ERROR] /path/to/file.java:[line,col] method getLast() is undefined
+[ERROR] COMPILATION ERROR
+```
+
+**Key distinction:**
+- Lines starting with `[WARNING]` or `[INFO]` are informational only
+- Lines starting with `[ERROR]` indicate actual build failures
+- UTF-8 encoding warnings are common and safe to ignore
+- Only focus on fixing `[ERROR]` lines when troubleshooting builds
+
+## Hardware Configuration
+
+**CRITICAL**: Before running any tests or code that uses ar-common's hardware acceleration, you must configure the native library path and driver.
+
+### Required Environment Setup
+
+```bash
+# Create native library directory
+mkdir -p /home/developer/.libs/
+
+# Set environment variables (required for all test/build sessions)
+export AR_HARDWARE_LIBS=/home/developer/.libs/
+export AR_HARDWARE_DRIVER=native
+```
+
+**Alternative: Use Maven/JVM System Properties**
+
+You can also configure these via system properties when running Maven:
+
+```bash
+mvn test -DAR_HARDWARE_LIBS=/home/developer/.libs/ -DAR_HARDWARE_DRIVER=native
+```
+
+**Why This Is Required:**
+- ar-common compiles computation graphs to native code at runtime
+- The native libraries (.so files on Linux, .dylib on macOS) are cached in AR_HARDWARE_LIBS
+- Without these settings, Hardware class initialization will fail with NullPointerException
+- The "native" driver uses CPU-based execution (GPU drivers also available: "opencl", "cuda")
+
+**Troubleshooting:**
+- If you get `Could not initialize class org.almostrealism.hardware.Hardware`, verify these environment variables are set
+- Check that `/home/developer/.libs/` exists and is writable
+- Native libraries will be automatically generated on first use
 
 ## Module Architecture
 
@@ -152,14 +273,14 @@ Rings compiles signal processing operations to target CPU or GPU:
 
 ## Key Dependencies
 
-From pom.xml:
-- **ar-common** (0.71): Core computational abstractions
-- **ar-flowtree** (0.27): Flow tree processing
-- **JOGL** (2.3.2): OpenGL bindings
-- **Jackson** (2.16.1): JSON processing
-- **gRPC** (1.53.0): Remote procedure calls
-- **ONNX Runtime** (1.22.0): ML inference
-- **JUnit** (4.12): Testing
+See pom.xml for current versions. Key dependencies include:
+- **ar-common**: Core computational abstractions
+- **ar-flowtree**: Flow tree processing
+- **JOGL**: OpenGL bindings
+- **Jackson**: JSON processing
+- **gRPC**: Remote procedure calls
+- **ONNX Runtime**: ML inference
+- **JUnit**: Testing
 
 ## Development Patterns
 
@@ -187,6 +308,36 @@ Operations are automatically compiled for GPU when available. The framework:
 ### Sample Rate
 
 Default sample rate is `OutputLine.sampleRate` (typically 44100 Hz). Most components accept sample rate as a constructor parameter or use the global default.
+
+## Native Library Management
+
+### CRITICAL: Do NOT modify Java/Extensions directory
+
+**NEVER** delete or modify files in `/Users/michael/Library/Java/Extensions/`:
+- This directory contains native libraries (.dylib files) compiled at runtime
+- The framework automatically regenerates libraries when needed
+- Manually deleting these files does NOT solve architecture issues
+- Libraries are cached for performance and should not be tampered with
+
+### Test Timeouts
+
+**DO NOT use the system `timeout` command** with Maven tests:
+- The system `timeout` binary may cause architecture issues (x86_64 vs arm64)
+- This can force Maven to run under Rosetta emulation
+- Native library compilation will then target the wrong architecture
+
+**INSTEAD:** Use Maven's built-in `forkedProcessTimeoutInSeconds` configuration:
+- Already configured in the root pom.xml (default: 120 seconds)
+- Applies to all test modules automatically
+- Works correctly with native architecture
+
+**To adjust timeout for specific tests:**
+```bash
+# Run with custom timeout (300 seconds = 5 minutes)
+mvn test -pl raytracer -Dtest=SomeTest -DforkedProcessTimeoutInSeconds=300
+```
+
+The default timeout of 120 seconds (2 minutes) is sufficient for most tests.
 
 ## Code Style and Formatting
 
@@ -219,8 +370,29 @@ This is standard for macOS/Linux development and critical for consistent git dif
 
 ## Important Notes
 
-IF YOU EVER FIND THAT YOU HAVE INTRODUCED CODE WHICH CONTAINS MORE THAN 20 NEARLY-IDENTICAL LINES,
-YOU HAVE MADE A MISTAKE AND MUST REFACTOR THE CODE TO REMOVE THE DUPLICATION.
+## ABSOLUTELY NO CODE DUPLICATION
+
+**THIS IS NON-NEGOTIABLE.**
+
+If you find yourself copying and pasting code, or writing nearly-identical logic multiple times, STOP IMMEDIATELY. This is unacceptable and will never be tolerated.
+
+**The rule**: If you have written more than 3-5 lines that are structurally similar to other code, you MUST refactor to eliminate the duplication BEFORE proceeding. Use:
+- Helper methods with parameters
+- Generic methods with type parameters
+- Factory functions
+- Higher-order functions that accept lambdas/functional interfaces
+- Template method pattern
+- Any other appropriate abstraction
+
+**Examples of violations**:
+- Writing two deserializers with identical structure but different type names
+- Copy-pasting a method and changing a few variable names
+- Creating multiple similar test methods instead of parameterized tests
+- Duplicating validation logic across multiple locations
+
+**No exceptions. No excuses. Refactor first, then proceed.**
+
+The threshold is NOT 20 lines. If you catch yourself typing similar code a second time, that is already too much. Extract it immediately.
 
 - **Cell** interface is from ar-common, not defined in this repo
 - **Producer**, **Evaluable**, **Factor** are core computation abstractions from ar-common

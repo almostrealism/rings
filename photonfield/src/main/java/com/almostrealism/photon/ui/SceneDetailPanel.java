@@ -16,15 +16,11 @@
 
 package com.almostrealism.photon.ui;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JFormattedTextField;
-import javax.swing.BorderFactory;
-import java.awt.BorderLayout;
-import java.text.NumberFormat;
-import java.beans.PropertyChangeListener;
+import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
-import java.awt.GridLayout;
+import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
 
 /**
  *  @author Samuel Tepper
@@ -37,12 +33,16 @@ public class SceneDetailPanel extends JPanel
 	 */
 	
 	public double Bound, Scale, Duration;
-	private JLabel boundLabel, scaleLabel, durLabel;
-	private JFormattedTextField boundField, scaleField, durField;
+	private final JLabel boundLabel;
+	private final JLabel scaleLabel;
+	private final JLabel durLabel;
+	private final JFormattedTextField boundField;
+	private final JFormattedTextField scaleField;
+	private final JFormattedTextField durField;
 	private NumberFormat numFormat;
-	private static String boundString = "Simulation Bound: ";
-	private static String scaleString = "Simulation Scale: ";
-	private static String durString = "Simulation Duration: ";
+	private static final String boundString = "Simulation Bound: ";
+	private static final String scaleString = "Simulation Scale: ";
+	private static final String durString = "Simulation Duration: ";
 					
 						
 	

@@ -17,26 +17,24 @@
 package org.almostrealism.audio.filter.test;
 
 import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.tone.DefaultKeyboardTuning;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.time.Frequency;
-import org.almostrealism.time.TemporalRunner;
-import org.almostrealism.audio.health.StableDurationHealthComputation;
-import org.almostrealism.audio.tone.WesternChromatic;
-import  org.almostrealism.audio.tone.WesternScales;
-import org.almostrealism.algebra.Scalar;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.filter.AudioPassFilter;
+import org.almostrealism.audio.health.StableDurationHealthComputation;
+import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.audio.tone.DefaultKeyboardTuning;
+import org.almostrealism.audio.tone.WesternChromatic;
+import org.almostrealism.audio.tone.WesternScales;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.graph.Receptor;
 import org.almostrealism.graph.ReceptorCell;
 import org.almostrealism.hardware.mem.MemoryBankAdapter.CacheLevel;
-import org.almostrealism.heredity.Genome;
 import org.almostrealism.time.AcceleratedTimeSeries;
+import org.almostrealism.time.Frequency;
+import org.almostrealism.time.TemporalRunner;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,7 +59,7 @@ public class AssignableGenomeTest implements CellFeatures {
 		return new AudioScene<>(null, 120, 2, 2, OutputLine.sampleRate);
 	}
 
-	protected Cells cells(Receptor<PackedCollection<?>> meter) {
+	protected Cells cells(Receptor<PackedCollection> meter) {
 		List<Frequency> frequencies = new DefaultKeyboardTuning().getTones(WesternScales.major(WesternChromatic.G3, 1));
 
 		CellList cells =

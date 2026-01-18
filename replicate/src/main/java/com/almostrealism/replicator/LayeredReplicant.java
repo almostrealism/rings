@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class LayeredReplicant<T extends Replicant> extends SurfaceGroup<T> {
-	private List<T> layers;
+	private final List<T> layers;
 
 	public LayeredReplicant() {
 		layers = new ArrayList<>();

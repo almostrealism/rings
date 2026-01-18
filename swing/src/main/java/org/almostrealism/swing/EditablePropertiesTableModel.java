@@ -16,9 +16,9 @@
 
 package org.almostrealism.swing;
 
-import javax.swing.table.AbstractTableModel;
-
 import io.almostrealism.relation.Editable;
+
+import javax.swing.table.AbstractTableModel;
 
 /**
   An EditablePropertiesTableModel object can be used to manage the data
@@ -27,7 +27,7 @@ import io.almostrealism.relation.Editable;
   stored Editable object.
 */
 public class EditablePropertiesTableModel extends AbstractTableModel {
-  public static final String columnNames[] = {"Property", "Description", "Type", "Value"};
+  public static final String[] columnNames = {"Property", "Description", "Type", "Value"};
   
   private Editable editing;
 
@@ -77,10 +77,7 @@ public class EditablePropertiesTableModel extends AbstractTableModel {
 	*/
 	
 	public boolean isCellEditable(int row, int column) {
-		if (column == 3)
-			return true;
-		else
-			return false;
+		return column == 3;
 	}
 	
 	/**

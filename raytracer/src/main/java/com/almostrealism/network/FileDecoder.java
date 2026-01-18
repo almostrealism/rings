@@ -16,6 +16,11 @@
 
 package com.almostrealism.network;
 
+import org.almostrealism.color.RGB;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.SurfaceGroup;
+
 import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.io.BufferedReader;
@@ -25,11 +30,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import org.almostrealism.color.RGB;
-import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
-import org.almostrealism.space.SurfaceGroup;
 
 /**
  * The FileDecoder class provides static methods for decoding scene and surface data
@@ -64,7 +64,7 @@ public class FileDecoder extends ModelData {
 
 				ShadableSurface group = new SurfaceGroup(scene.getSurfaces());
 
-				if (ui == true) {
+				if (ui) {
 					System.out.println("FileDecoder: UI mode no longer supported.");
 //				group = SurfaceUIFactory.createSurfaceUI((AbstractSurface)group);
 //				((AbstractSurfaceUI)group).setName("Surface (Triangles)");
@@ -99,7 +99,7 @@ public class FileDecoder extends ModelData {
 			String t = s.substring(0, index);
 			t = t.trim();
 			
-			if (t.equals("")) break w;
+			if (t.equals("")) break;
 			
 			values.addElement(new Double(t));
 			
@@ -107,13 +107,13 @@ public class FileDecoder extends ModelData {
 			index = s.indexOf(" ");
 		}
 		
-		double d[] = new double[values.size()];
+		double[] d = new double[values.size()];
 		for (int i = 0; i < d.length; i++) d[i] = ((Double)values.elementAt(i)).doubleValue();
 		
 		return d;
 	}
 	
-	public static RGB[][] readRGBList(InputStream in, RGB buf[][]) throws IOException {
+	public static RGB[][] readRGBList(InputStream in, RGB[][] buf) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		
 		String line = null;
@@ -121,9 +121,9 @@ public class FileDecoder extends ModelData {
 		
 		w: while ((line = reader.readLine()) != null) {
 			if (j >= buf[i].length) { i++; j = 0; }
-			if (i >= buf.length) break w;
+			if (i >= buf.length) break;
 			
-			String s[] = line.split(" ");
+			String[] s = line.split(" ");
 			
 			double r = Double.parseDouble(s[0]);
 			double g = Double.parseDouble(s[1]);

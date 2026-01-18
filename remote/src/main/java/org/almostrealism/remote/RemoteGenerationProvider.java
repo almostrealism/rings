@@ -20,8 +20,6 @@ import org.almostrealism.audio.generative.GenerationProvider;
 import org.almostrealism.audio.generative.GenerationResourceManager;
 import org.almostrealism.audio.generative.GeneratorStatus;
 import org.almostrealism.audio.notes.NoteAudio;
-import org.almostrealism.audio.notes.NoteAudioProvider;
-import org.almostrealism.audio.notes.NoteAudioSource;
 import org.almostrealism.util.KeyUtils;
 
 import java.util.ArrayList;
@@ -30,8 +28,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RemoteGenerationProvider implements GenerationProvider {
-	private RemoteGeneratorClient client;
-	private GenerationResourceManager resources;
+	private final RemoteGeneratorClient client;
+	private final GenerationResourceManager resources;
 
 	public RemoteGenerationProvider(String host, int port, RemoteAccessKey key, GenerationResourceManager resources) {
 		this.client = new RemoteGeneratorClient(host, port, key);

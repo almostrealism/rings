@@ -21,8 +21,8 @@ import com.almostrealism.remote.mgr.ManagerDatabase;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.almostrealism.audio.generative.GenerationProvider;
-import org.almostrealism.audioml.DiffusionGenerationProvider;
 import org.almostrealism.audio.generative.LocalResourceManager;
+import org.almostrealism.audioml.DiffusionGenerationProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.io.IOException;
 public class RemoteGenerationServer {
 	public static final int DEFAULT_PORT = 6565;
 
-	private Server server;
+	private final Server server;
 
 	public RemoteGenerationServer(AccessManager accessManager, GenerationProvider provider) {
 		this(accessManager, provider, DEFAULT_PORT);
@@ -53,7 +53,7 @@ public class RemoteGenerationServer {
 		server.awaitTermination();
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		String root = args[0];
 
 		DefaultAccessManager accessManager = new DefaultAccessManager(ManagerDatabase.load(new File(root, "rings-db.json")));

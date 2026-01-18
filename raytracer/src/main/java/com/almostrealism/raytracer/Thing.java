@@ -16,22 +16,17 @@
 
 package com.almostrealism.raytracer;
 
-import org.almostrealism.algebra.ScalarFeatures;
-import org.almostrealism.geometry.ContinuousField;
-import org.almostrealism.algebra.Scalar;
-import org.almostrealism.algebra.Vector;
 import io.almostrealism.code.Operator;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.algebra.ScalarFeatures;
+import org.almostrealism.collect.PackedCollection;
+import org.almostrealism.geometry.ContinuousField;
+import org.almostrealism.geometry.ShadableIntersection;
 import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Plane;
-import org.almostrealism.geometry.ShadableIntersection;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class Thing extends AbstractSurface implements ScalarFeatures {
-	private Plane p = new Plane(Plane.XY);
+	private final Plane p = new Plane(Plane.XY);
 
 	@Override
 	public ContinuousField intersectAt(Producer ray) {
@@ -43,17 +38,17 @@ public class Thing extends AbstractSurface implements ScalarFeatures {
 	}
 
 	@Override
-	public Operator<Scalar> expect() {
+	public Operator<PackedCollection> expect() {
 		return p.expect();
 	}
 
 	@Override
-	public Operator<Scalar> get() {
+	public Operator<PackedCollection> get() {
 		return p.get();
 	}
 
 	@Override
-	public Producer<Vector> getNormalAt(Producer<Vector> point) {
+	public Producer<PackedCollection> getNormalAt(Producer<PackedCollection> point) {
 		return vector(0.0, 0.0, 1.0);
 	}
 }

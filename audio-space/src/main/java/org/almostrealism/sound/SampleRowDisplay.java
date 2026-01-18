@@ -16,32 +16,29 @@
 
 package org.almostrealism.sound;
 
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import org.almostrealism.audio.line.LineUtilities;
+import org.almostrealism.audio.line.SourceDataOutputLine;
+import org.almostrealism.sound.util.SampleDisplayUtilities;
+
+import javax.sound.sampled.SourceDataLine;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.sound.sampled.SourceDataLine;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import org.almostrealism.audio.line.LineUtilities;
-import org.almostrealism.audio.line.SourceDataOutputLine;
-import org.almostrealism.sound.util.SampleDisplayUtilities;
-
 public class SampleRowDisplay extends JPanel implements Runnable, MouseListener, KeyListener {
-	private Sample samples[];
-	private SourceDataLine line;
+	private final Sample[] samples;
+	private final SourceDataLine line;
 	private boolean stop = true;
 	
 	private SampleRowColumnDisplay colDisplay;
 	
-	private SampleDisplayPane panels[];
+	private final SampleDisplayPane[] panels;
 	
-	public SampleRowDisplay(Sample samples[], SourceDataLine line) {
+	public SampleRowDisplay(Sample[] samples, SourceDataLine line) {
 		super(new GridLayout(1, samples.length));
 		this.samples = samples;
 		this.line = line;
@@ -77,8 +74,8 @@ public class SampleRowDisplay extends JPanel implements Runnable, MouseListener,
 	}
 	
 	public void playAndWait(int index) {
-		if (this.stop == false) {
-			System.out.println(this.toString() + " JavaAudioSample already playing.");
+		if (!this.stop) {
+			System.out.println(this + " JavaAudioSample already playing.");
 			return;
 		}
 		

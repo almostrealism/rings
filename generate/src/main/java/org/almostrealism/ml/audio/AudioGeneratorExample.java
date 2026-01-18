@@ -77,8 +77,8 @@ public class AudioGeneratorExample {
 
 					for (int i = 0; i < variations; i++) {
 						// Create random position vector for interpolation
-						PackedCollection<?> position =
-								new PackedCollection<>(generator.getComposerDimension()).randnFill(rand);
+						PackedCollection position =
+								new PackedCollection(generator.getComposerDimension()).randnFill(rand);
 
 						String filename = String.format("%s/sample_based_strength%.1f_%d_seed%d.wav",
 								outputPath, strength, i, seed);
@@ -95,11 +95,12 @@ public class AudioGeneratorExample {
 				generator.setAudioDurationSeconds(8.0);
 
 				for (int i = 0; i < variations; i++) {
+					long s = rand.nextLong();
 					String filename = String.format("%s/pure_gen_%d_seed%d.wav",
-							outputPath, i, seed);
+							outputPath, i, s);
 					System.out.println("Generating variation " +
-							(i + 1) + "/" + variations + " (seed " + seed + ")");
-					generator.generateAudio(prompt, seed, filename);
+							(i + 1) + "/" + variations + " (seed " + s + ")");
+					generator.generateAudio(prompt, s, filename);
 				}
 			}
 		} finally {

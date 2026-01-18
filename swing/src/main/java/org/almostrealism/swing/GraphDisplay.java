@@ -16,21 +16,20 @@
 
 package org.almostrealism.swing;
 
-import java.awt.Graphics;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.JPanel;
 
 /**
  * @author Mike Murray
  */
 public class GraphDisplay extends JPanel {
-	private int scale = 4;
+	private final int scale = 4;
 	
-	private int maxEntries;
-	private List entries = new ArrayList();
+	private final int maxEntries;
+	private final List entries = new ArrayList();
 
 	public GraphDisplay() { this(1000); }
 	public GraphDisplay(int maxEntries) { this.maxEntries = maxEntries; }

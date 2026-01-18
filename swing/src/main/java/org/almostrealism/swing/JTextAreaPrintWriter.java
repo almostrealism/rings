@@ -16,9 +16,9 @@
 
 package org.almostrealism.swing;
 
-import javax.swing.JTextArea;
-
 import org.almostrealism.io.PrintWriter;
+
+import javax.swing.*;
 
 
 /**
@@ -26,7 +26,7 @@ import org.almostrealism.io.PrintWriter;
  * text into a {@link JTextArea} object.
  */
 public class JTextAreaPrintWriter implements PrintWriter {
-  private StringBuffer indent;
+  private final StringBuffer indent;
   
   private JTextArea textArea;
 

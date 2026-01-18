@@ -17,7 +17,6 @@
 package org.almostrealism.audio.notes;
 
 import io.almostrealism.relation.Factor;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.sources.BufferDetails;
 import org.almostrealism.audio.sources.StatelessSource;
@@ -49,7 +48,7 @@ public class StatelessSourceNoteAudioTuned extends StatelessSourceNoteAudioAdapt
 
 	public StatelessSourceNoteAudioTuned(StatelessSource source,
 										 BufferDetails buffer,
-										 Factor<PackedCollection<?>> params) {
+										 Factor<PackedCollection> params) {
 		super(source, buffer, params);
 	}
 
@@ -63,8 +62,8 @@ public class StatelessSourceNoteAudioTuned extends StatelessSourceNoteAudioAdapt
 	 * @see #setTuning(KeyboardTuning) 
 	 */
 	@Override
-	public Factor<PackedCollection<?>> getFrequency(KeyPosition<?> target,
-													  Factor<PackedCollection<?>> automationLevel) {
+	public Factor<PackedCollection> getFrequency(KeyPosition<?> target,
+													  Factor<PackedCollection> automationLevel) {
 		return time -> c(tuning.getTone(target).asHertz());
 	}
 }

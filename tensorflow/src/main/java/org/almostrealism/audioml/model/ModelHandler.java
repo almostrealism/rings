@@ -9,8 +9,8 @@ import org.tensorflow.proto.SignatureDef;
 import org.tensorflow.types.TFloat32;
 import org.tensorflow.types.TInt64;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ModelHandler implements AutoCloseable {
 	// Model indices - match the C++ definitions
@@ -36,10 +36,10 @@ public class ModelHandler implements AutoCloseable {
 	private String autoencoderSignatureName;
 
 	// Input/output tensor names (will be determined from model inspection)
-	private Map<Integer, String> t5InputNames = new HashMap<>();
-	private Map<Integer, String> t5OutputNames = new HashMap<>();
-	private Map<Integer, String> ditInputNames = new HashMap<>();
-	private Map<Integer, String> ditOutputNames = new HashMap<>();
+	private final Map<Integer, String> t5InputNames = new HashMap<>();
+	private final Map<Integer, String> t5OutputNames = new HashMap<>();
+	private final Map<Integer, String> ditInputNames = new HashMap<>();
+	private final Map<Integer, String> ditOutputNames = new HashMap<>();
 	private String autoencoderInputName;
 	private String autoencoderOutputName;
 

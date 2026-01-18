@@ -27,7 +27,7 @@ public class ClipTokenizerTest {
 		String text = "Hello, my name is bob";
 
 		ClipTokenizer tokenizer = new ClipTokenizer("src/main/resources/openai/bpe_simple_vocab_16e6.txt");
-		int tokens[] = tokenizer.encodeAsInt(text);
+		int[] tokens = tokenizer.encodeAsInt(text);
 
 		for (int i = 0; i < tokens.length; i++) {
 			System.out.println(tokens[i]);

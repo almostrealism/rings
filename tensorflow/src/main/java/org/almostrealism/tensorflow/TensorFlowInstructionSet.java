@@ -17,8 +17,8 @@
 package org.almostrealism.tensorflow;
 
 import io.almostrealism.code.Execution;
-import io.almostrealism.scope.Argument;
 import io.almostrealism.code.InstructionSet;
+import io.almostrealism.scope.Argument;
 import io.almostrealism.scope.Scope;
 import org.tensorflow.ConcreteFunction;
 import org.tensorflow.Result;
@@ -33,13 +33,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class TensorFlowInstructionSet implements InstructionSet {
-	private ConcreteFunction func;
+	private final ConcreteFunction func;
 	private List<Argument<?>> arguments;
 	private Collection<TensorFlowInput> variables;
 
@@ -56,7 +55,7 @@ public class TensorFlowInstructionSet implements InstructionSet {
 		};
 	}
 
-	private void assignArgs(Object args[], Result result) {
+	private void assignArgs(Object[] args, Result result) {
 		List<Tensor> outputs = arguments.stream()
 				.map(Argument::getName)
 				.map(result::get)

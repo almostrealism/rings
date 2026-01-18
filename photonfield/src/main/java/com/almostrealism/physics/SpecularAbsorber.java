@@ -14,35 +14,37 @@
  * limitations under the License.
  */
 
+
 package com.almostrealism.physics;
 
-import java.io.IOException;
-
-import javax.swing.JFrame;
-
-import com.almostrealism.primitives.AbsorptionPlane;
-import com.almostrealism.primitives.Pinhole;
-import com.almostrealism.primitives.Plane;
+import com.almostrealism.geometry.Sphere;
+import org.almostrealism.light.PlanarLight;
+import com.almostrealism.stats.UniformHemisphericalDistribution;
 import io.almostrealism.relation.Producer;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.color.ProbabilityDistribution;
 import org.almostrealism.color.Spectrum;
 import org.almostrealism.physics.Absorber;
+import org.almostrealism.physics.BlackBody;
+import org.almostrealism.physics.Clock;
 import org.almostrealism.physics.Fast;
 import org.almostrealism.physics.PhotonField;
 import org.almostrealism.physics.PhysicalConstants;
+import org.almostrealism.physics.VolumeAbsorber;
+import org.almostrealism.primitives.AbsorptionPlane;
+import org.almostrealism.primitives.Pinhole;
+import org.almostrealism.primitives.Plane;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.raytrace.DefaultPhotonField;
 import org.almostrealism.stats.BRDF;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
-import org.almostrealism.physics.Clock;
+import org.almostrealism.utils.PriorityQueue;
 
-import com.almostrealism.stats.UniformHemisphericalDistribution;
-import com.almostrealism.geometry.Sphere;
-import com.almostrealism.light.PlanarLight;
-import org.almostrealism.CodeFeatures;
-import org.almostrealism.util.PriorityQueue;
-
-import java.lang.Math;
+import javax.swing.*;
+import java.io.IOException;
 
 /**
  * A {@link SpecularAbsorber} is an {@link Absorber} implementation that absorbs photons
@@ -57,7 +59,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 	public static double verbose = Math.pow(10.0, -7.0);
 	
 	private Clock clock;
-	private PriorityQueue Queue = new PriorityQueue();
+	private final PriorityQueue Queue = new PriorityQueue();
 	private Vector P, N, L, resultant;
 	
 	private SphericalProbabilityDistribution brdf;
@@ -65,9 +67,9 @@ public class SpecularAbsorber extends VolumeAbsorber
 	private double reflectDepth, absorbDepth;
 	private double startwave, range;
 	private double delay;
-	private double origPosition[];
+	private double[] origPosition;
 	
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		double x = 50.0;
 		
 		
@@ -93,7 +95,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 		plane.setThickness(0.05);
 		plane.setSurfaceNormal(Ops.o().vector(0.0, 0.0, -1.0));
 		plane.setOrientation(new double[] {0.0, 1.0, 0.0});
-		
+
 		Pinhole pinhole = new Pinhole();
 		pinhole.setRadius(x / 8.0);
 		pinhole.setThickness(0.05);
@@ -201,14 +203,14 @@ public class SpecularAbsorber extends VolumeAbsorber
 			System.out.println("SpecularAbsorber: Absorbing " +
 								Incoming.length() + " " + Energy);
 		
-		Object data[] = { Position, Incoming, new double[] { Energy }};
+		Object[] data = { Position, Incoming, new double[] { Energy }};
 		Queue.put(data, this.delay);
 		
 		return true;
 	}
 
 	@Override
-	public Producer<Vector> emit() {
+	public Producer<PackedCollection> emit() {
 		P = (Vector) ((Object[])Queue.peekNext())[0];
 		L = (Vector) ((Object[])Queue.next())[1];
 		
@@ -229,7 +231,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 			L = L.minus();
 		}
 		
-		N = volume.getNormalAt(v(P)).get().evaluate();
+		N = (Vector) volume.getNormalAt(v(P)).get().evaluate();
 		if (N.dotProduct(L) < 0) N = N.minus();
 		return this.brdf.getSample(L.toArray(), N.toArray());
 	}
@@ -249,7 +251,7 @@ public class SpecularAbsorber extends VolumeAbsorber
 //		return Integer.MAX_VALUE;
 	}
 
-	public Producer<Vector> getEmitPosition() {
+	public Producer<PackedCollection> getEmitPosition() {
 		// return position of next queue item
 		if (Queue.size() > 0)
 			return v((Vector) ((Object[]) Queue.peekNext())[0]);

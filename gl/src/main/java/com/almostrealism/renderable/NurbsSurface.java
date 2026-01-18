@@ -22,12 +22,12 @@ import com.jogamp.opengl.glu.GLUnurbs;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 
 public class NurbsSurface extends RenderableGLAdapter {
-	private float knots[];
-	private float pts[][][];
-	private GLUgl2 glu;
-	private GLUnurbs nurbs;
+	private final float[] knots;
+	private final float[][][] pts;
+	private final GLUgl2 glu;
+	private final GLUnurbs nurbs;
 	
-	public NurbsSurface(float knots[], float pts[][][], GLUgl2 glu, GLUnurbs nurbs) {
+	public NurbsSurface(float[] knots, float[][][] pts, GLUgl2 glu, GLUnurbs nurbs) {
 		this.knots = knots;
 		this.pts = pts;
 		this.nurbs = nurbs;
@@ -56,8 +56,8 @@ public class NurbsSurface extends RenderableGLAdapter {
 		glu.gluEndSurface(nurbs);
 	}
 	
-	protected float[] flatten(float f[][][]) {
-		float flat[] = new float[f.length * f[0].length * f[0][0].length];
+	protected float[] flatten(float[][][] f) {
+		float[] flat = new float[f.length * f[0].length * f[0][0].length];
 		int index = 0;
 		
 		for (int i = 0; i < f.length; i++) {

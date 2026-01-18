@@ -16,15 +16,15 @@
 
 package com.almostrealism.photon.ui.load;
 
-import java.awt.Container;
+import java.awt.*;
 import java.util.Hashtable;
 
 /**
  * @author  Mike Murray
  */
 public interface ObjectLoader {
-	public Class getParentType();
-	public Class[] loadTypes();
-	public Hashtable loadOperations();
-	public Container getUI();
+	Class getParentType();
+	Class[] loadTypes();
+	Hashtable loadOperations();
+	Container getUI();
 }

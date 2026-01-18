@@ -2,13 +2,13 @@ package com.almostrealism.network;
 
 import io.almostrealism.db.Query;
 import io.almostrealism.db.QueryHandler;
+import io.almostrealism.relation.DynamicProducer;
+import io.almostrealism.relation.Producer;
 import io.flowtree.job.JobFactory;
 import org.almostrealism.color.RGB;
 import org.almostrealism.io.JobOutput;
 import org.almostrealism.io.OutputHandler;
-import io.almostrealism.relation.Producer;
 import org.almostrealism.texture.ImageCanvas;
-import io.almostrealism.relation.DynamicProducer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,8 +28,8 @@ import java.util.Set;
 public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 	private static List completedTasks;
 
-	private RGB image[][];
-	private String taskId;
+	private RGB[][] image;
+	private final String taskId;
 
 	private Set children;
 	private String lastTaskId, currentTaskId;
@@ -103,7 +103,7 @@ public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 									" Task is complete.");
 
 						RayTracingOutputHandler.completedTasks.add(
-								new Long(RayTracingOutputHandler.this.taskId));
+								Long.valueOf(RayTracingOutputHandler.this.taskId));
 					}
 				});
 
@@ -167,7 +167,7 @@ public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 
 	@Override
 	public void storeOutput(long time, int uid, JobOutput data) {
-		if (data instanceof RayTracingJobOutput == false) {
+		if (!(data instanceof RayTracingJobOutput)) {
 			System.out.println("RayTracingOutputHandler (" + this.taskId + ") received: " + data);
 			return;
 		}
@@ -261,12 +261,12 @@ public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 			for (int j = 0; j < h; j++) {
 				try {
 					if (this.image[i][j] == null) {
-						result.put(new Integer(n++), i + JobFactory.ENTRY_SEPARATOR + j);
+						result.put(Integer.valueOf(n++), i + JobFactory.ENTRY_SEPARATOR + j);
 					}
 				} catch (ArrayIndexOutOfBoundsException oob) {
 					System.out.println("RayTracingJobOutputHandler (" + this.taskId + "): " + oob);
 					oob.printStackTrace(System.out);
-					result.put(new Integer(n++), i + JobFactory.ENTRY_SEPARATOR + j);
+					result.put(Integer.valueOf(n++), i + JobFactory.ENTRY_SEPARATOR + j);
 				}
 			}
 		}
@@ -281,11 +281,10 @@ public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 
 	public void expandImageBuffer(int w, int h) {
 		if (w != this.image.length || this.image.length <= 0 || h != this.image[0].length) {
-			RGB copy[][] = new RGB[w][h];
+			RGB[][] copy = new RGB[w][h];
 
 			for (int i = 0; i < this.image.length; i++)
-				for (int j = 0; j < this.image[i].length; j++)
-					copy[i][j] = this.image[i][j];
+				System.arraycopy(this.image[i], 0, copy[i], 0, this.image[i].length);
 
 			this.image = copy;
 
@@ -314,14 +313,14 @@ public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 
 	public synchronized Producer<RGB[][]> getImage() {
 		return new DynamicProducer<>(args -> {
-			RGB copy[][] = new RGB[this.image.length][this.image[0].length];
+			RGB[][] copy = new RGB[this.image.length][this.image[0].length];
 
 			for (int i = 0; i < copy.length; i++) {
 				for (int j = 0; j < copy[i].length; j++) {
 					if (this.image[i][j] == null)
 						copy[i][j] = new RGB(0.0, 0.0, 0.0);
 					else
-						copy[i][j] = (RGB) this.image[i][j].clone();
+						copy[i][j] = this.image[i][j].clone();
 				}
 			}
 

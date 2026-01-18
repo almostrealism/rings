@@ -16,8 +16,9 @@
 
 package org.almostrealism.audio.pattern;
 
+import io.almostrealism.profile.OperationMetadata;
+import io.almostrealism.profile.OperationWithInfo;
 import org.almostrealism.audio.arrange.AudioSceneContext;
-import org.almostrealism.audio.arrange.AutomationManager;
 import org.almostrealism.audio.arrange.ChannelSection;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.data.ParameterFunction;
@@ -41,6 +42,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
+	public static int AUTOMATION_GENE_LENGTH = 6;
 	public static int MAX_LAYERS = 32;
 
 	public static boolean enableWarnings = SystemUtils.isEnabled("AR_PATTERN_WARNINGS").orElse(true);
@@ -57,20 +59,20 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 
 	private double seedBiasAdjustment;
 
-	private Supplier<List<NoteAudioChoice>> percChoices;
-	private Supplier<List<NoteAudioChoice>> melodicChoices;
-	private Chromosome<PackedCollection<?>> layerChoiceChromosome;
-	private Chromosome<PackedCollection<?>> envelopeAutomationChromosome;
+	private final Supplier<List<NoteAudioChoice>> percChoices;
+	private final Supplier<List<NoteAudioChoice>> melodicChoices;
+	private Chromosome<PackedCollection> layerChoiceChromosome;
+	private Chromosome<PackedCollection> envelopeAutomationChromosome;
 
 	private ParameterFunction noteSelection;
 	private ParameterizedPositionFunction activeSelection;
 	private PatternElementFactory elementFactory;
 
-	private List<PatternLayer> roots;
-	private List<ParameterSet> layerParams;
+	private final List<PatternLayer> roots;
+	private final List<ParameterSet> layerParams;
 	private int layerCount;
 
-	private Map<ChannelInfo, PackedCollection<?>> destination;
+	private Map<ChannelInfo, PackedCollection> destination;
 
 	public PatternLayerManager(List<NoteAudioChoice> choices,
 							   ProjectedChromosome chromosome,
@@ -108,11 +110,11 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 				.mapToObj(i -> chromosome.addGene(3))
 				.collect(Collectors.toList()));
 		envelopeAutomationChromosome = chromosome(IntStream.range(0, MAX_LAYERS)
-				.mapToObj(i -> chromosome.addGene(AutomationManager.GENE_LENGTH))
+				.mapToObj(i -> chromosome.addGene(AUTOMATION_GENE_LENGTH))
 				.collect(Collectors.toList()));
 	}
 
-	public Map<ChannelInfo, PackedCollection<?>> getDestination() { return destination; }
+	public Map<ChannelInfo, PackedCollection> getDestination() { return destination; }
 
 	public void updateDestination(AudioSceneContext context) {
 		if (context.getChannels() == null) return;
@@ -196,14 +198,6 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 		return options.get((int) (options.size() * c));
 	}
 
-	public List<PatternElement> getTailElements() {
-		return roots.stream()
-				.map(PatternLayer::getTail)
-				.map(PatternLayer::getElements)
-				.flatMap(List::stream)
-				.collect(Collectors.toList());
-	}
-
 	public Map<NoteAudioChoice, List<PatternElement>> getAllElementsByChoice(double start, double end) {
 		Map<NoteAudioChoice, List<PatternElement>> result = new HashMap<>();
 		roots.forEach(l -> l.putAllElementsByChoice(result, start, end));
@@ -278,14 +272,14 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 		refresh();
 	}
 
-	public void layer(Gene<PackedCollection<?>> gene) {
+	public void layer(Gene<PackedCollection> gene) {
 		layer(ParameterSet.fromGene(gene));
 	}
 
 	protected void layer(ParameterSet params) {
-		Gene<PackedCollection<?>> automationGene = envelopeAutomationChromosome.valueAt(depth());
-		PackedCollection<?> automationParams =
-				PackedCollection.factory().apply(AutomationManager.GENE_LENGTH).fill(pos ->
+		Gene<PackedCollection> automationGene = envelopeAutomationChromosome.valueAt(depth());
+		PackedCollection automationParams =
+				PackedCollection.factory().apply(AUTOMATION_GENE_LENGTH).fill(pos ->
 						automationGene.valueAt(pos[0]).getResultant(null).evaluate().toDouble());
 
 		if (rootCount() <= 0) {
@@ -378,47 +372,49 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 		return options.get((int) (options.size() * c));
 	}
 
-	public void sum(Supplier<AudioSceneContext> context,
-					ChannelInfo.Voicing voicing,
-					ChannelInfo.StereoChannel audioChannel) {
-		Map<NoteAudioChoice, List<PatternElement>> elements = getAllElementsByChoice(0.0, duration);
-		if (elements.isEmpty()) {
-			if (!roots.isEmpty() && enableWarnings)
-				warn("No pattern elements (channel " + channel + ")");
-			return;
-		}
-
-		AudioSceneContext ctx = context.get();
-
-		// TODO  What about when duration is longer than measures?
-		// TODO  This results in count being 0, and nothing being output
-		int count = (int) (ctx.getMeasures() / duration);
-		if (ctx.getMeasures() / duration - count > 0.0001) {
-			warn("Pattern duration does not divide measures; there will be gaps");
-		}
-
-		IntStream.range(0, count).forEach(i -> {
-			ChannelSection section = ctx.getSection(i * duration);
-
-			if (section == null) {
-				warn("No ChannelSection at measure " + i);
-			} else {
-				double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition()) + ctx.getActivityBias();
-				if (active < 0) return;
+	public Supplier<Runnable> sum(Supplier<AudioSceneContext> context,
+								  ChannelInfo.Voicing voicing,
+								  ChannelInfo.StereoChannel audioChannel) {
+		return OperationWithInfo.of(new OperationMetadata("PatternLayerManager.sum", "PatternLayerManager.sum"), () -> () -> {
+			Map<NoteAudioChoice, List<PatternElement>> elements = getAllElementsByChoice(0.0, duration);
+			if (elements.isEmpty()) {
+				if (!roots.isEmpty() && enableWarnings)
+					warn("No pattern elements (channel " + channel + ")");
+				return;
 			}
 
-			double offset = i * duration;
-			elements.keySet().forEach(choice -> {
-				NoteAudioContext audioContext =
-						new NoteAudioContext(voicing, audioChannel,
-								choice.getValidPatternNotes(),
-								this::nextNotePosition);
+			AudioSceneContext ctx = context.get();
 
-				if (destination.get(new ChannelInfo(voicing, audioChannel)) != ctx.getDestination()) {
-					throw new IllegalArgumentException();
+			// TODO  What about when duration is longer than measures?
+			// TODO  This results in count being 0, and nothing being output
+			int count = (int) (ctx.getMeasures() / duration);
+			if (ctx.getMeasures() / duration - count > 0.0001) {
+				warn("Pattern duration does not divide measures; there will be gaps");
+			}
+
+			IntStream.range(0, count).forEach(i -> {
+				ChannelSection section = ctx.getSection(i * duration);
+
+				if (section == null) {
+					warn("No ChannelSection at measure " + i);
+				} else {
+					double active = activeSelection.apply(layerParams.get(layerParams.size() - 1), section.getPosition()) + ctx.getActivityBias();
+					if (active < 0) return;
 				}
 
-				render(ctx, audioContext, elements.get(choice), melodic, offset);
+				double offset = i * duration;
+				elements.keySet().forEach(choice -> {
+					NoteAudioContext audioContext =
+							new NoteAudioContext(voicing, audioChannel,
+									choice.getValidPatternNotes(),
+									this::nextNotePosition);
+
+					if (destination.get(new ChannelInfo(voicing, audioChannel)) != ctx.getDestination()) {
+						throw new IllegalArgumentException();
+					}
+
+					render(ctx, audioContext, elements.get(choice), melodic, offset);
+				});
 			});
 		});
 	}
@@ -430,56 +426,6 @@ public class PatternLayerManager implements PatternFeatures, HeredityFeatures {
 				.filter(p -> p > position)
 				.mapToDouble(p -> p)
 				.min().orElse(duration);
-	}
-
-	public static String layerHeader() {
-		int count = 128;
-		int divide = count / 4;
-
-		StringBuffer buf = new StringBuffer();
-
-		i: for (int i = 0; i < count; i++) {
-			if (i % (divide / 2) == 0) {
-				if (i % divide == 0) {
-					buf.append("|");
-				} else {
-					buf.append(" ");
-				}
-			}
-
-			buf.append(" ");
-		}
-
-		buf.append("|");
-		return buf.toString();
-	}
-
-	public static String layerString(PatternLayer layer) {
-		return layerString(layer.getElements());
-	}
-
-	public static String layerString(List<PatternElement> elements) {
-		int count = 128;
-		int divide = count / 8;
-		double scale = 1.0 / count;
-
-		StringBuffer buf = new StringBuffer();
-
-		i: for (int i = 0; i < count; i++) {
-			if (i % divide == 0) buf.append("|");
-			for (PatternElement e : elements) {
-				if (e.isPresent(i * scale, (i + 1) * scale)) {
-					String s = e.getNote(ChannelInfo.Voicing.MAIN).toString();
-					if (s.contains("/")) s = s.substring(s.lastIndexOf("/") + 1, s.lastIndexOf("/") + 2);
-					buf.append(s);
-					continue i;
-				}
-			}
-			buf.append(" ");
-		}
-
-		buf.append("|");
-		return buf.toString();
 	}
 
 	public static class Settings {

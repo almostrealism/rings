@@ -17,23 +17,25 @@
 package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.arrange.MixdownManager;
-import org.almostrealism.audio.data.ChannelInfo;
-import org.almostrealism.audio.generative.NoOpGenerationProvider;
-import org.almostrealism.audio.health.MultiChannelAudioOutput;
-import org.almostrealism.audio.pattern.PatternLayerManager;
-import org.almostrealism.audio.tone.DefaultKeyboardTuning;
-import org.almostrealism.hardware.OperationList;
-import org.almostrealism.time.TemporalRunner;
 import org.almostrealism.audio.CellFeatures;
 import org.almostrealism.audio.CellList;
 import org.almostrealism.audio.Cells;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.WaveOutput;
+import org.almostrealism.audio.arrange.MixdownManager;
+import org.almostrealism.audio.data.ChannelInfo;
+import org.almostrealism.audio.data.FileWaveDataProviderNode;
+import org.almostrealism.audio.health.MultiChannelAudioOutput;
+import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.audio.optimize.AudioSceneOptimizer;
+import org.almostrealism.audio.pattern.PatternLayerManager;
+import org.almostrealism.audio.tone.DefaultKeyboardTuning;
+import org.almostrealism.hardware.OperationList;
+import org.almostrealism.io.SystemUtils;
+import org.almostrealism.time.TemporalRunner;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.stream.IntStream;
 
 public class AudioSceneOptimizationTest implements CellFeatures {
@@ -65,19 +67,25 @@ public class AudioSceneOptimizationTest implements CellFeatures {
 	}
 
 	protected AudioScene<?> pattern(int sources, int delayLayers, boolean sections) {
-		AudioScene<?> scene = new AudioScene<>(null, 120, sources, delayLayers,
-				OutputLine.sampleRate, new ArrayList<>(), new NoOpGenerationProvider());
-		scene.setTotalMeasures(16);
-		scene.setTuning(new DefaultKeyboardTuning());
+		try {
+			AudioScene<?> scene = new AudioScene<>(120, sources, delayLayers, OutputLine.sampleRate);
+			scene.setTotalMeasures(16);
+			scene.setTuning(new DefaultKeyboardTuning());
 
-		PatternLayerManager layer = scene.getPatternManager().addPattern(0, 1.0, false);
-		layer.setLayerCount(3);
-		
-		if (sections) {
-			scene.addSection(0, 16);
+			scene.loadPatterns(SystemUtils.getLocalDestination("pattern-factory.json"));
+			scene.setLibraryRoot(new FileWaveDataProviderNode(new File(AudioSceneOptimizer.LIBRARY)));
+
+			PatternLayerManager layer = scene.getPatternManager().addPattern(4, 1.0, true);
+			layer.setLayerCount(3);
+
+			if (sections) {
+				scene.addSection(0, 16);
+			}
+
+			return scene;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-
-		return scene;
 	}
 
 	@Test

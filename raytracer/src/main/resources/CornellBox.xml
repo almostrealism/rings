@@ -28,12 +28,12 @@
     <void index="0"> 
      <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane0" class="com.almostrealism.primitives.Plane">
+       <object id="Plane0" class="org.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
           <void index="0"> 
-           <object id="DiffuseShader0" class="com.almostrealism.rayshade.DiffuseShader"> 
+           <object id="DiffuseShader0" class="org.almostrealism.color.DiffuseShader">
             <void id="ObjectArray0" property="propertyValues"/> 
             <void property="propertyValues"> 
              <object idref="ObjectArray0"/> 
@@ -82,12 +82,12 @@
     <void index="1"> 
      <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane1" class="com.almostrealism.primitives.Plane">
+       <object id="Plane1" class="org.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
           <void index="0"> 
-           <object id="DiffuseShader1" class="com.almostrealism.rayshade.DiffuseShader"> 
+           <object id="DiffuseShader1" class="org.almostrealism.color.DiffuseShader">
             <void id="ObjectArray1" property="propertyValues"/> 
             <void property="propertyValues"> 
              <object idref="ObjectArray1"/> 
@@ -139,12 +139,12 @@
     <void index="2"> 
      <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane2" class="com.almostrealism.primitives.Plane">
+       <object id="Plane2" class="org.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
           <void index="0"> 
-           <object id="DiffuseShader2" class="com.almostrealism.rayshade.DiffuseShader"> 
+           <object id="DiffuseShader2" class="org.almostrealism.color.DiffuseShader">
             <void id="ObjectArray2" property="propertyValues"/> 
             <void property="propertyValues"> 
              <object idref="ObjectArray2"/> 
@@ -190,12 +190,12 @@
     <void index="3"> 
      <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane3" class="com.almostrealism.primitives.Plane">
+       <object id="Plane3" class="org.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
           <void index="0"> 
-           <object id="DiffuseShader3" class="com.almostrealism.rayshade.DiffuseShader"> 
+           <object id="DiffuseShader3" class="org.almostrealism.color.DiffuseShader">
             <void id="ObjectArray3" property="propertyValues"/> 
             <void property="propertyValues"> 
              <object idref="ObjectArray3"/> 
@@ -241,12 +241,12 @@
     <void index="4"> 
      <object class="com.almostrealism.surfaceui.SurfaceUIFactory$SurfaceUIImpl">
       <void property="surface"> 
-       <object id="Plane4" class="com.almostrealism.primitives.Plane">
+       <object id="Plane4" class="org.almostrealism.primitives.Plane">
         <void method="calculateTransform"/> 
         <void property="shaders"> 
          <array class="com.almostrealism.rayshade.Shader" length="1"> 
           <void index="0"> 
-           <object id="DiffuseShader4" class="com.almostrealism.rayshade.DiffuseShader"> 
+           <object id="DiffuseShader4" class="org.almostrealism.color.DiffuseShader">
             <void id="ObjectArray4" property="propertyValues"/> 
             <void property="propertyValues"> 
              <object idref="ObjectArray4"/> 

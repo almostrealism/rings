@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, CodeFeatures {
+public class AudioComposer implements Factor<PackedCollection>, Destroyable, CodeFeatures {
 	public static boolean normalizeWeights = true;
 
 	private final AutoEncoder autoencoder;
@@ -76,14 +76,14 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 
 	public TraversalPolicy getFeatureShape() {
 		if (features.isEmpty()) return null;
-		return features.getLast().getFeatureShape();
+		return features.get(features.size() - 1).getFeatureShape();
 	}
 
-	public void addAudio(Producer<PackedCollection<?>> audio) {
+	public void addAudio(Producer<PackedCollection> audio) {
 		addSource(autoencoder.encode(audio));
 	}
 
-	public void addSource(Producer<PackedCollection<?>> features) {
+	public void addSource(Producer<PackedCollection> features) {
 		addSource(new ComposableAudioFeatures(features, createWeights(features)));
 	}
 
@@ -107,7 +107,7 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 	 * @param value the position vector to use for interpolation
 	 * @return interpolated latent features [64, 256]
 	 */
-	public Producer<PackedCollection<?>> getInterpolatedLatent(Producer<PackedCollection<?>> value) {
+	public Producer<PackedCollection> getInterpolatedLatent(Producer<PackedCollection> value) {
 		if (features.isEmpty()) {
 			throw new IllegalStateException("No features have been added to the composer");
 		}
@@ -123,16 +123,16 @@ public class AudioComposer implements Factor<PackedCollection<?>>, Destroyable, 
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getResultant(Producer<PackedCollection<?>> value) {
+	public Producer<PackedCollection> getResultant(Producer<PackedCollection> value) {
 		return autoencoder.decode(getInterpolatedLatent(value));
 	}
 
-	protected CollectionProducer<PackedCollection<?>> createWeights(Producer<PackedCollection<?>> features) {
+	protected CollectionProducer createWeights(Producer<PackedCollection> features) {
 		double scale = 1.0;
 		int bins = shape(features).length(0);
 		int time = shape(features).length(1);
 
-		CollectionProducer<PackedCollection<?>> rand = randn(shape(dim), scale, scale * getDeviation(), random);
+		CollectionProducer rand = randn(shape(dim), scale, scale * getDeviation(), random);
 		if (normalizeWeights)
 			rand = normalize(rand);
 		return rand.repeat(bins).repeat(time);

@@ -18,14 +18,6 @@ package com.almostrealism.gl;
 
 import com.almostrealism.gl.shaders.FragmentShader;
 import com.almostrealism.gl.shaders.VertexShader;
-import io.almostrealism.code.ExpressionFeatures;
-import io.almostrealism.code.Precision;
-import io.almostrealism.expression.Expression;
-import io.almostrealism.lang.LanguageOperations;
-import org.almostrealism.c.CLanguageOperations;
-import org.almostrealism.projection.OrthographicCamera;
-import com.almostrealism.projection.PinholeCamera;
-import com.almostrealism.raytrace.FogParameters;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLException;
@@ -33,25 +25,33 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
-import org.almostrealism.algebra.*;
+import io.almostrealism.code.ExpressionFeatures;
+import io.almostrealism.code.Precision;
+import io.almostrealism.expression.Expression;
+import io.almostrealism.lang.LanguageOperations;
+import org.almostrealism.algebra.Pair;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.c.CLanguageOperations;
 import org.almostrealism.color.RGB;
 import org.almostrealism.color.RGBA;
 import org.almostrealism.geometry.Camera;
 import org.almostrealism.geometry.TransformMatrix;
+import org.almostrealism.projection.OrthographicCamera;
+import org.almostrealism.projection.PinholeCamera;
+import org.almostrealism.raytrace.FogParameters;
 import org.almostrealism.space.Triangle;
 import org.almostrealism.texture.ImageTexture;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.joml.Vector4d;
 
-import java.awt.Component;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -104,7 +104,7 @@ public class GLDriver implements ExpressionFeatures {
 
         this.cameraStack = new Stack<>();
         this.projection_joml = new Matrix4d();
-		this.lighting = new GLLightingConfiguration(Arrays.asList());
+		this.lighting = new GLLightingConfiguration(List.of());
 
 		this.transform = new TransformMatrix();
 		this.matrixStack = new Stack<>();
@@ -124,22 +124,22 @@ public class GLDriver implements ExpressionFeatures {
 
 	public void setLighting(GLLightingConfiguration lighting) {
 		this.lighting = lighting;
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight0Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight0Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight1Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight1Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight2Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight2Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight3Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight3Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight4Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight4Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight5Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight5Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight6Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight6Diffuse().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_POSITION, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight7Position().toArray())));
-		gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_DIFFUSE, FloatBuffer.wrap(Scalar.toFloat(lighting.getLight7Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight0Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight0Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight1Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight1Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight2Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight2Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight3Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight3Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight4Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight4Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight5Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight5Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight6Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight6Diffuse().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_POSITION, FloatBuffer.wrap(toFloat(lighting.getLight7Position().toArray())));
+		gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_DIFFUSE, FloatBuffer.wrap(toFloat(lighting.getLight7Diffuse().toArray())));
 	}
 
 	public void glColor(RGB color) {
@@ -165,15 +165,15 @@ public class GLDriver implements ExpressionFeatures {
 
 	public void glMaterial(GLMaterial mat) {
 		if (isDoublePrecision()) {
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, Scalar.toFloat(mat.ambient.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, Scalar.toFloat(mat.diffuse.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{(float) mat.shininess.getValue()}, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, toFloat(mat.ambient.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, toFloat(mat.diffuse.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, toFloat(mat.specular.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{(float) mat.shininess}, 0);
 		} else {
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, Scalar.toFloat(mat.ambient.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, Scalar.toFloat(mat.diffuse.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, Scalar.toFloat(mat.specular.toArray()), 0);
-			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{(float) mat.shininess.getValue()}, 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_AMBIENT, toFloat(mat.ambient.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_DIFFUSE, toFloat(mat.diffuse.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SPECULAR, toFloat(mat.specular.toArray()), 0);
+			gl.glMaterialfv(GL.GL_FRONT, GL2.GL_SHININESS, new float[]{(float) mat.shininess}, 0);
 		}
 	}
 
@@ -222,7 +222,7 @@ public class GLDriver implements ExpressionFeatures {
 	}
 
 	/** It is recommended to use {@link org.almostrealism.texture.Texture} instead. */
-	@Deprecated public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte buf[]) {
+	@Deprecated public void glTexImage2D(int a, int b, int c, int d, int e, int f, int g, int h, byte[] buf) {
 		gl.glTexImage2D(a, b, c, d, e, f, g, h, ByteBuffer.wrap(buf));
 	}
 
@@ -267,7 +267,7 @@ public class GLDriver implements ExpressionFeatures {
 	/** It is recommended to use {@link org.almostrealism.color.Light}s instead. */
 	@Deprecated
 	public void glLightModel(int code, RGBA color) {
-		gl.glLightModelfv(code, FloatBuffer.wrap(Scalar.toFloat(color.toArray())));
+		gl.glLightModelfv(code, FloatBuffer.wrap(toFloat(color.toArray())));
 	}
 
 	public boolean isLightingOn() { return gl.glIsEnabled(GL2.GL_LIGHTING); }
@@ -285,8 +285,8 @@ public class GLDriver implements ExpressionFeatures {
 	}
 
 	public void triangle(Triangle t) {
-		Vector v[] = t.getVertices();
-		float tex[][] = t.getTextureCoordinates();
+		Vector[] v = t.getVertices();
+		float[][] tex = t.getTextureCoordinates();
 
 		glVertex(v[0]);
 		uv(new Pair(tex[0][0], tex[0][1]));
@@ -338,7 +338,7 @@ public class GLDriver implements ExpressionFeatures {
 
 	public void setFog(FogParameters f) {
 		gl.glFogi(GL2.GL_FOG_MODE, GL2.GL_EXP);
-		gl.glFogfv(GL2.GL_FOG_COLOR, FloatBuffer.wrap(Scalar.toFloat(f.fogColor.toArray())));
+		gl.glFogfv(GL2.GL_FOG_COLOR, FloatBuffer.wrap(toFloat(f.fogColor.toArray())));
 		gl.glFogf(GL2.GL_FOG_DENSITY, (float) f.fogDensity);
 		gl.glFogf(GL2.GL_FOG_START, 0.0f);
 		gl.glFogf(GL2.GL_FOG_END, Float.MAX_VALUE);
@@ -387,7 +387,7 @@ public class GLDriver implements ExpressionFeatures {
 		GLSLPrintWriter p = new GLSLPrintWriter(out, lang);
 		// TODO  Need it to be named vshade
 		this.vertexShader.getScope(null).write(p);
-		String shader = new String(out.toByteArray());
+		String shader = out.toString();
 		compileShader("GL_VERTEX_SHADER", shader);
 	}
 
@@ -400,7 +400,7 @@ public class GLDriver implements ExpressionFeatures {
 		GLSLPrintWriter p = new GLSLPrintWriter(out, lang);
 		// TODO  Need it to be named fshade
 		this.fragmentShader.getScope(null).write(p);
-		String shader = new String(out.toByteArray());
+		String shader = out.toString();
 		compileShader("GL_FRAGMENT_SHADER", shader);
 	}
 
@@ -450,7 +450,7 @@ public class GLDriver implements ExpressionFeatures {
 
 	public void glPopAttrib() { gl.glPopAttrib(); }
 
-	public void glGenBuffers(int a, int b[], int c) { gl.glGenBuffers(a, b, c); }
+	public void glGenBuffers(int a, int[] b, int c) { gl.glGenBuffers(a, b, c); }
 
 	public Expression createProgram() {
 		return null; // TODO
@@ -542,7 +542,13 @@ public class GLDriver implements ExpressionFeatures {
 
 	public void glMultMatrix(TransformMatrix m) { transform = transform.multiply(m); }
 
-	public void setMatrix(TransformMatrix m) { transform = m; }
+	public void setMatrix(TransformMatrix m) {
+		if (m == null) {
+			transform = new TransformMatrix();
+		} else {
+			transform = m;
+		}
+	}
 
 	public void glRasterPos(Vector pos) {
 		if (isDoublePrecision()) {
@@ -576,10 +582,18 @@ public class GLDriver implements ExpressionFeatures {
 		glu.gluLookAt(e.getX(), e.getY(), e.getZ(), c.getX(), c.getY(), c.getZ(), var13, var15, var17);
 	}
 
-	public boolean gluUnProject(Vector w, double modelview[], double projection[], int viewport[], Vector worldpos) {
+	public boolean gluUnProject(Vector w, double[] modelview, double[] projection, int[] viewport, Vector worldpos) {
 		return glu.gluUnProject((float) w.getX(), (float) w.getY(), (float) w.getZ(),
-				FloatBuffer.wrap(Scalar.toFloat(modelview)), FloatBuffer.wrap(Scalar.toFloat(projection)),
-				IntBuffer.wrap(viewport), FloatBuffer.wrap(Scalar.toFloat(worldpos.toArray())));
+				FloatBuffer.wrap(toFloat(modelview)), FloatBuffer.wrap(toFloat(projection)),
+				IntBuffer.wrap(viewport), FloatBuffer.wrap(toFloat(worldpos.toArray())));
+	}
+
+	private static float[] toFloat(double[] d) {
+		float[] f = new float[d.length];
+		for (int i = 0; i < d.length; i++) {
+			f[i] = (float) d[i];
+		}
+		return f;
 	}
 
 	public boolean gluUnProject(Vector w, Vector worldpos) {
@@ -589,7 +603,7 @@ public class GLDriver implements ExpressionFeatures {
 		return gluUnProject(w, modelview, projection, viewport, worldpos);
 	}
 
-	public void gluPickMatrix(float x, float y, float w, float h, int viewport[]) {
+	public void gluPickMatrix(float x, float y, float w, float h, int[] viewport) {
 		glu.gluPickMatrix(x, y, w, h, IntBuffer.wrap(viewport));
 	}
 
@@ -655,8 +669,7 @@ public class GLDriver implements ExpressionFeatures {
 	protected void glProjection(Camera c) {
 		projection_joml = new Matrix4d();
 
-		if (c instanceof PinholeCamera) {
-			PinholeCamera camera = (PinholeCamera) c;
+		if (c instanceof PinholeCamera camera) {
 
 			Vector eye = camera.getLocation();
 			Vector center = eye.add(camera.getViewingDirection());
@@ -669,8 +682,7 @@ public class GLDriver implements ExpressionFeatures {
 							new Vector3d(center.getX(), center.getY(), center.getZ()),
 							new Vector3d(0, 1, 0));
 		}
-		else if (c instanceof OrthographicCamera) {
-			OrthographicCamera camera = (OrthographicCamera) c;
+		else if (c instanceof OrthographicCamera camera) {
 
 			// TODO: Orthographic projection matrix.
 		}
@@ -747,15 +759,15 @@ public class GLDriver implements ExpressionFeatures {
 		int n = -slices;
 		int size = Math.abs(n);
 		double angle = 2 * Math.PI / (double) ((n == 0) ? 1 : n);
-		double sint1[] = new double[size + 1];
-		double cost1[] = new double[size + 1];
+		double[] sint1 = new double[size + 1];
+		double[] cost1 = new double[size + 1];
 		circleTable(sint1, cost1, size, angle);
 
 		n = stacks * 2;
 		size = Math.abs(n);
 		angle = 2 * Math.PI / (double) ((n == 0) ? 1 : n);
-		double sint2[] = new double[size + 1];
-		double cost2[] = new double[size + 1];
+		double[] sint2 = new double[size + 1];
+		double[] cost2 = new double[size + 1];
 		circleTable(sint2, cost2, size, angle);
 
     	/* The top stack is covered with a triangle fan */
@@ -844,14 +856,14 @@ public class GLDriver implements ExpressionFeatures {
 	}
 
 	public double[] getModelViewMatrix() {
-		double modelview[] = new double[16];
+		double[] modelview = new double[16];
 		gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, DoubleBuffer.wrap(modelview));
 		return modelview;
 	}
 
 	public double[] getProjectionMatrix() {
 	
-			double projection[] = new double[16];
+			double[] projection = new double[16];
 			gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, DoubleBuffer.wrap(projection));
 			return projection;
 	
@@ -859,13 +871,13 @@ public class GLDriver implements ExpressionFeatures {
 	}
 
 	public int[] getViewport() {
-		int viewport[] = new int[4];
+		int[] viewport = new int[4];
 		gl.glGetIntegerv(GL2.GL_VIEWPORT, IntBuffer.wrap(viewport));
 		return viewport;
 	}
 
 	public int getMatrixMode() {
-		int matrixMode[] = new int[1];
+		int[] matrixMode = new int[1];
 		gl.glGetIntegerv(GL2.GL_MATRIX_MODE, IntBuffer.wrap(matrixMode));
 		return matrixMode[0];
 	}
@@ -884,7 +896,7 @@ public class GLDriver implements ExpressionFeatures {
 		return gle;
 	}
 
-	private static void circleTable(double sint[], double cost[], int size, double angle) {
+	private static void circleTable(double[] sint, double[] cost, int size, double angle) {
 		int i;
 
     	/* Compute cos and sin around the circle */

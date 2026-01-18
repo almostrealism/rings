@@ -16,20 +16,18 @@
 
 package com.almostrealism.replicator;
 
-import java.util.ArrayList;
-import java.util.List;
+import io.almostrealism.uml.ViewModel;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.geometry.BasicGeometry;
+import org.almostrealism.projection.PinholeCamera;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.StandardLightingRigs;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.geometry.BasicGeometry;
-import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
-import io.almostrealism.uml.ViewModel;
-
-import com.almostrealism.lighting.StandardLightingRigs;
-import com.almostrealism.projection.PinholeCamera;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO  Add listener support
@@ -45,8 +43,8 @@ public class ReplicatorTableModel extends Scene<ShadableSurface> implements Tabl
 	public static final String FRONT = "Front";
 	public static final String BACK = "Back";
 
-	private LayeredReplicant<DefaultReplicant> replicant;
-	private List<String> modelNames;
+	private final LayeredReplicant<DefaultReplicant> replicant;
+	private final List<String> modelNames;
 	
 	public ReplicatorTableModel() {
 		replicant = new LayeredReplicant<>();
@@ -103,19 +101,18 @@ public class ReplicatorTableModel extends Scene<ShadableSurface> implements Tabl
 	
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		if (columnIndex < 2) return false;
-		return true;
+		return columnIndex >= 2;
 	}
 	
 	protected void setScale(int layer, String node, int vectorIndex, double value) {
-		double s[] = replicant.getReplicant(layer).get(node).getScaleCoefficients();
+		double[] s = replicant.getReplicant(layer).get(node).getScaleCoefficients();
 		s[vectorIndex] = value;
 		replicant.getReplicant(layer).get(node).setScaleCoefficients(s[0], s[1], s[2]);
 	}
 	
 	protected void setOffset(int layer, String node, int vectorIndex, boolean invert, double value) {
 		if (invert) value = -value;
-		double p[] = replicant.getReplicant(layer).get(node).getLocation().toArray();
+		double[] p = replicant.getReplicant(layer).get(node).getLocation().toArray();
 		p[vectorIndex] = value;
 		replicant.getReplicant(layer).get(node).setLocation(new Vector(p[0], p[1], p[2]));
 	}

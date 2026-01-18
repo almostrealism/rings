@@ -80,7 +80,7 @@ public class PatternLayer {
 		return result;
 	}
 
-	public void setAutomationParameters(PackedCollection<?> parameters) {
+	public void setAutomationParameters(PackedCollection parameters) {
 		getElements().forEach(e -> e.setAutomationParameters(parameters));
 	}
 

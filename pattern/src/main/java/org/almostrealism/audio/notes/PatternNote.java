@@ -19,8 +19,8 @@ package org.almostrealism.audio.notes;
 import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Factor;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.filter.AudioProcessingUtils;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.tone.KeyPosition;
 import org.almostrealism.audio.tone.KeyboardTuned;
 import org.almostrealism.audio.tone.KeyboardTuning;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PatternNote extends PatternNoteAudioAdapter {
-	private static NoteAudioSourceAggregator layerAggregator;
+	private static final NoteAudioSourceAggregator layerAggregator;
 
 	static {
 		layerAggregator = new NoteAudioSourceAggregator();
@@ -122,15 +122,15 @@ public class PatternNote extends PatternNoteAudioAdapter {
 	}
 
 	@Override
-	public Producer<PackedCollection<?>> getAudio(KeyPosition<?> target, int channel,
+	public Producer<PackedCollection> getAudio(KeyPosition<?> target, int channel,
 												  DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() != null) return super.getAudio(target, channel, audioSelection);
 		return combineLayers(target, channel, -1, null, audioSelection);
 	}
 
-	protected Producer<PackedCollection<?>> computeAudio(KeyPosition<?> target, int channel,
+	protected Producer<PackedCollection> computeAudio(KeyPosition<?> target, int channel,
 														 double noteDuration,
-														 Factor<PackedCollection<?>> automationLevel,
+														 Factor<PackedCollection> automationLevel,
 														 DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (getDelegate() != null) {
 			return super.computeAudio(
@@ -142,9 +142,9 @@ public class PatternNote extends PatternNoteAudioAdapter {
 		return combineLayers(target, channel, noteDuration, automationLevel, audioSelection);
 	}
 
-	protected Producer<PackedCollection<?>> combineLayers(KeyPosition<?> target, int channel,
+	protected Producer<PackedCollection> combineLayers(KeyPosition<?> target, int channel,
 														  double noteDuration,
-														  Factor<PackedCollection<?>> automationLevel,
+														  Factor<PackedCollection> automationLevel,
 														  DoubleFunction<PatternNoteAudio> audioSelection) {
 		if (noteDuration < 0) {
 			throw new UnsupportedOperationException();
@@ -154,11 +154,11 @@ public class PatternNote extends PatternNoteAudioAdapter {
 			warn("Using PatternNote without SourceAggregation");
 
 			return () -> {
-				List<Evaluable<PackedCollection<?>>> layerAudio =
+				List<Evaluable<PackedCollection>> layerAudio =
 						layers.stream()
 								.map(l -> l.getAudio(target, channel, noteDuration, automationLevel, audioSelection).get())
 								.toList();
-				int frames[] = IntStream.range(0, layerAudio.size())
+				int[] frames = IntStream.range(0, layerAudio.size())
 						.map(i -> (int) (layers.get(i).getDuration(target, audioSelection) *
 								layers.get(i).getSampleRate(target, audioSelection)))
 						.toArray();
@@ -166,9 +166,9 @@ public class PatternNote extends PatternNoteAudioAdapter {
 				return args -> {
 					int totalFrames = (int) (getDuration(target, audioSelection) * getSampleRate(target, audioSelection));
 
-					PackedCollection<?> dest = PackedCollection.factory().apply(totalFrames);
+					PackedCollection dest = PackedCollection.factory().apply(totalFrames);
 					for (int i = 0; i < layerAudio.size(); i++) {
-						PackedCollection<?> audio = layerAudio.get(i).evaluate(args);
+						PackedCollection audio = layerAudio.get(i).evaluate(args);
 						int f = Math.min(frames[i], totalFrames);
 
 						AudioProcessingUtils.getSum().sum(dest.range(shape(f)), audio.range(shape(f)));
@@ -194,9 +194,7 @@ public class PatternNote extends PatternNoteAudioAdapter {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof PatternNote)) return false;
-
-		PatternNote n = (PatternNote) obj;
+		if (!(obj instanceof PatternNote n)) return false;
 
 		boolean eq;
 

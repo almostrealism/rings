@@ -16,6 +16,14 @@
 
 package com.almostrealism.network;
 
+import org.almostrealism.algebra.Gradient;
+import org.almostrealism.algebra.Matrix3D;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.space.AbstractSurface;
+import org.almostrealism.space.Mesh;
+import org.almostrealism.space.Scene;
+import org.almostrealism.space.Triangle;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -23,23 +31,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import org.almostrealism.algebra.Matrix3D;
-import org.almostrealism.algebra.Vector;
-import org.almostrealism.algebra.Gradient;
-import org.almostrealism.space.AbstractSurface;
-import org.almostrealism.space.Mesh;
-import org.almostrealism.space.Scene;
-import org.almostrealism.space.Triangle;
-
 public class Matrix3DSolutionOutput {
-	private int x, y, z, off;
-	private boolean pieces[][][][];
-	private AbstractSurface models[];
+	private final int x;
+	private final int y;
+	private final int z;
+	private final int off;
+	private final boolean[][][][] pieces;
+	private final AbstractSurface[] models;
 	
 	private int piece = -1;
 	private Matrix3D data;
-	private boolean exitOnFirst = false;
-	private PrintStream out;
+	private final boolean exitOnFirst = false;
+	private final PrintStream out;
 	
 	public Matrix3DSolutionOutput(int x, int y, int z, int off) throws FileNotFoundException {
 		this.x = x;
@@ -116,14 +119,14 @@ public class Matrix3DSolutionOutput {
 	
 	public void loadPieceFromGTS(int p, InputStream in) throws IOException {
 		Scene scene = ModelData.decodeScene(in, ModelData.GTSEncoding, false, null);
-		Gradient s[] = scene.getSurfaces();
+		Gradient[] s = scene.getSurfaces();
 		
-		boolean piece[][][] = new boolean[this.x][this.y][this.z];
+		boolean[][][] piece = new boolean[this.x][this.y][this.z];
 		this.models[p] = null;
 		
 		i: for (int i = 0; i < s.length; i++) {
 			if (s[i] instanceof Mesh) {
-				Triangle t[] = ((Mesh)s[i]).getTriangles();
+				Triangle[] t = ((Mesh)s[i]).getTriangles();
 				for (int j = 0; j < t.length; j++) piece = addTriangle(piece, t[i]);
 			} else if (s[i] instanceof Triangle) {
 				piece = addTriangle(piece, (Triangle) s[i]);
@@ -137,8 +140,8 @@ public class Matrix3DSolutionOutput {
 		}
 	}
 	
-	public static boolean[][][] addTriangle(boolean piece[][][], Triangle t) {
-		Vector v[] = t.getVertices();
+	public static boolean[][][] addTriangle(boolean[][][] piece, Triangle t) {
+		Vector[] v = t.getVertices();
 		piece = addVector(piece, v[0]);
 		piece = addVector(piece, v[1]);
 		piece = addVector(piece, v[2]);
@@ -146,7 +149,7 @@ public class Matrix3DSolutionOutput {
 		return piece;
 	}
 	
-	public static boolean[][][] addVector(boolean piece[][][], Vector v) {
+	public static boolean[][][] addVector(boolean[][][] piece, Vector v) {
 		int x = (int) v.getX();
 		int y = (int) v.getY();
 		int z = (int) v.getZ();
@@ -155,6 +158,6 @@ public class Matrix3DSolutionOutput {
 		return piece;
 	}
 	
-	public void print() { this.out.println(this.toString()); }
+	public void print() { this.out.println(this); }
 	public String toString() { return this.data.toString(true); }
 }

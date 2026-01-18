@@ -19,5 +19,5 @@ package org.almostrealism.swing;
 /** A DynamicDisplay implementation represents a display that can be updated. */
 public interface DynamicDisplay {
 	/** Updates this DynamicDisplay object. */
-	public void updateDisplay();
+	void updateDisplay();
 }

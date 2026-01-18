@@ -35,9 +35,9 @@ public class OnnxDitModel implements DitModel, OnnxFeatures {
 		this.session = env.createSession(modelFile, options);
 	}
 
-	public PackedCollection<?> forward(PackedCollection<?> x, PackedCollection<?> t,
-									   PackedCollection<?> crossAttnCond,
-									   PackedCollection<?> globalCond) {
+	public PackedCollection forward(PackedCollection x, PackedCollection t,
+									   PackedCollection crossAttnCond,
+									   PackedCollection globalCond) {
 		Map<String, OnnxTensor> ditInputs = new HashMap<>();
 		OnnxTensor ditOutput = null;
 

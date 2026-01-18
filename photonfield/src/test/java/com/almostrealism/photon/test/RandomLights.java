@@ -16,22 +16,21 @@
 
 package com.almostrealism.photon.test;
 
+import com.almostrealism.geometry.Sphere;
+import org.almostrealism.light.LightBulb;
+import org.almostrealism.raytrace.AbsorberHashSet;
+import org.almostrealism.physics.BlackBody;
+import org.almostrealism.raytrace.DefaultPhotonField;
+import org.almostrealism.physics.VolumeAbsorber;
+import org.almostrealism.Ops;
+import org.almostrealism.physics.Clock;
+import org.almostrealism.physics.PhotonField;
+import org.almostrealism.primitives.AbsorptionPlane;
+
+import javax.swing.*;
 import java.io.IOException;
 
-import javax.swing.JFrame;
-
-import com.almostrealism.physics.AbsorberHashSet;
-import com.almostrealism.physics.BlackBody;
-import com.almostrealism.physics.DefaultPhotonField;
-import com.almostrealism.physics.VolumeAbsorber;
-import com.almostrealism.primitives.AbsorptionPlane;
-import org.almostrealism.Ops;
-import org.almostrealism.physics.PhotonField;
-import org.almostrealism.physics.Clock;
-
-import com.almostrealism.geometry.Sphere;
-import com.almostrealism.light.LightBulb;
-import static org.almostrealism.Ops.*;
+import static org.almostrealism.Ops.o;
 
 public class RandomLights {
 	public static double verbose = 0.01;
@@ -41,7 +40,7 @@ public class RandomLights {
 	 */
 	public static void main(String[] args) {
 		AbsorberHashSet a = new AbsorberHashSet();
-		a.setBound(1.0 * Math.pow(10.0, 1.0));
+		a.setBound(Math.pow(10.0, 1.0));
 		
 		for (int i = 0; i < 4; i++) {
 			double r = Math.random();
@@ -52,7 +51,7 @@ public class RandomLights {
 			LightBulb l = new LightBulb();
 			l.setPower(LightBulb.wattsToEvMsec * 0.005 * Math.random());
 			
-			double p[] = {Math.random() * 400 - 200,
+			double[] p = {Math.random() * 400 - 200,
 					Math.random() * 400 - 200,
 					3 * Math.random() - 1.5};
 			

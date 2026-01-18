@@ -24,9 +24,9 @@ import org.almostrealism.CodeFeatures;
 import org.almostrealism.collect.CollectionProducer;
 import org.almostrealism.collect.PackedCollection;
 
-public class ComposableAudioFeatures implements Factor<PackedCollection<?>>, Destroyable, CodeFeatures {
-	private Producer<PackedCollection<?>> features;
-	private Producer<PackedCollection<?>> weights;
+public class ComposableAudioFeatures implements Factor<PackedCollection>, Destroyable, CodeFeatures {
+	private Producer<PackedCollection> features;
+	private Producer<PackedCollection> weights;
 
 	/**
 	 * Create {@link ComposableAudioFeatures} with the provided features and weights.
@@ -37,8 +37,8 @@ public class ComposableAudioFeatures implements Factor<PackedCollection<?>>, Des
 	 * @param features  (T, B)
 	 * @param weights  (T, B, L)
 	 */
-	public ComposableAudioFeatures(Producer<PackedCollection<?>> features,
-								   Producer<PackedCollection<?>> weights) {
+	public ComposableAudioFeatures(Producer<PackedCollection> features,
+								   Producer<PackedCollection> weights) {
 		this.features = features;
 		this.weights = weights;
 	}
@@ -53,8 +53,8 @@ public class ComposableAudioFeatures implements Factor<PackedCollection<?>>, Des
 	 * @return  scaled feature data
 	 */
 	@Override
-	public Producer<PackedCollection<?>> getResultant(Producer<PackedCollection<?>> value) {
-		CollectionProducer<PackedCollection<?>> scale = c(weights).traverse(2).multiply(c(value)).sum();
+	public Producer<PackedCollection> getResultant(Producer<PackedCollection> value) {
+		CollectionProducer scale = c(weights).traverse(2).multiply(c(value)).sum();
 		scale = scale.reshape(scale.getShape().trim());
 		return c(features).multiply(max(scale, c(0)));
 	}

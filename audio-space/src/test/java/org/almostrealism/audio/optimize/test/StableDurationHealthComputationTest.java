@@ -17,17 +17,17 @@
 package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.CellList;
+import org.almostrealism.audio.Cells;
+import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.arrange.MixdownManager;
 import org.almostrealism.audio.health.HealthComputationAdapter;
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.health.SilenceDurationHealthComputation;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.optimize.AudioSceneOptimizer;
 import org.almostrealism.audio.optimize.AudioScenePopulation;
-import org.almostrealism.audio.CellList;
-import org.almostrealism.audio.Cells;
-import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.graph.CellAdapter;
 import org.almostrealism.heredity.Genome;
@@ -107,22 +107,23 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 
 	@Test
 	public void cellsPatternSmall() {
+		int channels = 5;
+
 		SilenceDurationHealthComputation.enableSilenceCheck = false;
 		MixdownManager.enableMainFilterUp = false;
 		MixdownManager.enableEfxFilters = false;
 
-		// Hardware.getLocalHardware().setMaximumOperationDepth(9);
 		HealthComputationAdapter.setStandardDuration(150);
 
-		StableDurationHealthComputation health = new StableDurationHealthComputation(2, false);
+		StableDurationHealthComputation health =
+				new StableDurationHealthComputation(channels + 1); // extra channel for efx
 		health.setOutputFile("results/cells-pattern-small.wav");
 
-		AudioScene<?> pattern = pattern(2, 2, true);
+		AudioScene<?> pattern = pattern(channels, 2, true);
 		pattern.assignGenome(pattern.getGenome().random());
 
 		Cells organ = randomOrgan(pattern, health.getOutput());
 
-		organ.reset();
 		health.setTarget(organ);
 		health.computeHealth();
 	}
@@ -148,7 +149,7 @@ public class StableDurationHealthComputationTest extends AudioScenePopulationTes
 
 		AtomicInteger index = new AtomicInteger();
 
-		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+		List<Genome<PackedCollection>> genomes = new ArrayList<>();
 		genomes.add(scene.getGenome().random());
 		genomes.add(scene.getGenome().random());
 

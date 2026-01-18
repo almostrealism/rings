@@ -357,7 +357,7 @@ public class AudioLibraryPersistence {
 
 		int totalFrames = data.stream().mapToInt(Audio.WaveDetailData::getFrameCount).sum();
 
-		PackedCollection<?> output = new PackedCollection<>(totalFrames);
+		PackedCollection output = new PackedCollection(totalFrames);
 		int cursor = 0;
 
 		for (Audio.WaveDetailData d : data) {

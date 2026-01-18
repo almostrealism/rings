@@ -1,11 +1,8 @@
 package org.almostrealism.audioml.audio;
 
-import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 public class AudioUtils {
 	private static final int SAMPLE_RATE = 44100;

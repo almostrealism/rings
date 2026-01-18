@@ -16,22 +16,11 @@
 
 package org.almostrealism.audio.optimize;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.almostrealism.lifecycle.Destroyable;
 import io.almostrealism.profile.OperationProfile;
+import org.almostrealism.CodeFeatures;
 import org.almostrealism.audio.AudioScene;
-import org.almostrealism.audio.Cells;
 import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
 import org.almostrealism.audio.health.StableDurationHealthComputation;
@@ -43,13 +32,23 @@ import org.almostrealism.heredity.TemporalCellular;
 import org.almostrealism.io.Console;
 import org.almostrealism.optimize.HealthCallable;
 import org.almostrealism.optimize.Population;
-import org.almostrealism.CodeFeatures;
 
-public class AudioScenePopulation implements Population<PackedCollection<?>, TemporalCellular>, Destroyable, CodeFeatures {
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-	private AudioScene<?> scene;
+public class AudioScenePopulation implements Population<PackedCollection, TemporalCellular>, Destroyable, CodeFeatures {
 
-	private List<Genome<PackedCollection<?>>> pop;
+	private final AudioScene<?> scene;
+
+	private List<Genome<PackedCollection>> pop;
 	private Genome currentGenome;
 	private TemporalCellular temporal;
 
@@ -60,17 +59,17 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 		this(scene, new ArrayList<>());
 	}
 
-	public AudioScenePopulation(AudioScene<?> scene, List<Genome<PackedCollection<?>>> population) {
+	public AudioScenePopulation(AudioScene<?> scene, List<Genome<PackedCollection>> population) {
 		this.scene = scene;
 		this.pop = population;
 	}
 
-	public void init(Genome<PackedCollection<?>> templateGenome,
+	public void init(Genome<PackedCollection> templateGenome,
 					 MultiChannelAudioOutput output) {
 		init(templateGenome, output, null);
 	}
 
-	public void init(Genome<PackedCollection<?>> templateGenome,
+	public void init(Genome<PackedCollection> templateGenome,
 					 MultiChannelAudioOutput output, List<Integer> channels) {
 		enableGenome(templateGenome);
 		this.temporal = scene.runner(output, channels);
@@ -82,8 +81,8 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 	}
 
 	@Override
-	public List<Genome<PackedCollection<?>>> getGenomes() { return pop; }
-	public void setGenomes(List<Genome<PackedCollection<?>>> pop) { this.pop = pop; }
+	public List<Genome<PackedCollection>> getGenomes() { return pop; }
+	public void setGenomes(List<Genome<PackedCollection>> pop) { this.pop = pop; }
 
 	@Override
 	public TemporalCellular enableGenome(int index) {
@@ -197,11 +196,11 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 	public Console console() { return HealthCallable.console; }
 
 	public static class GenerationResult {
-		private String outputPath;
-		private Genome<PackedCollection<?>> genome;
-		private long generationTime;
+		private final String outputPath;
+		private final Genome<PackedCollection> genome;
+		private final long generationTime;
 
-		public GenerationResult(String outputPath, Genome<PackedCollection<?>> genome, long generationTime) {
+		public GenerationResult(String outputPath, Genome<PackedCollection> genome, long generationTime) {
 			this.outputPath = outputPath;
 			this.genome = genome;
 			this.generationTime = generationTime;
@@ -211,7 +210,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 			return outputPath;
 		}
 
-		public Genome<PackedCollection<?>> getGenome() {
+		public Genome<PackedCollection> getGenome() {
 			return genome;
 		}
 
@@ -230,7 +229,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 		mapper.writeValue(s, genomeData);
 	}
 
-	public static List<Genome<PackedCollection<?>>> read(InputStream in) throws IOException {
+	public static List<Genome<PackedCollection>> read(InputStream in) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		GenomeData data = mapper.readValue(in, GenomeData.class);
 		return data.getGenomes();
@@ -242,7 +241,7 @@ public class AudioScenePopulation implements Population<PackedCollection<?>, Tem
 			this.add(((ProjectedGenome) genome).getParameters().toArray());
 		}
 
-		public List<Genome<PackedCollection<?>>> getGenomes() {
+		public List<Genome<PackedCollection>> getGenomes() {
 			return stream()
 					.map(params -> new ProjectedGenome(pack(params)))
 					.collect(Collectors.toList());

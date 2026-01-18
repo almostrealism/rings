@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GenerationManager {
-	private NoteSourceProvider sourceProvider;
-	private GenerationProvider generationProvider;
+	private final NoteSourceProvider sourceProvider;
+	private final GenerationProvider generationProvider;
 	private List<Generator> generators;
 
 	public GenerationManager(NoteSourceProvider sourceProvider, GenerationProvider generationProvider) {

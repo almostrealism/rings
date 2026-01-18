@@ -16,33 +16,23 @@
 
 package com.almostrealism.photon.xml;
 
+import com.almostrealism.photon.ui.DefaultProbabilityDistributionEditPanel;
+import com.almostrealism.stats.OverlayBRDF;
 import io.almostrealism.tree.ui.ObjectTreeDisplay;
 import io.almostrealism.tree.ui.ObjectTreeNode;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.tree.TreeCellRenderer;
-
 import org.almostrealism.color.ProbabilityDistribution;
 import org.almostrealism.color.RGB;
 import org.almostrealism.texture.GraphicsConverter;
 
-import com.almostrealism.stats.OverlayBRDF;
-import com.almostrealism.photon.ui.DefaultProbabilityDistributionEditPanel;
+import javax.swing.*;
+import javax.swing.tree.TreeCellRenderer;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class ProbabilityDistributionDisplay extends JPanel
 								implements NodeDisplay, TreeCellRenderer, MouseListener {
-	private Node node;
+	private final Node node;
 	private Object obj;
 	private Color cl;
 	private boolean arrow, open;
@@ -65,7 +55,7 @@ public class ProbabilityDistributionDisplay extends JPanel
 		
 		Object o = this.obj;
 		if (o == null) o = this.node.getObject();
-		if (o instanceof ProbabilityDistribution == false) return;
+		if (!(o instanceof ProbabilityDistribution)) return;
 		ProbabilityDistribution dist = (ProbabilityDistribution) o;
 		
 		int off = 1;
@@ -135,7 +125,7 @@ public class ProbabilityDistributionDisplay extends JPanel
 		this.open = expanded;
 		
 		Color bg = tree.getBackground();
-		float hsb[] = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null);
+		float[] hsb = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null);
 		this.cl = new Color(Color.HSBtoRGB(1 - hsb[0], hsb[1], 1 - hsb[2]));
 		
 		if (selected)

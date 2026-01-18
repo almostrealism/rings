@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Michael Murray
+ * Copyright 2026 Michael Murray
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,26 +24,22 @@ import java.util.stream.Collectors;
 public abstract class AudioPlayerBase implements AudioPlayer {
 	public static boolean enableStemsExport = false;
 
-	private String file, uri;
+	private String file;
 	private List<String> stems;
 
 	protected AudioPlayerBase() {
-		this(null, null, null);
+		this(null, null);
 	}
 
-	public AudioPlayerBase(String file, String uri,
-						   List<String> stems) {
+	/**
+	 * Creates an AudioPlayerBase with the specified file path and stems.
+	 *
+	 * @param file The file path
+	 * @param stems List of stem file paths for multi-track audio
+	 */
+	public AudioPlayerBase(String file, List<String> stems) {
 		this.file = file;
-		this.uri = uri;
 		this.stems = stems;
-	}
-
-	public String getUri() {
-		return uri;
-	}
-
-	public void setUri(String uri) {
-		this.uri = uri;
 	}
 
 	public void setStems(List<String> stems) {

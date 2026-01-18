@@ -18,8 +18,8 @@ package org.almostrealism.audio.generative;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.almostrealism.audio.notes.NoteAudio;
-import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.audio.notes.NoteSourceProvider;
 import org.almostrealism.util.KeyUtils;
 
 import java.util.ArrayList;

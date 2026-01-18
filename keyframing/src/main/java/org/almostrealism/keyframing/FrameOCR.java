@@ -2,8 +2,6 @@ package org.almostrealism.keyframing;
 
 import net.didion.jwnl.JWNL;
 import net.didion.jwnl.JWNLException;
-import net.didion.jwnl.data.IndexWord;
-import net.didion.jwnl.data.IndexWordSet;
 import net.didion.jwnl.dictionary.Dictionary;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.leptonica.PIX;
@@ -36,16 +34,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class FrameOCR {
 	static {
@@ -63,7 +56,7 @@ public class FrameOCR {
 	public static final int padX = 6;
 	public static final int padY = 2;
 
-	private MediaProvider media;
+	private final MediaProvider media;
 	private Net detector;
 	private Net recognition;
 	private TessBaseAPI tess;
@@ -298,10 +291,10 @@ public class FrameOCR {
 				double h = x0_data.apply(x) + x2_data.apply(x) + padY;
 				double w = x1_data.apply(x) + x3_data.apply(x) + padX;
 
-				double offset[] = new double[] { offsetX + cosA * x1_data.apply(x) + sinA * x2_data.apply(x), offsetY - sinA * x1_data.apply(x) + cosA * x2_data.apply(x) };
-				double p1[] = new double[] { -sinA * h + offset[0], -cosA * h + offset[1] };
-				double p3[] = new double[] { -cosA * w + offset[0], sinA * w + offset[1] };
-				double center[] = new double[] { 0.5 * (p1[0] + p3[0]), 0.5 * (p1[1] + p3[1]) };
+				double[] offset = new double[] { offsetX + cosA * x1_data.apply(x) + sinA * x2_data.apply(x), offsetY - sinA * x1_data.apply(x) + cosA * x2_data.apply(x) };
+				double[] p1 = new double[] { -sinA * h + offset[0], -cosA * h + offset[1] };
+				double[] p3 = new double[] { -cosA * w + offset[0], sinA * w + offset[1] };
+				double[] center = new double[] { 0.5 * (p1[0] + p3[0]), 0.5 * (p1[1] + p3[1]) };
 				detections.detections.add(new Detection(center, new double[] { w, h }, -1 * angle * 180.0 / Math.PI));
 				detections.confidences.add(score);
 			});
@@ -328,7 +321,7 @@ public class FrameOCR {
 
 	private String decodeText(Mat scores) {
 		StringBuffer text = new StringBuffer();
-		char alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
+		char[] alphabet = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
 
 		for (int i = 0; i < scores.size(0); i++) {
 			int c = argmax(vals(scores, i, 0));
@@ -341,7 +334,7 @@ public class FrameOCR {
 		}
 
 		StringBuffer result = new StringBuffer();
-		char txt[] = text.toString().toCharArray();
+		char[] txt = text.toString().toCharArray();
 		for (int i = 0; i < txt.length; i++) {
 			if (txt[i] != '-' && !(i > 0 && txt[i] == txt[i - 1]))
 				result.append(txt[i]);
@@ -351,19 +344,19 @@ public class FrameOCR {
 		return result.toString();
 	}
 
-	private int argmax(double vals[]) {
+	private int argmax(double[] vals) {
 		return IntStream.range(0, vals.length).mapToObj(i -> i).max((i, j) -> (int) (1000 * vals[i] - vals[j])).get();
 	}
 
 	private double[] vals(Mat mat, int x, int y) {
-		double vals[] = new double[mat.size(2)];
+		double[] vals = new double[mat.size(2)];
 		IntStream.range(0, vals.length).forEach(i -> vals[i] = mat.get(new int[] { x, y, i })[0]);
 		return vals;
 	}
 
 	private static class Detections {
-		private List<Detection> detections = new ArrayList<>();
-		private List<Double> confidences = new ArrayList<>();
+		private final List<Detection> detections = new ArrayList<>();
+		private final List<Double> confidences = new ArrayList<>();
 
 
 		public MatOfRotatedRect getBoxes() {
@@ -371,18 +364,18 @@ public class FrameOCR {
 		}
 
 		public MatOfFloat getConfidences() {
-			float f[] = new float[confidences.size()];
+			float[] f = new float[confidences.size()];
 			IntStream.range(0, f.length).forEach(i -> f[i] = (float) confidences.get(i).doubleValue());
 			return new MatOfFloat(f);
 		}
 	}
 
 	private static class Detection {
-		private double center[];
-		private double wh[];
-		private double angle;
+		private final double[] center;
+		private final double[] wh;
+		private final double angle;
 
-		public Detection(double center[], double wh[], double angle) {
+		public Detection(double[] center, double[] wh, double angle) {
 			this.center = center;
 			this.wh = wh;
 			this.angle = angle;
@@ -402,7 +395,7 @@ public class FrameOCR {
 		return imageRGB;
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		enableDebugImages = true;
 
 		FrameOCR ocr = new FrameOCR();

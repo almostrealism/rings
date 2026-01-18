@@ -16,21 +16,22 @@
 
 package com.almostrealism.network;
 
-import io.almostrealism.code.*;
+import io.almostrealism.code.Accessibility;
+import io.almostrealism.code.ExpressionAssignment;
 import io.almostrealism.expression.Expression;
 import io.almostrealism.lang.CodePrintWriter;
 import io.almostrealism.lang.CodePrintWriterAdapter;
 import io.almostrealism.profile.OperationMetadata;
 import io.almostrealism.relation.Evaluable;
+import io.almostrealism.resource.JsonResource;
 import io.almostrealism.resource.Resource;
 import io.almostrealism.resource.ResourceTranscoder;
 import io.almostrealism.resource.ResourceVariable;
 import io.almostrealism.scope.ArrayVariable;
 import io.almostrealism.scope.Method;
 import io.almostrealism.scope.Variable;
-import org.almostrealism.algebra.Scalar;
+import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.io.PrintWriter;
-import io.almostrealism.resource.JsonResource;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -102,8 +103,7 @@ public class JavaScriptPrintWriter extends CodePrintWriterAdapter {
 	}
 
 	protected String toString(Expression<?> e) {
-		if (e instanceof Method) {
-			Method m = (Method) e;
+		if (e instanceof Method m) {
 
 			StringBuffer b = new StringBuffer();
 			if (m.getMember() != null)
@@ -141,8 +141,8 @@ public class JavaScriptPrintWriter extends CodePrintWriterAdapter {
 			o = ((Evaluable) o).evaluate();
 		}
 
-		if (o instanceof Scalar) {
-			o = ((Scalar) o).getValue();
+		if (o instanceof PackedCollection) {
+			o = ((PackedCollection) o).toDouble(0);
 		}
 
 		if (o instanceof String) {

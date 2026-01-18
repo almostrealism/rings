@@ -41,8 +41,8 @@ public interface TensorFeatures {
 	}
 
 	default Operand<TFloat32> reshape(Operand<TFloat32> input, Shape shape) {
-		long newShape[] = shape.asArray();
-		int s[] = new int[newShape.length];
+		long[] newShape = shape.asArray();
+		int[] s = new int[newShape.length];
 		for (int i = 0; i < s.length; i++) {
 			if (newShape[i] >= Integer.MAX_VALUE) throw new UnsupportedOperationException();
 			s[i] = (int) newShape[i];

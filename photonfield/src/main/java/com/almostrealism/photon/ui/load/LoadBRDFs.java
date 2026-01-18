@@ -16,25 +16,21 @@
 
 package com.almostrealism.photon.ui.load;
 
-import io.almostrealism.tree.ui.ObjectTreeDisplay;
-
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Hashtable;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-
-import org.almostrealism.stats.SphericalProbabilityDistribution;
-
+import com.almostrealism.geometry.Sphere;
+import com.almostrealism.photon.ui.AbsorberPreviewPanel;
 import com.almostrealism.physics.SpecularAbsorber;
 import com.almostrealism.stats.OverlayBRDF;
 import com.almostrealism.stats.ReflectiveProbabilityDistribution;
 import com.almostrealism.stats.RefractiveProbabilityDistribution;
 import com.almostrealism.stats.UniformHemisphericalDistribution;
-import com.almostrealism.geometry.Sphere;
-import com.almostrealism.photon.ui.AbsorberPreviewPanel;
+import io.almostrealism.tree.ui.ObjectTreeDisplay;
+import org.almostrealism.stats.SphericalProbabilityDistribution;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Hashtable;
 
 /**
  * @author  Michael Murray
@@ -56,7 +52,7 @@ public class LoadBRDFs extends TreeObjectLoader {
 		return t;
 	}
 	
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		final ObjectTreeDisplay display = (ObjectTreeDisplay) new LoadBRDFs().getUI();
 		final SpecularAbsorber sa = new SpecularAbsorber();
 		sa.setVolume(new Sphere(5.0));

@@ -17,21 +17,21 @@
 package org.almostrealism.audio.optimize.test;
 
 import org.almostrealism.audio.AudioScene;
+import org.almostrealism.audio.WaveOutput;
 import org.almostrealism.audio.data.ChannelInfo;
 import org.almostrealism.audio.health.MultiChannelAudioOutput;
-import org.almostrealism.audio.optimize.AudioSceneOptimizer;
-import org.almostrealism.audio.pattern.PatternElementFactory;
+import org.almostrealism.audio.health.StableDurationHealthComputation;
+import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.notes.NoteAudioChoice;
+import org.almostrealism.audio.optimize.AudioSceneOptimizer;
+import org.almostrealism.audio.optimize.AudioScenePopulation;
+import org.almostrealism.audio.pattern.PatternElementFactory;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.hardware.mem.Heap;
+import org.almostrealism.heredity.Genome;
 import org.almostrealism.heredity.ProjectedGenome;
 import org.almostrealism.io.SystemUtils;
 import org.almostrealism.time.TemporalRunner;
-import org.almostrealism.audio.health.StableDurationHealthComputation;
-import org.almostrealism.audio.optimize.AudioScenePopulation;
-import org.almostrealism.audio.line.OutputLine;
-import org.almostrealism.audio.WaveOutput;
-import org.almostrealism.heredity.Genome;
 import org.almostrealism.util.KeyUtils;
 import org.junit.Test;
 
@@ -49,7 +49,7 @@ import java.util.stream.IntStream;
 public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryTest {
 	protected AudioScenePopulation population(AudioScene<?> scene, MultiChannelAudioOutput output) {
 		int params = 8;
-		List<Genome<PackedCollection<?>>> genomes = new ArrayList<>();
+		List<Genome<PackedCollection>> genomes = new ArrayList<>();
 		genomes.add(new ProjectedGenome(params));
 		genomes.add(new ProjectedGenome(params));
 		genomes.add(new ProjectedGenome(params));
@@ -181,7 +181,7 @@ public class AudioScenePopulationTest extends AdjustmentLayerOrganSystemFactoryT
 
 		if (file.exists()) {
 			try {
-				List<Genome<PackedCollection<?>>> genomes = AudioScenePopulation.read(new FileInputStream(file));
+				List<Genome<PackedCollection>> genomes = AudioScenePopulation.read(new FileInputStream(file));
 				log("Loaded " + genomes.size() + " genomes from " + file);
 				return new AudioScenePopulation(scene, genomes);
 			} catch (IOException e) {

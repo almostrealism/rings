@@ -23,7 +23,7 @@ import org.almostrealism.graph.temporal.WaveCell;
 import java.util.function.IntFunction;
 
 public class SampleMixer implements CellFeatures {
-	private Mixer mixer;
+	private final Mixer mixer;
 	private WaveCell[] samples;
 
 	public SampleMixer(int channels) {

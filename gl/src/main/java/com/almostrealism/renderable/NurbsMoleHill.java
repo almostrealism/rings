@@ -21,13 +21,13 @@ import com.jogamp.opengl.glu.GLUnurbs;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 
 public class NurbsMoleHill extends RenderableList {
-	private GLUgl2 glu;
+	private final GLUgl2 glu;
 	
-	float knots[] = { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-	float pts1[][][] = new float[4][4][3];
-	float pts2[][][] = new float[4][4][3];
-	float pts3[][][] = new float[4][4][3];
-	float pts4[][][] = new float[4][4][3];
+	float[] knots = { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+	float[][][] pts1 = new float[4][4][3];
+	float[][][] pts2 = new float[4][4][3];
+	float[][][] pts3 = new float[4][4][3];
+	float[][][] pts4 = new float[4][4][3];
 
 	GLUnurbs nurb;
 

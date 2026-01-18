@@ -51,7 +51,7 @@ public class PatternElement implements CodeFeatures {
 	private int repeatCount;
 	private double repeatDuration;
 
-	private PackedCollection<?> automationParameters;
+	private PackedCollection automationParameters;
 
 	public PatternElement() {
 		this((PatternNote) null, 0.0);
@@ -150,11 +150,11 @@ public class PatternElement implements CodeFeatures {
 		this.repeatDuration = repeatDuration;
 	}
 
-	public PackedCollection<?> getAutomationParameters() {
+	public PackedCollection getAutomationParameters() {
 		return automationParameters;
 	}
 
-	public void setAutomationParameters(PackedCollection<?> automationParameters) {
+	public void setAutomationParameters(PackedCollection automationParameters) {
 		this.automationParameters = automationParameters;
 	}
 
@@ -177,8 +177,8 @@ public class PatternElement implements CodeFeatures {
 									context, audioContext);
 	}
 
-	public Producer<PackedCollection<?>> getNoteAudio(ElementVoicingDetails details,
-													  Factor<PackedCollection<?>> automationLevel,
+	public Producer<PackedCollection> getNoteAudio(ElementVoicingDetails details,
+													  Factor<PackedCollection> automationLevel,
 													  DoubleFunction<PatternNoteAudio> audioSelection,
 													  DoubleUnaryOperator timeForDuration) {
 		KeyPosition<?> k = details.isMelodic() ? details.getTarget() : null;

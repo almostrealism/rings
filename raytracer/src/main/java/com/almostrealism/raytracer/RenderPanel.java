@@ -16,31 +16,25 @@
 
 package com.almostrealism.raytracer;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import com.almostrealism.raytrace.FogParameters;
-import com.almostrealism.raytrace.RayIntersectionEngine;
-import com.almostrealism.raytrace.RenderParameters;
+import io.almostrealism.relation.Evaluable;
 import io.almostrealism.relation.Producer;
-import org.almostrealism.color.RealizableImage;
 import org.almostrealism.color.RGB;
+import org.almostrealism.color.RealizableImage;
+import org.almostrealism.color.ShadableSurface;
+import org.almostrealism.projection.OrthographicCamera;
+import org.almostrealism.raytrace.FogParameters;
+import org.almostrealism.raytrace.RayIntersectionEngine;
+import org.almostrealism.raytrace.RenderParameters;
+import org.almostrealism.render.RayTracedScene;
 import org.almostrealism.space.Scene;
-import org.almostrealism.space.ShadableSurface;
 import org.almostrealism.swing.Event;
 import org.almostrealism.swing.EventGenerator;
 import org.almostrealism.swing.EventHandler;
 import org.almostrealism.swing.EventListener;
 import org.almostrealism.texture.GraphicsConverter;
 
-import org.almostrealism.projection.OrthographicCamera;
-import io.almostrealism.relation.Evaluable;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * A {@link RenderPanel} object allows display of {@link Scene} previews and
@@ -49,13 +43,13 @@ import io.almostrealism.relation.Evaluable;
  * @author  Michael Murray
  */
 public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPanel implements EventListener, EventGenerator, Producer<Image> {
-	private T scene;
+	private final T scene;
 	private EventHandler handler;
 
 	private int width, height, ssWidth, ssHeight;
 
 	private RealizableImage image;
-	private RGB renderedImageData[][];
+	private RGB[][] renderedImageData;
 	private Image renderedImage;
 
 	private Thread evaluationThread;
@@ -322,7 +316,7 @@ public class RenderPanel<T extends Scene<? extends ShadableSurface>> extends JPa
 			} catch(InterruptedException ie) {
 				System.out.println("Swing Utilities Interruption: " + ie);
 			} catch(java.lang.reflect.InvocationTargetException ite) {
-				System.out.println("Swing Utilities Invocation Target Error: " + ite.toString());
+				System.out.println("Swing Utilities Invocation Target Error: " + ite);
 			}
 
 			if (evaluationStart > 0) {

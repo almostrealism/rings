@@ -16,14 +16,13 @@
 
 package com.almostrealism.gl.test;
 
-import javax.swing.JFrame;
-
-import org.almostrealism.algebra.Vector;
-import org.junit.Test;
-
 import com.almostrealism.gl.DefaultGLCanvas;
 import com.almostrealism.renderable.Gear;
-import com.almostrealism.projection.PinholeCamera;
+import org.almostrealism.algebra.Vector;
+import org.almostrealism.projection.PinholeCamera;
+import org.junit.Test;
+
+import javax.swing.*;
 
 /**
  * @author  Michael Murray
@@ -50,5 +49,5 @@ public class DefaultGLCanvasTest {
 		c.start();
 	}
 	
-	public static void main(String args[]) { new DefaultGLCanvasTest().test(); }
+	public static void main(String[] args) { new DefaultGLCanvasTest().test(); }
 }

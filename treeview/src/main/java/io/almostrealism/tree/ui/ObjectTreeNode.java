@@ -16,6 +16,9 @@
 
 package io.almostrealism.tree.ui;
 
+import org.almostrealism.space.Length;
+
+import javax.swing.tree.TreeNode;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,17 +27,14 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.tree.TreeNode;
-
-import org.almostrealism.space.Length;
-
 public class ObjectTreeNode implements TreeNode, Length {
-	private ObjectTreeNode parent;
+	private final ObjectTreeNode parent;
 	private Method method;
 	private Object obj, target;
-	private List children;
-	private boolean leaf, arrayWrap = true;
-	private Object arrayType[];
+	private final List children;
+	private final boolean leaf;
+	private final boolean arrayWrap = true;
+	private Object[] arrayType;
 	
 	public ObjectTreeNode(ObjectTreeNode parent, Method m) {
 		this.parent = parent;
@@ -107,7 +107,7 @@ public class ObjectTreeNode implements TreeNode, Length {
 			return l.toArray(this.arrayType);
 	}
 	
-	public void setArrayType(Object o[]) { this.arrayType = o; }
+	public void setArrayType(Object[] o) { this.arrayType = o; }
 	
 	public Object[] getArrayType() {
 		if (this.arrayType != null)
@@ -120,7 +120,7 @@ public class ObjectTreeNode implements TreeNode, Length {
 	
 	public Enumeration children() {
 		Enumeration en = new Enumeration() {
-			Iterator itr = children.iterator();
+			final Iterator itr = children.iterator();
 			public boolean hasMoreElements() { return this.itr.hasNext(); }
 			public Object nextElement() { return itr.next(); }
 		};

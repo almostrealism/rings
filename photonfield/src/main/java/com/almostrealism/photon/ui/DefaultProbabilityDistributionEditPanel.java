@@ -16,30 +16,23 @@
 
 package com.almostrealism.photon.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
+import com.almostrealism.photon.xml.ProbabilityDistributionDisplay;
 import org.almostrealism.color.ProbabilityDistribution;
 import org.almostrealism.swing.panels.PercentagePanel;
 
-import com.almostrealism.photon.xml.ProbabilityDistributionDisplay;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 
 /**
  * @author  Mike Murray
  */
 public class DefaultProbabilityDistributionEditPanel extends JPanel
 													implements ChangeListener {
-	private ProbabilityDistribution pdf;
-	private PercentagePanel sliders[];
-	private ProbabilityDistributionDisplay display;
+	private final ProbabilityDistribution pdf;
+	private final PercentagePanel[] sliders;
+	private final ProbabilityDistributionDisplay display;
 	private ChangeListener listener;
 	
 	public DefaultProbabilityDistributionEditPanel(ProbabilityDistribution p) {

@@ -21,8 +21,8 @@ package org.almostrealism.swing;
  */
 public interface Dialog {
 	/** Shows this dialog. */
-	public void showDialog();
+	void showDialog();
 	
 	/** Closes this dialog if it is open. */
-	public void closeDialog();
+	void closeDialog();
 }

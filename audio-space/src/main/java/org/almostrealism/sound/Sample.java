@@ -24,15 +24,15 @@ public class Sample {
 	private boolean mute = false;
 	private boolean loop = true;
 	
-	private AudioFormat format;
+	private final AudioFormat format;
 	
-	byte data[][];
-	byte empty[];
-	double realFFT[];
+	byte[][] data;
+	byte[] empty;
+	double[] realFFT;
 	
 	int pos, loopStart, loopEnd;
 	
-	public Sample(byte data[][], AudioFormat format) {
+	public Sample(byte[][] data, AudioFormat format) {
 		this.data = data;
 		this.loopStart = 0;
 		this.loopEnd = this.data.length;
@@ -60,7 +60,7 @@ public class Sample {
 	}
 	
 	public synchronized void play(SourceDataLine line) {
-		System.out.println(this.toString() + ": Play");
+		System.out.println(this + ": Play");
 		
 		stop = false;
 		
@@ -79,7 +79,7 @@ public class Sample {
 	}
 	
 	public void stop() {
-		System.out.println(this.toString() + ": Stop");
+		System.out.println(this + ": Stop");
 		stop = true;
 	}
 	
@@ -113,10 +113,10 @@ public class Sample {
 			totSize += pieces - (totSize % pieces);
 		int size = totSize / pieces;
 		
-		Sample s[] = new Sample[pieces];
+		Sample[] s = new Sample[pieces];
 		
 		for (int i = 0; i < pieces; i++) {
-			byte newData[][] = new byte[size][this.data[0].length];
+			byte[][] newData = new byte[size][this.data[0].length];
 			System.arraycopy(this.data, this.loopStart + i * size, newData, 0, size);
 			s[i] = new Sample(newData, this.format);
 			s[i].unloop();

@@ -19,9 +19,8 @@ package org.almostrealism.audio.notes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.almostrealism.uml.Named;
 import org.almostrealism.audio.CellFeatures;
-import org.almostrealism.audio.data.FileWaveDataProviderFilter;
-import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.data.FileWaveDataProvider;
+import org.almostrealism.audio.data.FileWaveDataProviderFilter;
 import org.almostrealism.audio.data.FileWaveDataProviderNode;
 import org.almostrealism.audio.data.FileWaveDataProviderTree;
 import org.almostrealism.audio.tone.KeyPosition;
@@ -54,7 +53,7 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 	private boolean forwardPlayback;
 	private boolean reversePlayback;
 
-	private List<FileWaveDataProviderFilter> filters;
+	private final List<FileWaveDataProviderFilter> filters;
 
 	public TreeNoteSource() { this((FileWaveDataProviderTree) null); }
 
@@ -271,8 +270,8 @@ public class TreeNoteSource extends NoteAudioSourceBase implements Named, Consol
 	}
 
 	protected class Provider implements Comparable<Provider> {
-		private NoteAudioProvider provider;
-		private BooleanSupplier active;
+		private final NoteAudioProvider provider;
+		private final BooleanSupplier active;
 
 		public Provider(NoteAudioProvider provider, BooleanSupplier active) {
 			this.provider = provider;

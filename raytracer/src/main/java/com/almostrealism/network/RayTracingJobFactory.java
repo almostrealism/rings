@@ -16,14 +16,14 @@
 
 package com.almostrealism.network;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
 import io.flowtree.job.Job;
 import io.flowtree.job.JobFactory;
 import org.almostrealism.io.OutputHandler;
 import org.almostrealism.util.KeyUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author  Michael Murray
@@ -44,9 +44,9 @@ public class RayTracingJobFactory implements JobFactory {
 	private String outputHost;
 	private int outputPort;
 
-	private List<Job> jobs;
+	private final List<Job> jobs;
 
-	private CompletableFuture<Void> future = new CompletableFuture<>();
+	private final CompletableFuture<Void> future = new CompletableFuture<>();
 
 	/**
 	 * Constructs a new RayTracingJobFactory object.

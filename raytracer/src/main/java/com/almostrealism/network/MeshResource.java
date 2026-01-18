@@ -1,11 +1,11 @@
 package com.almostrealism.network;
 
-import io.almostrealism.resource.JsonResource;
-import org.almostrealism.algebra.Vector;
 import io.almostrealism.resource.IOStreams;
+import io.almostrealism.resource.JsonResource;
 import io.almostrealism.resource.Permissions;
 import io.almostrealism.resource.Resource;
 import io.almostrealism.resource.ResourceTranscoder;
+import org.almostrealism.algebra.Vector;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.Triangle;
 
@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class MeshResource implements Resource<Mesh> {
-	private Mesh mesh;
-	private Permissions permissions;
+	private final Mesh mesh;
+	private final Permissions permissions;
 
 	public MeshResource(Mesh m) {
 		this.mesh = m;
@@ -25,7 +25,7 @@ public class MeshResource implements Resource<Mesh> {
 	public void load(IOStreams io) throws IOException { }  // TODO  Read serialized data
 
 	@Override
-	public void load(byte data[], long offset, int len) { } // TODO  Read serialized data
+	public void load(byte[] data, long offset, int len) { } // TODO  Read serialized data
 
 	@Override
 	public void loadFromURI() throws IOException { } // TODO
@@ -68,10 +68,10 @@ public class MeshResource implements Resource<Mesh> {
 
 			buf.append("new Float32Array( [\n");
 
-			Triangle t[] = r.getMesh().getTriangles();
+			Triangle[] t = r.getMesh().getTriangles();
 
 			for (int i = 0; i < t.length; i++) {
-				Vector v[] = t[i].getVertices();
+				Vector[] v = t[i].getVertices();
 				buf.append(v[0].getX());
 				buf.append(", ");
 				buf.append(v[0].getY());

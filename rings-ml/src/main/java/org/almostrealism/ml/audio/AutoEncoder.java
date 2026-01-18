@@ -28,7 +28,7 @@ public interface AutoEncoder extends Destroyable {
 
 	double getMaximumDuration();
 
-	Producer<PackedCollection<?>> encode(Producer<PackedCollection<?>> input);
+	Producer<PackedCollection> encode(Producer<PackedCollection> input);
 
-	Producer<PackedCollection<?>> decode(Producer<PackedCollection<?>> latent);
+	Producer<PackedCollection> decode(Producer<PackedCollection> latent);
 }
