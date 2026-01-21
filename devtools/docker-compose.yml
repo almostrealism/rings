@@ -13,6 +13,8 @@ services:
     environment:
       - TERM=xterm-256color
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+      - FLOWTREE_PORT=7766
+      - FLOWTREE_NODE_ID=sandbox-a
     network_mode: host
   rings-dev-sandbox-b:
     build:
@@ -28,6 +30,8 @@ services:
     environment:
       - TERM=xterm-256color
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+      - FLOWTREE_PORT=7767
+      - FLOWTREE_NODE_ID=sandbox-b
     network_mode: host
   rings-dev-sandbox-c:
     build:
@@ -43,6 +47,8 @@ services:
     environment:
       - TERM=xterm-256color
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+      - FLOWTREE_PORT=7768
+      - FLOWTREE_NODE_ID=sandbox-c
     network_mode: host
   rings-dev-sandbox-d:
     build:
@@ -58,4 +64,6 @@ services:
     environment:
       - TERM=xterm-256color
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+      - FLOWTREE_PORT=7769
+      - FLOWTREE_NODE_ID=sandbox-d
     network_mode: host
