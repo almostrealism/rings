@@ -45,13 +45,53 @@ RUN apt-get install -y \
     ca-certificates \
     gnupg \
     lsb-release \
+    # Playwright browser dependencies (Chromium/Firefox/WebKit)
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libdbus-1-3 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libpangocairo-1.0-0 \
+    libatspi2.0-0 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxext6 \
+    libxcursor1 \
+    libxi6 \
+    libxtst6 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libgdk-pixbuf2.0-0 \
+    libxshmfence1 \
+    libglu1-mesa \
+    libenchant-2-2 \
+    libsecret-1-0 \
+    libhyphen0 \
+    libmanette-0.2-0 \
+    libflite1 \
+    libgstreamer1.0-0 \
+    libgstreamer-plugins-base1.0-0 \
+    libgstreamer-plugins-bad1.0-0 \
+    gstreamer1.0-libav \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Java environment variables
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
-# Install Node.js and npm (for Claude CLI installation)
+# Install Node.js and npm (for Playwright and general JS tooling)
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
@@ -90,7 +130,8 @@ RUN mkdir -p ~/.npm-global && \
 # Add npm global bin to PATH
 ENV PATH="/home/developer/.npm-global/bin:${PATH}"
 
-# Install Claude Code CLI as developer user (allows auto-updates without permission issues)
+# Install Claude Code CLI via npm
+# Note: Can also be installed via `curl -fsSL https://claude.ai/install.sh | bash` at runtime
 RUN npm install -g @anthropic-ai/claude-code
 
 # Set up bash prompt and environment

@@ -37,14 +37,14 @@ check_docker() {
 # Build the image
 build() {
     print_info "Building Docker image for ARM64..."
-    docker-compose build --platform linux/arm64
+    docker compose build
     print_info "Build complete!"
 }
 
 # Start the container
 start() {
     print_info "Starting development container..."
-    docker-compose up -d
+    docker compose up -d
     print_info "Container started!"
     print_info "Use './run.sh shell' to enter the container"
 }
@@ -52,14 +52,14 @@ start() {
 # Stop the container
 stop() {
     print_info "Stopping development container..."
-    docker-compose down
+    docker compose down
     print_info "Container stopped!"
 }
 
 # Restart the container
 restart() {
     print_info "Restarting development container..."
-    docker-compose restart
+    docker compose restart
     print_info "Container restarted!"
 }
 
@@ -82,12 +82,12 @@ shell() {
 # Show container status
 status() {
     print_info "Container status:"
-    docker-compose ps
+    docker compose ps
 }
 
 # Show container logs
 logs() {
-    docker-compose logs -f
+    docker compose logs -f
 }
 
 # Clean up (remove container and volumes)
@@ -97,7 +97,7 @@ clean() {
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         print_info "Cleaning up..."
-        docker-compose down -v
+        docker compose down -v
         print_info "Cleanup complete!"
     else
         print_info "Cleanup cancelled"
@@ -107,9 +107,9 @@ clean() {
 # Rebuild from scratch
 rebuild() {
     print_info "Rebuilding from scratch..."
-    docker-compose down
-    docker-compose build --no-cache --platform linux/arm64
-    docker-compose up -d
+    docker compose down
+    docker compose build --no-cache
+    docker compose up -d
     print_info "Rebuild complete!"
 }
 
