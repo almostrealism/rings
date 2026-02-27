@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: dev-sandbox-a
+    cpus: 8
     volumes:
       - /Users/michael/AlmostRealism/sandboxA/:/workspace/project
       - /Users/michael/AlmostRealism/sandboxA/.claude:/home/developer/.claude
@@ -21,6 +22,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: dev-sandbox-b
+    cpus: 8
     volumes:
       - /Users/michael/AlmostRealism/sandboxB/:/workspace/project
       - /Users/michael/AlmostRealism/sandboxB/.claude:/home/developer/.claude
@@ -38,6 +40,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: dev-sandbox-c
+    cpus: 8
     volumes:
       - /Users/michael/AlmostRealism/sandboxC/:/workspace/project
       - /Users/michael/AlmostRealism/sandboxC/.claude:/home/developer/.claude
@@ -55,6 +58,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: dev-sandbox-d
+    cpus: 8
     volumes:
       - /Users/michael/AlmostRealism/sandboxD/:/workspace/project
       - /Users/michael/AlmostRealism/sandboxD/.claude:/home/developer/.claude
