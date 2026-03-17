@@ -9,6 +9,7 @@ services:
       - /Users/michael/AlmostRealism/sandboxA/:/workspace/project
       - /Users/michael/AlmostRealism/sandboxA/.claude:/home/developer/.claude
       - /Users/michael/sandbox/ssh:/home/developer/.ssh
+      - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
     working_dir: /workspace/project
     stdin_open: true
     tty: true
@@ -28,6 +29,7 @@ services:
       - /Users/michael/AlmostRealism/sandboxB/:/workspace/project
       - /Users/michael/AlmostRealism/sandboxB/.claude:/home/developer/.claude
       - /Users/michael/sandbox/ssh:/home/developer/.ssh
+      - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
     working_dir: /workspace/project
     stdin_open: true
     tty: true
@@ -47,6 +49,7 @@ services:
       - /Users/michael/AlmostRealism/sandboxC/:/workspace/project
       - /Users/michael/AlmostRealism/sandboxC/.claude:/home/developer/.claude
       - /Users/michael/sandbox/ssh:/home/developer/.ssh
+      - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
     working_dir: /workspace/project
     stdin_open: true
     tty: true
@@ -66,6 +69,7 @@ services:
       - /Users/michael/AlmostRealism/sandboxD/:/workspace/project
       - /Users/michael/AlmostRealism/sandboxD/.claude:/home/developer/.claude
       - /Users/michael/sandbox/ssh:/home/developer/.ssh
+      - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
     working_dir: /workspace/project
     stdin_open: true
     tty: true
