@@ -10,6 +10,8 @@ services:
       - /Users/michael/AlmostRealism/sandboxA/.claude:/home/developer/.claude
       - /Users/michael/sandbox/ssh:/home/developer/.ssh
       - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
+      - /Users/michael/Documents/AlmostRealism/models:/models:ro
+      - /Users/michael/Music/Samples:/samples:ro
     working_dir: /workspace/project
     stdin_open: true
     tty: true
@@ -30,6 +32,8 @@ services:
       - /Users/michael/AlmostRealism/sandboxB/.claude:/home/developer/.claude
       - /Users/michael/sandbox/ssh:/home/developer/.ssh
       - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
+      - /Users/michael/Documents/AlmostRealism/models:/models:ro
+      - /Users/michael/Music/Samples:/samples:ro
     working_dir: /workspace/project
     stdin_open: true
     tty: true
@@ -50,6 +54,8 @@ services:
       - /Users/michael/AlmostRealism/sandboxC/.claude:/home/developer/.claude
       - /Users/michael/sandbox/ssh:/home/developer/.ssh
       - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
+      - /Users/michael/Documents/AlmostRealism/models:/models:ro
+      - /Users/michael/Music/Samples:/samples:ro
     working_dir: /workspace/project
     stdin_open: true
     tty: true
@@ -70,6 +76,8 @@ services:
       - /Users/michael/AlmostRealism/sandboxD/.claude:/home/developer/.claude
       - /Users/michael/sandbox/ssh:/home/developer/.ssh
       - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
+      - /Users/michael/Documents/AlmostRealism/models:/models:ro
+      - /Users/michael/Music/Samples:/samples:ro
     working_dir: /workspace/project
     stdin_open: true
     tty: true
