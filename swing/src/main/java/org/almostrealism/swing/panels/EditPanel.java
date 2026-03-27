@@ -16,7 +16,7 @@
 
 package org.almostrealism.swing.panels;
 
-import io.almostrealism.relation.Editable;
+import org.almostrealism.swing.Editable;
 import org.almostrealism.swing.EditablePropertiesTableModel;
 
 import javax.swing.*;

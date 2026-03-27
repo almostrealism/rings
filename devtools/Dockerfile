@@ -1,11 +1,20 @@
-# Multi-architecture base image (supports ARM64/AMD64)
+# ARM64 base image
 FROM --platform=linux/arm64 ubuntu:22.04
 
 # Avoid interactive prompts during build
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Workaround for Ubuntu ARM ports GPG signature issues
+# This is a known intermittent issue with the ports.ubuntu.com mirror
+# TODO  This concerns me as I believe it makes it easy to install hacked images
+RUN apt-get update --allow-insecure-repositories || true && \
+    apt-get install -y --allow-unauthenticated ca-certificates gnupg && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get update
+
 # Install base dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get install -y \
     # Build tools
     build-essential \
     gcc \
@@ -15,6 +24,10 @@ RUN apt-get update && apt-get install -y \
     # Java 17
     openjdk-17-jdk \
     maven \
+    # Python and pip
+    python3 \
+    python3-pip \
+    python3-venv \
     # Version control
     git \
     # Utilities
@@ -32,19 +45,56 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     gnupg \
     lsb-release \
+    # Playwright browser dependencies (Chromium/Firefox/WebKit)
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libdbus-1-3 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libpangocairo-1.0-0 \
+    libatspi2.0-0 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxext6 \
+    libxcursor1 \
+    libxi6 \
+    libxtst6 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libgdk-pixbuf2.0-0 \
+    libxshmfence1 \
+    libglu1-mesa \
+    libenchant-2-2 \
+    libsecret-1-0 \
+    libhyphen0 \
+    libmanette-0.2-0 \
+    libflite1 \
+    libgstreamer1.0-0 \
+    libgstreamer-plugins-base1.0-0 \
+    libgstreamer-plugins-bad1.0-0 \
+    gstreamer1.0-libav \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Java environment variables
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
-# Install Node.js and npm (for Claude CLI installation)
+# Install Node.js and npm (for Playwright and general JS tooling)
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
-
-# Install Claude Code CLI via npm
-RUN npm install -g @anthropic-ai/claude-code
 
 # Create workspace directory
 WORKDIR /workspace
@@ -73,10 +123,24 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 USER developer
 WORKDIR /home/developer
 
+# Configure npm to use user-local prefix (avoids permission issues with global installs)
+RUN mkdir -p ~/.npm-global && \
+    npm config set prefix ~/.npm-global
+
+# Add npm global bin to PATH
+ENV PATH="/home/developer/.npm-global/bin:${PATH}"
+
+# Install Claude Code CLI via npm
+# Note: Can also be installed via `curl -fsSL https://claude.ai/install.sh | bash` at runtime
+RUN npm install -g @anthropic-ai/claude-code
+
 # Set up bash prompt and environment
 RUN echo 'export PS1="\u@\h:\w$ "' >> ~/.bashrc && \
     echo 'alias ll="ls -alh"' >> ~/.bashrc && \
-    echo 'export EDITOR=vim' >> ~/.bashrc
+    echo 'alias pip=pip3' >> ~/.bashrc && \
+    echo 'alias python=python3' >> ~/.bashrc && \
+    echo 'export EDITOR=vim' >> ~/.bashrc && \
+    echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
 
 # Configure tmux for better usability
 RUN echo '# Enable mouse support' >> ~/.tmux.conf && \
@@ -95,6 +159,8 @@ RUN echo '# Enable mouse support' >> ~/.tmux.conf && \
 RUN java -version && \
     mvn -version && \
     gcc --version && \
+    python3 --version && \
+    pip3 --version && \
     node --version && \
     npm --version && \
     claude --version && \

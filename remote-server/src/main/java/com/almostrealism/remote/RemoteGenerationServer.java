@@ -20,8 +20,8 @@ import com.almostrealism.remote.mgr.DefaultAccessManager;
 import com.almostrealism.remote.mgr.ManagerDatabase;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import org.almostrealism.audio.generative.GenerationProvider;
-import org.almostrealism.audio.generative.LocalResourceManager;
+import org.almostrealism.studio.generative.GenerationProvider;
+import org.almostrealism.studio.generative.LocalResourceManager;
 import org.almostrealism.audioml.DiffusionGenerationProvider;
 
 import java.io.File;

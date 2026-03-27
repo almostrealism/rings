@@ -5,14 +5,13 @@
 
 	<groupId>com.almostrealism</groupId>
 	<artifactId>rings</artifactId>
-	<version>0.43</version>
+	<version>0.44</version>
 
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 
-		<common.version>0.72</common.version>
-		<flowtree.version>0.28</flowtree.version>
+		<common.version>0.73</common.version>
 
 		<grpc.version>1.53.0</grpc.version>
 		<protobuf.version>3.21.7</protobuf.version>
@@ -23,9 +22,6 @@
 	</properties>
 
 	<modules>
-		<module>pattern</module>
-		<module>audio-space</module>
-
 		<module>treeview</module>
 		<module>swing</module>
 		<module>gl</module>
@@ -37,11 +33,8 @@
 		<module>tensorflow</module>
 		<module>torch</module>
 		<module>keyframing</module>
-		<module>rings-ml</module>
-		<module>generate</module>
 
 		<module>remote</module>
-		<module>spatial</module>
 
 		<module>remote-server</module>
 	</modules>
@@ -53,7 +46,7 @@
 			<dependency>
 				<groupId>com.almostrealism</groupId>
 				<artifactId>ar-treeview</artifactId>
-				<version>0.43</version>
+				<version>0.44</version>
 			</dependency>
 
 			<dependency>
@@ -106,6 +99,18 @@
 
 			<dependency>
 				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-music</artifactId>
+				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-compose</artifactId>
+				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.almostrealism</groupId>
 				<artifactId>ar-ml</artifactId>
 				<version>${common.version}</version>
 			</dependency>
@@ -119,21 +124,33 @@
 			</dependency>
 
 			<dependency>
-				<groupId>io.flowtree</groupId>
+				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-ml-onnx</artifactId>
+				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.almostrealism</groupId>
+				<artifactId>ar-ml-djl</artifactId>
+				<version>${common.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.almostrealism</groupId>
 				<artifactId>ar-flowtree</artifactId>
-				<version>${flowtree.version}</version>
+				<version>${common.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>io.flowtree</groupId>
+				<groupId>org.almostrealism</groupId>
 				<artifactId>ar-flowtreeapi</artifactId>
-				<version>${flowtree.version}</version>
+				<version>${common.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>io.flowtree</groupId>
+				<groupId>org.almostrealism</groupId>
 				<artifactId>ar-graphpersist</artifactId>
-				<version>${flowtree.version}</version>
+				<version>${common.version}</version>
 			</dependency>
 
 			<dependency>
@@ -164,12 +181,6 @@
 				<groupId>ai.djl.sentencepiece</groupId>
 				<artifactId>sentencepiece</artifactId>
 				<version>0.33.0</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.microsoft.onnxruntime</groupId>
-				<artifactId>onnxruntime</artifactId>
-				<version>1.22.0</version>
 			</dependency>
 
 			<!-- This is not available as a Jar because it is intended for Android -->

@@ -31,17 +31,8 @@ import java.util.Properties;
  * @author  Michael Murray
  */
 public abstract class Settings extends NumberFormats {
-  /** String containing the version number of this software. */
-  public static final String version = "0.32";
-  
-  /** String containing "Written by Michael Murray". */
-  public static final String writtenByInfo = "Written by Michael Murray";
-  
   /** String containing "michael@almostrealism.com". */
   public static final String adminEmail = "michael@almostrealism.com";
-  
-  /** String containing "http://almostrealism.org/". */
-  public static final String websiteUrl = "http://almostrealism.org/";
   
   
   /** String used to indicate this warning is given at random. */

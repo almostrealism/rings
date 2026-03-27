@@ -1,67 +1,89 @@
-version: '3.8'
-
 services:
   rings-dev-sandbox-a:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: dev-sandbox-a
+    cpus: 8
     volumes:
       - /Users/michael/AlmostRealism/sandboxA/:/workspace/project
-      - claude-config:/home/developer/.config/claude
+      - /Users/michael/AlmostRealism/sandboxA/.claude:/home/developer/.claude
+      - /Users/michael/sandbox/ssh:/home/developer/.ssh
+      - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
+      - /Users/michael/Documents/AlmostRealism/models:/models:ro
+      - /Users/michael/Music/Samples:/samples:ro
     working_dir: /workspace/project
     stdin_open: true
     tty: true
     environment:
       - TERM=xterm-256color
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+      - FLOWTREE_PORT=7766
+      - FLOWTREE_NODE_ID=sandbox-a
     network_mode: host
   rings-dev-sandbox-b:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: dev-sandbox-b
+    cpus: 8
     volumes:
       - /Users/michael/AlmostRealism/sandboxB/:/workspace/project
-      - claude-config:/home/developer/.config/claude
+      - /Users/michael/AlmostRealism/sandboxB/.claude:/home/developer/.claude
+      - /Users/michael/sandbox/ssh:/home/developer/.ssh
+      - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
+      - /Users/michael/Documents/AlmostRealism/models:/models:ro
+      - /Users/michael/Music/Samples:/samples:ro
     working_dir: /workspace/project
     stdin_open: true
     tty: true
     environment:
       - TERM=xterm-256color
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+      - FLOWTREE_PORT=7767
+      - FLOWTREE_NODE_ID=sandbox-b
     network_mode: host
   rings-dev-sandbox-c:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: dev-sandbox-c
+    cpus: 8
     volumes:
       - /Users/michael/AlmostRealism/sandboxC/:/workspace/project
-      - claude-config:/home/developer/.config/claude
+      - /Users/michael/AlmostRealism/sandboxC/.claude:/home/developer/.claude
+      - /Users/michael/sandbox/ssh:/home/developer/.ssh
+      - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
+      - /Users/michael/Documents/AlmostRealism/models:/models:ro
+      - /Users/michael/Music/Samples:/samples:ro
     working_dir: /workspace/project
     stdin_open: true
     tty: true
     environment:
       - TERM=xterm-256color
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+      - FLOWTREE_PORT=7768
+      - FLOWTREE_NODE_ID=sandbox-c
     network_mode: host
   rings-dev-sandbox-d:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: dev-sandbox-d
+    cpus: 8
     volumes:
       - /Users/michael/AlmostRealism/sandboxD/:/workspace/project
-      - claude-config:/home/developer/.config/claude
+      - /Users/michael/AlmostRealism/sandboxD/.claude:/home/developer/.claude
+      - /Users/michael/sandbox/ssh:/home/developer/.ssh
+      - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
+      - /Users/michael/Documents/AlmostRealism/models:/models:ro
+      - /Users/michael/Music/Samples:/samples:ro
     working_dir: /workspace/project
     stdin_open: true
     tty: true
     environment:
       - TERM=xterm-256color
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+      - FLOWTREE_PORT=7769
+      - FLOWTREE_NODE_ID=sandbox-d
     network_mode: host
-
-volumes:
-  claude-config:
-    driver: local

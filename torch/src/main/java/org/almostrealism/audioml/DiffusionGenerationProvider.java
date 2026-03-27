@@ -16,9 +16,9 @@
 
 package org.almostrealism.audioml;
 
-import org.almostrealism.audio.generative.GenerationProvider;
-import org.almostrealism.audio.generative.GenerationResourceManager;
-import org.almostrealism.audio.generative.GeneratorStatus;
+import org.almostrealism.studio.generative.GenerationProvider;
+import org.almostrealism.studio.generative.GenerationResourceManager;
+import org.almostrealism.studio.generative.GeneratorStatus;
 import org.almostrealism.audio.line.OutputLine;
 import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.audio.notes.NoteAudioProvider;
@@ -89,8 +89,9 @@ public class DiffusionGenerationProvider implements GenerationProvider {
 
 		resources.loadModel(generatorId, new File("models/latest.zip"));
 		model.generate(count);
-		return IntStream.range(0, count).mapToObj(i ->
-			resources.storeAudio(requestId + ":" + i, new File("output/" + i + ".wav")))
+		return IntStream.range(0, count)
+				.<NoteAudio>mapToObj(i ->
+					resources.storeAudio(requestId + ":" + i, new File("output/" + i + ".wav")))
 				.collect(Collectors.toList());
 	}
 

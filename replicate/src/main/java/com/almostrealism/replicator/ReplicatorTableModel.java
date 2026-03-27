@@ -16,7 +16,6 @@
 
 package com.almostrealism.replicator;
 
-import io.almostrealism.uml.ViewModel;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.geometry.BasicGeometry;
@@ -34,7 +33,6 @@ import java.util.List;
  * 
  * @author  Michael Murray
  */
-@ViewModel
 public class ReplicatorTableModel extends Scene<ShadableSurface> implements TableModel {
 	public static final String LEFT = "Left";
 	public static final String RIGHT = "Right";

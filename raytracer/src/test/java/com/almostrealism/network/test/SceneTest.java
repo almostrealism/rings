@@ -7,13 +7,13 @@ import org.almostrealism.color.RGB;
 import org.almostrealism.color.ShaderContext;
 import org.almostrealism.geometry.ShadableIntersection;
 import org.almostrealism.raytrace.IntersectionalLightingEngine;
-import org.almostrealism.util.TestFeatures;
+import org.almostrealism.util.TestSuiteBase;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Collections;
 
-public class SceneTest implements TestFeatures {
+public class SceneTest extends TestSuiteBase {
 	@Test
 	public void intersection() throws IOException {
 		TestScene scene = new TestScene();

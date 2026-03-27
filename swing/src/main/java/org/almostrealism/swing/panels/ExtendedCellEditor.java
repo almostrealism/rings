@@ -16,14 +16,13 @@
 
 package org.almostrealism.swing.panels;
 
-import io.almostrealism.relation.Editable;
+import org.almostrealism.swing.Editable;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.RGB;
 import org.almostrealism.swing.DynamicDisplay;
 import org.almostrealism.swing.dialogs.EditRGBDialog;
 import org.almostrealism.swing.dialogs.EditVectorDialog;
 import org.almostrealism.texture.GraphicsConverter;
-import org.almostrealism.texture.ImageTexture;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -67,14 +66,6 @@ public class ExtendedCellEditor extends DefaultCellEditor implements TableCellEd
 		    }
 		} else if (this.currentValue instanceof Editable.Selection) {
 			((Editable.Selection)this.currentValue).setSelected(this.combo.getSelectedIndex());
-			return this.currentValue;
-		} else if (this.currentValue instanceof ImageTexture) {
-			try {
-				((ImageTexture)this.currentValue).setPropertyValue(new URL(this.field.getText()), 0);
-			} catch (Exception e) {
-				// Revert settings.
-			}
-			
 			return this.currentValue;
 		} else if (this.currentValue instanceof Double &&
 					((Double)this.currentValue).doubleValue() >= 0.0 &&
@@ -147,9 +138,6 @@ public class ExtendedCellEditor extends DefaultCellEditor implements TableCellEd
 		} else if (this.currentValue instanceof Editable.Selection) {
 			this.combo = new JComboBox(((Editable.Selection)this.currentValue).getOptions());
 			return this.combo;
-		} else if (this.currentValue instanceof ImageTexture) {
-			this.field = new JTextField(((ImageTexture)this.currentValue).getPropertyValues()[0].toString());
-			return this.field;
 		} else if (this.currentValue instanceof Double &&
 				((Double)this.currentValue).doubleValue() >= 0.0 &&
 				((Double)this.currentValue).doubleValue() < 1.0) {

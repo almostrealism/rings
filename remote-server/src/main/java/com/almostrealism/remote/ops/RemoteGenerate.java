@@ -19,9 +19,9 @@ package com.almostrealism.remote.ops;
 import com.almostrealism.remote.AccessManager;
 import com.almostrealism.remote.GenerationProviderQueue;
 import io.grpc.stub.StreamObserver;
-import org.almostrealism.audio.generative.GenerationProvider;
+import org.almostrealism.studio.generative.GenerationProvider;
 import org.almostrealism.audio.notes.NoteAudio;
-import org.almostrealism.audio.notes.NoteAudioSource;
+import org.almostrealism.music.notes.NoteAudioSource;
 import org.almostrealism.remote.api.Generation;
 import org.almostrealism.remote.ops.WaveDataPublisher;
 

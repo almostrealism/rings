@@ -17,7 +17,7 @@
 package com.almostrealism.remote;
 
 import com.almostrealism.remote.ops.Operation;
-import org.almostrealism.audio.generative.GenerationProvider;
+import org.almostrealism.studio.generative.GenerationProvider;
 
 import java.util.ArrayList;
 import java.util.List;
