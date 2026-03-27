@@ -46,8 +46,8 @@ public class RayTracingTest {
 			p.getShaderSet().add(new DiffuseShader());
 			p.setLocation(new Vector(0.0, -0.3, 0.0));
 			StripeTexture t = new StripeTexture();
-			t.setPropertyValue(2.5, 0);
-			t.setPropertyValue(true, 1);
+			t.setStripeWidth(2.5);
+			t.setSmooth(true);
 			p.addTexture(t);
 			scene.add(p);
 

@@ -16,7 +16,7 @@
 
 package org.almostrealism.swing;
 
-import io.almostrealism.relation.Editable;
+import org.almostrealism.swing.Editable;
 
 import javax.swing.table.AbstractTableModel;
 

@@ -16,9 +16,9 @@
 
 package org.almostrealism.remote;
 
-import org.almostrealism.audio.generative.GenerationProvider;
-import org.almostrealism.audio.generative.GenerationResourceManager;
-import org.almostrealism.audio.generative.GeneratorStatus;
+import org.almostrealism.studio.generative.GenerationProvider;
+import org.almostrealism.studio.generative.GenerationResourceManager;
+import org.almostrealism.studio.generative.GeneratorStatus;
 import org.almostrealism.audio.notes.NoteAudio;
 import org.almostrealism.util.KeyUtils;
 

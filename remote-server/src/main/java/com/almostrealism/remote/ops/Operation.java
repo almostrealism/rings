@@ -16,7 +16,7 @@
 
 package com.almostrealism.remote.ops;
 
-import org.almostrealism.audio.generative.GenerationProvider;
+import org.almostrealism.studio.generative.GenerationProvider;
 
 public interface Operation {
 	String getRequestId();

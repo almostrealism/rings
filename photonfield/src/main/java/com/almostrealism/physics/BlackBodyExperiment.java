@@ -5,7 +5,7 @@ import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.chem.Alloy;
 import org.almostrealism.chem.ElectronCloud;
-import org.almostrealism.chem.PeriodicTable;
+import org.almostrealism.chem.Element;
 import org.almostrealism.chem.SpectralLineDiagram;
 import org.almostrealism.light.LightBulb;
 import org.almostrealism.physics.BlackBody;
@@ -104,7 +104,7 @@ public class BlackBodyExperiment {
 
 		// Add some atoms
 		ElectronCloud ec = new ElectronCloud(
-				new Alloy(List.of(PeriodicTable.Gold), 1.0), 10);
+				new Alloy(List.of(Element.Gold), 1.0), 10);
 		v = new VolumeAbsorber(new Sphere(1000.0), ec);
 		a.addAbsorber(v, ZeroVector.getInstance());
 

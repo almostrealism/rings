@@ -12,6 +12,9 @@ import org.almostrealism.remote.ops.GenerateRequest;
 import org.almostrealism.remote.ops.RefreshRequest;
 import org.almostrealism.remote.ops.RequestHistory;
 import org.almostrealism.audio.line.OutputLine;
+import org.almostrealism.studio.generative.GenerationProvider;
+import org.almostrealism.studio.generative.GenerationResourceManager;
+import org.almostrealism.studio.generative.GeneratorStatus;
 
 import java.util.List;
 import java.util.function.BiConsumer;
