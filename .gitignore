@@ -23,3 +23,6 @@ Population.xml
 
 Extensions/**
 lib/**SNAPSHOT.jar
+
+# Docker env files (may contain tokens/secrets)
+devtools/.env
