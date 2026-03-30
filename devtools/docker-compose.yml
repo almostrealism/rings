@@ -20,6 +20,7 @@ services:
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
       - FLOWTREE_PORT=7766
       - FLOWTREE_NODE_ID=sandbox-a
+      - CLAUDE_OAUTH_TOKEN=${CLAUDE_OAUTH_TOKEN}
     network_mode: host
   rings-dev-sandbox-b:
     build:
@@ -29,7 +30,7 @@ services:
     cpus: 8
     volumes:
       - /Users/michael/AlmostRealism/sandboxB/:/workspace/project
-      - /Users/michael/AlmostRealism/sandboxB/.claude:/home/developer/.claude
+      - /Users/michael/AlmostRealism/sandboxA/.claude:/home/developer/.claude
       - /Users/michael/sandbox/ssh:/home/developer/.ssh
       - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
       - /Users/michael/Documents/AlmostRealism/models:/models:ro
@@ -42,6 +43,7 @@ services:
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
       - FLOWTREE_PORT=7767
       - FLOWTREE_NODE_ID=sandbox-b
+      - CLAUDE_OAUTH_TOKEN=${CLAUDE_OAUTH_TOKEN}
     network_mode: host
   rings-dev-sandbox-c:
     build:
@@ -51,7 +53,7 @@ services:
     cpus: 8
     volumes:
       - /Users/michael/AlmostRealism/sandboxC/:/workspace/project
-      - /Users/michael/AlmostRealism/sandboxC/.claude:/home/developer/.claude
+      - /Users/michael/AlmostRealism/sandboxA/.claude:/home/developer/.claude
       - /Users/michael/sandbox/ssh:/home/developer/.ssh
       - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
       - /Users/michael/Documents/AlmostRealism/models:/models:ro
@@ -64,6 +66,7 @@ services:
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
       - FLOWTREE_PORT=7768
       - FLOWTREE_NODE_ID=sandbox-c
+      - CLAUDE_OAUTH_TOKEN=${CLAUDE_OAUTH_TOKEN}
     network_mode: host
   rings-dev-sandbox-d:
     build:
@@ -73,7 +76,7 @@ services:
     cpus: 8
     volumes:
       - /Users/michael/AlmostRealism/sandboxD/:/workspace/project
-      - /Users/michael/AlmostRealism/sandboxD/.claude:/home/developer/.claude
+      - /Users/michael/AlmostRealism/sandboxA/.claude:/home/developer/.claude
       - /Users/michael/sandbox/ssh:/home/developer/.ssh
       - /Users/Shared/flowtree/tools:/Users/Shared/flowtree/tools
       - /Users/michael/Documents/AlmostRealism/models:/models:ro
@@ -86,4 +89,5 @@ services:
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
       - FLOWTREE_PORT=7769
       - FLOWTREE_NODE_ID=sandbox-d
+      - CLAUDE_OAUTH_TOKEN=${CLAUDE_OAUTH_TOKEN}
     network_mode: host

@@ -130,9 +130,8 @@ RUN mkdir -p ~/.npm-global && \
 # Add npm global bin to PATH
 ENV PATH="/home/developer/.npm-global/bin:${PATH}"
 
-# Install Claude Code CLI via npm
-# Note: Can also be installed via `curl -fsSL https://claude.ai/install.sh | bash` at runtime
-RUN npm install -g @anthropic-ai/claude-code
+# Install Claude Code CLI and OpenAI Codex CLI via npm
+RUN npm install -g @anthropic-ai/claude-code @openai/codex
 
 # Set up bash prompt and environment
 RUN echo 'export PS1="\u@\h:\w$ "' >> ~/.bashrc && \
@@ -164,6 +163,7 @@ RUN java -version && \
     node --version && \
     npm --version && \
     claude --version && \
+    codex --version && \
     tmux -V
 
 # Set entrypoint to fix permissions on startup
