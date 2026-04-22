@@ -20,7 +20,7 @@ services:
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
       - FLOWTREE_PORT=7766
       - FLOWTREE_NODE_ID=sandbox-a
-      - CLAUDE_OAUTH_TOKEN=${CLAUDE_OAUTH_TOKEN}
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
     network_mode: host
   rings-dev-sandbox-b:
     build:
@@ -43,7 +43,7 @@ services:
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
       - FLOWTREE_PORT=7767
       - FLOWTREE_NODE_ID=sandbox-b
-      - CLAUDE_OAUTH_TOKEN=${CLAUDE_OAUTH_TOKEN}
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
     network_mode: host
   rings-dev-sandbox-c:
     build:
@@ -66,7 +66,7 @@ services:
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
       - FLOWTREE_PORT=7768
       - FLOWTREE_NODE_ID=sandbox-c
-      - CLAUDE_OAUTH_TOKEN=${CLAUDE_OAUTH_TOKEN}
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
     network_mode: host
   rings-dev-sandbox-d:
     build:
@@ -89,5 +89,5 @@ services:
       - MAVEN_OPTS=-Xmx4096m -XX:MaxMetaspaceSize=1024m
       - FLOWTREE_PORT=7769
       - FLOWTREE_NODE_ID=sandbox-d
-      - CLAUDE_OAUTH_TOKEN=${CLAUDE_OAUTH_TOKEN}
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
     network_mode: host
