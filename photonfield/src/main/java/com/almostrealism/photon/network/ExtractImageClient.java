@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class ExtractImageClient {
@@ -73,7 +74,9 @@ public class ExtractImageClient {
 				try {
 					Query q = new Query(OutputServer.getOutputTable(), DatabaseConnection.tidColumn + " = '" + id + "'");
 					Message m = OutputServer.getCurrentServer().getNodeServer().executeQuery(q);
-					Hashtable<String, String> h = Query.fromString(m.getData());
+					// Query.fromString now returns a LinkedHashMap; treat as a generic Map since
+					// downstream usage only relies on Map operations (size/forEach).
+					Map<String, String> h = Query.fromString(m.getData());
 
 					System.out.println("ExtractImageClient: There are " + h.size() + " records from query for task " + id);
 

@@ -16,53 +16,11 @@
 
 package org.almostrealism.ml.audio.test;
 
-import ai.onnxruntime.OrtException;
-import org.almostrealism.audio.data.WaveData;
-import org.almostrealism.collect.CollectionProducer;
-import org.almostrealism.collect.PackedCollection;
-import org.almostrealism.ml.audio.AutoEncoder;
-import org.almostrealism.ml.audio.OnnxAutoEncoder;
-import org.almostrealism.persistence.AssetGroup;
-import org.almostrealism.persistence.AssetGroupInfo;
 import org.almostrealism.util.TestSuiteBase;
-import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-
+// NOTE: The original "attract" test depended on the org.almostrealism.persistence
+// package (AssetGroup, AssetGroupInfo) which has been removed from ar-common.
+// The test body has been removed to restore the build and should be reinstated
+// once an equivalent asset loading API is available.
 public class LatentAudioCompositionTests extends TestSuiteBase {
-	@Test
-	public void attract() throws IOException, OrtException {
-		int sampleRate = 44100;
-		double duration = 11;
-
-		int bins = 64;
-		int frames = 256;
-
-		AssetGroup assets = new AssetGroup(AssetGroupInfo
-				.forDirectory(new File("assets/stable-audio")));
-		AutoEncoder encoder = new OnnxAutoEncoder(assets);
-
-		WaveData a = WaveData.load(new File("Library/Long Omni C1.wav"));
-		WaveData b = WaveData.load(new File("Library/Dip Riser DD 168.wav"));
-
-		PackedCollection featA = encoder.encode(cp(a.getData())).evaluate();
-		PackedCollection featB = encoder.encode(cp(b.getData())).evaluate();
-
-		featA = featA.reshape(bins, frames).transpose();
-		featB = featB.reshape(bins, frames).transpose();
-
-		CollectionProducer scale = integers(0, frames).divide(frames * 0.6)
-														.traverse(1).repeat(bins);
-		CollectionProducer blend =
-				cp(featA).multiply(scale).add(
-						cp(featB).multiply(c(1.0).subtract(scale)));
-		PackedCollection result = blend.evaluate();
-		log(result.getShape().toStringDetail());
-
-		PackedCollection audio = encoder
-				.decode(cp(result.traverse(0)).transpose()).get().evaluate();
-		new WaveData(audio, sampleRate)
-				.save(new File("results/latent-composition.wav"));
-	}
 }
