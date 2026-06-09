@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>rings</artifactId>
 		<groupId>com.almostrealism</groupId>
-		<version>0.45</version>
+		<version>0.46</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -14,19 +14,19 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.almostrealism</groupId>
-			<artifactId>ar-flowtree</artifactId>
+			<artifactId>ar-flowtree-runtime</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-treeview</artifactId>
-			<version>0.45</version>
+			<version>0.46</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.almostrealism</groupId>
 			<artifactId>ar-raytracer</artifactId>
-			<version>0.45</version>
+			<version>0.46</version>
 		</dependency>
 
 		<dependency>
