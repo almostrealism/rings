@@ -20,6 +20,7 @@ import com.almostrealism.gl.DefaultGLCanvas;
 import com.almostrealism.renderable.Gear;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.projection.PinholeCamera;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -27,6 +28,8 @@ import javax.swing.*;
 /**
  * @author  Michael Murray
  */
+@Ignore("Requires a live display and a GL profile (GL_DEFAULT); fails in headless/CI builds. " +
+		"Run manually via main() on a machine with a GPU/display.")
 public class DefaultGLCanvasTest {
 	@Test
 	public void test() {
