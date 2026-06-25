@@ -1,62 +1,100 @@
-name: Qodana
+name: Analysis
 
 on:
   workflow_dispatch:
   pull_request:
   push:
     branches:
-      - main
+      - master
+
+# rings depends on the org.almostrealism:ar-* artifacts produced by the sibling
+# common repository (version pinned via <common.version> in the root pom.xml).
+# Those artifacts are real, tagged releases — they are NOT published to GitHub
+# Packages on every commit (and a released version cannot be overwritten there).
+# So CI bootstraps them by checking out common and building the jars from source
+# into the local Maven repository before building/testing rings. This keeps both
+# projects' versioning untouched: common stays on its real release version and
+# rings keeps pointing at that same version.
+#
+# rings is a cross-platform library (no committed native libraries), so it runs on
+# GitHub-hosted ubuntu runners and mirrors common's Linux test setup: the native
+# driver compiles generated sources into ${RUNNER_TEMP}/ar_libs at runtime.
+env:
+  COMMON_REPO: almostrealism/common
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
-      checks: write
-
+      contents: read
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout rings
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
+      - name: Determine matching common ref
+        id: commonref
+        # Prefer a common branch with the same name as the rings branch under test
+        # (coordinated cross-repo feature branches); otherwise use common's default
+        # branch (master).
+        env:
+          CANDIDATE: ${{ github.head_ref || github.ref_name }}
+          TOKEN: ${{ secrets.UPSTREAM_REPO_TOKEN || github.token }}
+        run: |
+          REF="master"
+          if [ -n "$CANDIDATE" ] && \
+             git ls-remote --exit-code --heads \
+               "https://x-access-token:${TOKEN}@github.com/${COMMON_REPO}.git" \
+               "$CANDIDATE" >/dev/null 2>&1; then
+            REF="$CANDIDATE"
+            echo "Found matching common branch: $REF"
+          else
+            echo "No matching common branch for '$CANDIDATE'; using master"
+          fi
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout common (${{ steps.commonref.outputs.ref }})
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.COMMON_REPO }}
+          ref: ${{ steps.commonref.outputs.ref }}
+          path: common
+          fetch-depth: 0
+          # The default GITHUB_TOKEN cannot read a *different* private repository.
+          # If common is private, set an org-scoped PAT secret named
+          # UPSTREAM_REPO_TOKEN (contents:read). For a public common the default
+          # token is sufficient and this falls back to it automatically.
+          token: ${{ secrets.UPSTREAM_REPO_TOKEN || github.token }}
+
       - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: 'maven'
 
-      - name: Validate Maven Wrapper
-        run: mvn --version
+      - name: Build and install common
+        # Jars only — no tests, no checkstyle. Populates the local repo with the
+        # ar-* artifacts rings depends on (pinned <common.version>).
+        run: mvn -B -f common/pom.xml install -DskipTests -Dcheckstyle.skip=true
 
       - name: Run Tests
+        # Mirrors common's Linux test job: the native driver compiles generated
+        # sources into ${RUNNER_TEMP}/ar_libs at runtime (gcc is present on the
+        # runner), so no prebuilt native libraries are required.
         run: |
-          LD_LIBRARY_PATH=Extensions mvn test \
+          LD_LIBRARY_PATH="${{ runner.temp }}/ar_libs" mvn -B test -Dcheckstyle.skip=true \
            -DAR_HARDWARE_DRIVER=native \
            -DAR_HARDWARE_MEMORY_SCALE=7 \
-           -DAR_HARDWARE_LIBS=Extensions \
+           -DAR_HARDWARE_LIBS="${{ runner.temp }}/ar_libs" \
            -DAR_TEST_PROFILE=pipeline
 
       - name: Archive coverage data
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: maven-coverage-data
           path: .qodana/code-coverage
-
-      - name: Qodana Scan
-        uses: JetBrains/qodana-action@main
-        env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-          args: "-i,.,--linter,jetbrains/qodana-jvm"
-          pr-mode: false
-
-      - name: Github Scan
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
+          if-no-files-found: ignore

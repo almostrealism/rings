@@ -16,14 +16,10 @@
 
 package org.almostrealism.tensorflow.test;
 
-import io.almostrealism.code.DefaultNameProvider;
 import io.almostrealism.code.DefaultScopeInputManager;
 import io.almostrealism.code.Execution;
-import io.almostrealism.code.Precision;
-import io.almostrealism.lang.LanguageOperations;
 import io.almostrealism.scope.Scope;
 import org.almostrealism.CodeFeatures;
-import org.almostrealism.c.CLanguageOperations;
 import org.almostrealism.collect.PackedCollection;
 import org.almostrealism.tensorflow.TensorFlowArgument;
 import org.almostrealism.tensorflow.TensorFlowComputeContext;
@@ -37,17 +33,13 @@ import java.util.function.Supplier;
 @Ignore("Fails with NullPointerException (LanguageOperations 'lang' is null) in " +
 		"TensorFlowComputeContext.deliver(); disabled pending tensorflow compute-context fixes.")
 public class TFScopeTest implements CodeFeatures {
-	private int counter = 0;
-
 	@Test
 	public void scope() {
-		LanguageOperations lang = new CLanguageOperations(Precision.FP64, false, false);
-		DefaultNameProvider nameProvider = new DefaultNameProvider("test");
-		DefaultScopeInputManager manager = new DefaultScopeInputManager(lang,
-				(p, input) -> new TensorFlowArgument<>(p.getArgumentName(counter++), (Supplier) input));
+		DefaultScopeInputManager manager = new DefaultScopeInputManager(
+				(name, input) -> new TensorFlowArgument<>(name, (Supplier) input));
 
 		PackedCollection s = new PackedCollection(1);
-		TensorFlowArgument destination = (TensorFlowArgument) manager.argumentForInput(nameProvider).apply(p(s));
+		TensorFlowArgument destination = (TensorFlowArgument) manager.argumentForInput().apply(p(s));
 		TensorFlowConstant v = new TensorFlowConstant(1.0);
 
 		Scope<?> scope = new Scope<>();
