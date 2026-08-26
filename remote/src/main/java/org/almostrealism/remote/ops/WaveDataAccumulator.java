@@ -40,7 +40,10 @@ public class WaveDataAccumulator {
 			data.put(id, collection);
 		}
 
-		collection.setMem(segment.getIndex(), segment.getDataList().stream().mapToDouble(Double::doubleValue).toArray());
+		try (PackedCollection received = PackedCollection.of(segment.getDataList())) {
+			collection.setFrom(segment.getIndex(), received);
+		}
+
 		if (segment.getIsFinal()) {
 			System.out.println("WaveDataAccumulator: Final segment received for " + id);
 			output.accept(id, new WaveData(data.remove(id), segment.getSampleRate()));

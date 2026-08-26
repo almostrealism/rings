@@ -127,8 +127,11 @@ public class RemoteRefresh implements StreamObserver<Generation.RefreshRequest>,
 				currentSource = new PackedCollection(request.getSource().getSegment().getTotalSamples());
 			}
 
-			currentSource.setMem(currentIndex,
-					request.getSource().getSegment().getDataList().stream().mapToDouble(d -> d).toArray());
+			try (PackedCollection received = PackedCollection.of(
+					request.getSource().getSegment().getDataList())) {
+				currentSource.setFrom(currentIndex, received);
+			}
+
 			currentIndex += request.getSource().getSegment().getDataList().size();
 
 			if (request.getSource().getSegment().getIsFinal()) {

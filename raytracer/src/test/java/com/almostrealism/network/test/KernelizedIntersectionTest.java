@@ -33,7 +33,7 @@ public class KernelizedIntersectionTest extends AbstractIntersectionTest {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				Pair p = new Pair(pixelLocations.get(j * width + i), 0);
-				p.setMem(new double[] { i, j });
+				p.setX(i).setY(j);
 			}
 		}
 
