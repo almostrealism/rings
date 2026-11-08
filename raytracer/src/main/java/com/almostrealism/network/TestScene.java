@@ -39,6 +39,7 @@ import org.almostrealism.space.Mesh;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.StandardLightingRigs;
+import org.almostrealism.space.format.FileDecoder;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
 

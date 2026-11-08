@@ -16,7 +16,7 @@
 
 package com.almostrealism.photon.test;
 
-import com.almostrealism.network.FileDecoder;
+import org.almostrealism.space.format.FileDecoder;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.color.PointLight;

@@ -23,6 +23,7 @@ import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.Triangle;
+import org.almostrealism.space.format.ModelData;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

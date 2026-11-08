@@ -36,6 +36,7 @@ import org.almostrealism.render.RayTracedScene;
 import org.almostrealism.render.RayTracer;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.SceneLoader;
+import org.almostrealism.space.format.FileDecoder;
 import org.almostrealism.texture.ImageCanvas;
 
 import java.io.File;

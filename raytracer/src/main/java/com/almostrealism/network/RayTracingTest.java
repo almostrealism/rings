@@ -18,6 +18,7 @@ import org.almostrealism.render.RayTracedScene;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
+import org.almostrealism.space.format.FileDecoder;
 import org.almostrealism.texture.ImageCanvas;
 import org.almostrealism.texture.StripeTexture;
 
