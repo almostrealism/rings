@@ -16,7 +16,7 @@
 
 package com.almostrealism.photon.test;
 
-import com.almostrealism.geometry.Sphere;
+import org.almostrealism.primitives.SphericalVolume;
 import org.almostrealism.light.LightBulb;
 import org.almostrealism.raytrace.AbsorberHashSet;
 import org.almostrealism.physics.BlackBody;
@@ -46,7 +46,7 @@ public class RandomLights {
 			double r = Math.random();
 			
 			BlackBody b = new BlackBody();
-			VolumeAbsorber v = new VolumeAbsorber(new Sphere(r), b);
+			VolumeAbsorber v = new VolumeAbsorber(new SphericalVolume(r), b);
 			
 			LightBulb l = new LightBulb();
 			l.setPower(LightBulb.wattsToEvMsec * 0.005 * Math.random());

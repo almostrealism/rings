@@ -16,11 +16,11 @@
 
 package com.almostrealism.photon.test;
 
-import com.almostrealism.geometry.Box;
+import org.almostrealism.primitives.BoxVolume;
 import org.almostrealism.light.PlanarLight;
 import org.almostrealism.raytrace.AbsorberHashSet;
 import org.almostrealism.raytrace.DefaultPhotonField;
-import com.almostrealism.physics.SpecularAbsorber;
+import org.almostrealism.primitives.SpecularAbsorber;
 import org.almostrealism.Ops;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.physics.Clock;
@@ -43,6 +43,9 @@ import static org.almostrealism.Ops.o;
  * @author Samuel Tepper
  */
 public class TestRoom implements PhysicalConstants {
+	/** The chance, each tick, of printing progress and saving the image. */
+	private static final double verbose = Math.pow(10.0, -3.0);
+
 
 	/**z
 	 * @param args
@@ -123,24 +126,22 @@ public class TestRoom implements PhysicalConstants {
 		FL.setColorRange(570, 50);
 		
 
-		Box box1 = new Box();
+		BoxVolume box1 = new BoxVolume();
 		box1.setWidth(160.0);
 		box1.setHeight(160.0);
 		box1.setWidth(160.0);
 		box1.setOrientation(new double[] {-Math.sin(80.0), 0.0, Math.cos(20.0)});
 		box1.setSurfaceNormal(new double[] {0.0, 0.0, -1.0});
 		box1.setWallThickness(.05);
-		box1.makeWalls(true);
 //		box1.setColorRange(450.0, 50.0);
 		
 		
-		Box box2 = new Box();
+		BoxVolume box2 = new BoxVolume();
 		box2.setWidth(150.0);
 		box2.setHeight(350.0);
 		box2.setDepth(130.0);
 		box2.setOrientation(new double[] {Math.sin(40.0), 0.0, Math.cos(40.0)});
 		box2.setSurfaceNormal(new double[] {0.0, 0.0, -1.0});
-		box2.makeWalls(true);		
 //		box2.setColorRange(570.0, 50.0);
 		
 		AbsorberHashSet a = new AbsorberHashSet();
@@ -173,7 +174,7 @@ public class TestRoom implements PhysicalConstants {
 		while (true) {
 			c.tick().get().run();
 			
-			if (Math.random() < Box.verbose) {
+			if (Math.random() < verbose) {
 				int rate = (int) ((System.currentTimeMillis() - start) /
 									(60 * 60000 * c.getTime()));
 				

@@ -1,6 +1,6 @@
 package com.almostrealism.physics;
 
-import com.almostrealism.geometry.Sphere;
+import org.almostrealism.primitives.SphericalVolume;
 import org.almostrealism.algebra.Vector;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.chem.Alloy;
@@ -77,7 +77,7 @@ public class BlackBodyExperiment {
 		// Create a black body and confine it to a sphere
 		// with a radius of one micrometer.
 		BlackBody b = new BlackBody();
-		VolumeAbsorber v = new VolumeAbsorber(new Sphere(500000), b);
+		VolumeAbsorber v = new VolumeAbsorber(new SphericalVolume(500000), b);
 
 		PinholeCameraAbsorber camera = new PinholeCameraAbsorber(2.4, 35000,
 				Vector.negZAxis(), Vector.yAxis());
@@ -105,12 +105,12 @@ public class BlackBodyExperiment {
 		// Add some atoms
 		ElectronCloud ec = new ElectronCloud(
 				new Alloy(List.of(Element.Gold), 1.0), 10);
-		v = new VolumeAbsorber(new Sphere(1000.0), ec);
+		v = new VolumeAbsorber(new SphericalVolume(1000.0), ec);
 		a.addAbsorber(v, ZeroVector.getInstance());
 
 		// Add a SpectralLineDiagram
 		SpectralLineDiagram d = new SpectralLineDiagram(1200, 40);
-		v = new VolumeAbsorber(new Sphere(1000.0), d);
+		v = new VolumeAbsorber(new SphericalVolume(1000.0), d);
 		a.addAbsorber(v, o().vector(0.0, 0.0, -1000000.0));
 
 		// Create photon field and set absorber to the absorber set
