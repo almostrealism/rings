@@ -36,6 +36,7 @@ import org.almostrealism.render.RayTracedScene;
 import org.almostrealism.render.RayTracer;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.SceneLoader;
+import org.almostrealism.space.format.FileDecoder;
 import org.almostrealism.texture.ImageCanvas;
 
 import java.io.File;
@@ -273,8 +274,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 
 					SceneLoader loader = (uri) -> {
 						try {
-							return FileDecoder.decodeScene(new URL(uri).openStream(), FileDecoder.XMLEncoding,
-									false, Exception::printStackTrace);
+							return FileDecoder.decodeScene(new URL(uri).openStream(), FileDecoder.XMLEncoding, Exception::printStackTrace);
 						} catch (IOException e) {
 							e.printStackTrace();
 							return null;

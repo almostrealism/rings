@@ -1,6 +1,6 @@
 package com.almostrealism.photon.network;
 
-import com.almostrealism.network.FileDecoder;
+import org.almostrealism.space.format.FileDecoder;
 import io.almostrealism.resource.Resource;
 import io.flowtree.fs.OutputServer;
 import org.almostrealism.space.Scene;
@@ -20,8 +20,7 @@ public class DefaultSceneLoader implements SceneLoader {
 	public Scene apply(String s) {
 		try {
 			Resource r = OutputServer.getCurrentServer().getNodeServer().loadResource(s);
-			return FileDecoder.decodeScene(r.getInputStream(), FileDecoder.XMLEncoding,
-										false, Exception::printStackTrace);
+			return FileDecoder.decodeScene(r.getInputStream(), FileDecoder.XMLEncoding, Exception::printStackTrace);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

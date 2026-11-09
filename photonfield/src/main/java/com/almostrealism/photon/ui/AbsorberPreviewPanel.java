@@ -16,12 +16,12 @@
 
 package com.almostrealism.photon.ui;
 
-import com.almostrealism.geometry.Sphere;
+import org.almostrealism.primitives.SphericalVolume;
 import org.almostrealism.light.LightBulb;
 import org.almostrealism.light.PlanarLight;
 import org.almostrealism.raytrace.AbsorberHashSet;
 import org.almostrealism.raytrace.DefaultPhotonField;
-import com.almostrealism.physics.SpecularAbsorber;
+import org.almostrealism.primitives.SpecularAbsorber;
 import org.almostrealism.physics.VolumeAbsorber;
 import org.almostrealism.CodeFeatures;
 import org.almostrealism.algebra.Vector;
@@ -140,7 +140,7 @@ public class AbsorberPreviewPanel extends JPanel
 	}
 	
 	protected void initAbsorber() {
-		Volume v = new Sphere(5.0);
+		Volume v = new SphericalVolume(5.0);
 		this.absorber = new SpecularAbsorber();
 		((VolumeAbsorber)this.absorber).setVolume(v);
 		((SpecularAbsorber)this.absorber).setSpectra(new ProbabilityDistribution(this));

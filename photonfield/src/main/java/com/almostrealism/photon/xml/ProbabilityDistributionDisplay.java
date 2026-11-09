@@ -17,7 +17,7 @@
 package com.almostrealism.photon.xml;
 
 import com.almostrealism.photon.ui.DefaultProbabilityDistributionEditPanel;
-import com.almostrealism.stats.OverlayBRDF;
+import org.almostrealism.space.distribution.OverlayBRDF;
 import io.almostrealism.tree.ui.ObjectTreeDisplay;
 import io.almostrealism.tree.ui.ObjectTreeNode;
 import org.almostrealism.color.ProbabilityDistribution;

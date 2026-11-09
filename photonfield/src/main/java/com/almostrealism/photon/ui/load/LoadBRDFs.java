@@ -16,13 +16,13 @@
 
 package com.almostrealism.photon.ui.load;
 
-import com.almostrealism.geometry.Sphere;
+import org.almostrealism.primitives.SphericalVolume;
 import com.almostrealism.photon.ui.AbsorberPreviewPanel;
-import com.almostrealism.physics.SpecularAbsorber;
-import com.almostrealism.stats.OverlayBRDF;
-import com.almostrealism.stats.ReflectiveProbabilityDistribution;
-import com.almostrealism.stats.RefractiveProbabilityDistribution;
-import com.almostrealism.stats.UniformHemisphericalDistribution;
+import org.almostrealism.primitives.SpecularAbsorber;
+import org.almostrealism.space.distribution.OverlayBRDF;
+import org.almostrealism.space.distribution.ReflectiveProbabilityDistribution;
+import org.almostrealism.space.distribution.RefractiveProbabilityDistribution;
+import org.almostrealism.space.distribution.UniformHemisphericalDistribution;
 import io.almostrealism.tree.ui.ObjectTreeDisplay;
 import org.almostrealism.stats.SphericalProbabilityDistribution;
 
@@ -30,6 +30,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Method;
 import java.util.Hashtable;
 
 /**
@@ -48,14 +49,38 @@ public class LoadBRDFs extends TreeObjectLoader {
 	
 	public Hashtable loadOperations() {
 		Hashtable t = new Hashtable();
-		t.put(TreeObjectLoader.overlay, OverlayBRDF.getOverlayMethod());
+		t.put(TreeObjectLoader.overlay, getOverlayMethod());
 		return t;
+	}
+
+	/**
+	 * Returns {@link #overlay(SphericalProbabilityDistribution[])}, which the tree editor
+	 * invokes reflectively to combine distributions.
+	 *
+	 * @return the overlay factory method
+	 */
+	public static Method getOverlayMethod() {
+		try {
+			return LoadBRDFs.class.getMethod("overlay", SphericalProbabilityDistribution[].class);
+		} catch (NoSuchMethodException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	/**
+	 * Creates an {@link OverlayBRDF} of the given distributions.
+	 *
+	 * @param children the distributions whose samples are summed
+	 * @return the overlay
+	 */
+	public static OverlayBRDF overlay(SphericalProbabilityDistribution[] children) {
+		return new OverlayBRDF(children);
 	}
 	
 	public static void main(String[] args) {
 		final ObjectTreeDisplay display = (ObjectTreeDisplay) new LoadBRDFs().getUI();
 		final SpecularAbsorber sa = new SpecularAbsorber();
-		sa.setVolume(new Sphere(5.0));
+		sa.setVolume(new SphericalVolume(5.0));
 		final AbsorberPreviewPanel preview = new AbsorberPreviewPanel(sa);
 		
 		JFrame treeFrame = new JFrame("BRDF Tree");

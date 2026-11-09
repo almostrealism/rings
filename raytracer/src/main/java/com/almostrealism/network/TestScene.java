@@ -39,6 +39,7 @@ import org.almostrealism.space.Mesh;
 import org.almostrealism.space.Plane;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.StandardLightingRigs;
+import org.almostrealism.space.format.FileDecoder;
 import org.almostrealism.texture.StripeTexture;
 import org.almostrealism.texture.Texture;
 
@@ -57,7 +58,7 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 					 boolean enableThinLensCamera) throws IOException {
 		if (enableCornellBox) {
 			addAll(FileDecoder.decodeScene(new FileInputStream("CornellBox.xml"),
-						FileDecoder.XMLEncoding, false, null));
+						FileDecoder.XMLEncoding, null));
 		}
 
 		Sphere s = new Sphere();
@@ -176,7 +177,7 @@ public class TestScene extends Scene<ShadableSurface> implements RGBFeatures, Co
 
 		if (enableDragon) {
 			Mesh dragon = (Mesh) ((Scene<ShadableSurface>) FileDecoder.decodeScene(getClass().getClassLoader().getResourceAsStream("dragon.ply"),
-					FileDecoder.PLYEncoding, false, null)).get(0);
+					FileDecoder.PLYEncoding, null)).get(0);
 
 			if (enableSilhouette) {
 				dragon.setShaders(new Shader[] { new SilhouetteShader(white()) });

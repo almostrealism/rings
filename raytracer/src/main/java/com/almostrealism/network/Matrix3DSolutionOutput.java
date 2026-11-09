@@ -23,6 +23,7 @@ import org.almostrealism.space.AbstractSurface;
 import org.almostrealism.space.Mesh;
 import org.almostrealism.space.Scene;
 import org.almostrealism.space.Triangle;
+import org.almostrealism.space.format.ModelData;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -118,7 +119,7 @@ public class Matrix3DSolutionOutput {
 	}
 	
 	public void loadPieceFromGTS(int p, InputStream in) throws IOException {
-		Scene scene = ModelData.decodeScene(in, ModelData.GTSEncoding, false, null);
+		Scene scene = ModelData.decodeScene(in, ModelData.GTSEncoding, null);
 		Gradient[] s = scene.getSurfaces();
 		
 		boolean[][][] piece = new boolean[this.x][this.y][this.z];
