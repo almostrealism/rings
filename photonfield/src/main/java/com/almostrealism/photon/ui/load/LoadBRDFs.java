@@ -30,6 +30,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Method;
 import java.util.Hashtable;
 
 /**
@@ -48,8 +49,32 @@ public class LoadBRDFs extends TreeObjectLoader {
 	
 	public Hashtable loadOperations() {
 		Hashtable t = new Hashtable();
-		t.put(TreeObjectLoader.overlay, OverlayBRDF.getOverlayMethod());
+		t.put(TreeObjectLoader.overlay, getOverlayMethod());
 		return t;
+	}
+
+	/**
+	 * Returns {@link #overlay(SphericalProbabilityDistribution[])}, which the tree editor
+	 * invokes reflectively to combine distributions.
+	 *
+	 * @return the overlay factory method
+	 */
+	public static Method getOverlayMethod() {
+		try {
+			return LoadBRDFs.class.getMethod("overlay", SphericalProbabilityDistribution[].class);
+		} catch (NoSuchMethodException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	/**
+	 * Creates an {@link OverlayBRDF} of the given distributions.
+	 *
+	 * @param children the distributions whose samples are summed
+	 * @return the overlay
+	 */
+	public static OverlayBRDF overlay(SphericalProbabilityDistribution[] children) {
+		return new OverlayBRDF(children);
 	}
 	
 	public static void main(String[] args) {
