@@ -1,6 +1,6 @@
 package com.almostrealism.physics;
 
-import com.almostrealism.raytracer.RayTracedAnimation;
+import org.almostrealism.render.RayTracedAnimation;
 import org.almostrealism.algebra.ZeroVector;
 import org.almostrealism.color.ShadableSurface;
 import org.almostrealism.physics.Absorber;

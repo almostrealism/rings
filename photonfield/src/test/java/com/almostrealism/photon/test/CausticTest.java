@@ -59,8 +59,7 @@ public class CausticTest implements Runnable, RGBFeatures, CodeFeatures {
         try {
             if (useCornellBox) {
                 scene = FileDecoder.decodeScene(new FileInputStream(new File("../rings/CornellBox.xml")),
-                        FileDecoder.XMLEncoding,
-                        false, (e) -> {
+                        FileDecoder.XMLEncoding, (e) -> {
                             e.printStackTrace();
                         });
             }
@@ -92,7 +91,7 @@ public class CausticTest implements Runnable, RGBFeatures, CodeFeatures {
         if (displayDragon) {
             try {
                 scene.add(((Scene<ShadableSurface>) FileDecoder.decodeScene(new FileInputStream(new File("dragon.ply")),
-                                                    FileDecoder.PLYEncoding, false, null)).get(0));
+                                                    FileDecoder.PLYEncoding, null)).get(0));
             } catch (Exception e) {
                 e.printStackTrace();
                 assert false;

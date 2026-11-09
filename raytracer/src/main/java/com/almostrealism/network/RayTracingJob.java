@@ -274,8 +274,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 
 					SceneLoader loader = (uri) -> {
 						try {
-							return FileDecoder.decodeScene(new URL(uri).openStream(), FileDecoder.XMLEncoding,
-									false, Exception::printStackTrace);
+							return FileDecoder.decodeScene(new URL(uri).openStream(), FileDecoder.XMLEncoding, Exception::printStackTrace);
 						} catch (IOException e) {
 							e.printStackTrace();
 							return null;

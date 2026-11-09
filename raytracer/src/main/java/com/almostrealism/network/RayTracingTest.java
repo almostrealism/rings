@@ -37,8 +37,7 @@ public class RayTracingTest {
 	public static RayTracedScene generateScene() throws IOException {
 		Scene<ShadableSurface> scene = useCornellBox ?
 				FileDecoder.decodeScene(new FileInputStream(new File("CornellBox.xml")),
-						FileDecoder.XMLEncoding,
-						false, (e) -> e.printStackTrace()) : new Scene<>();
+						FileDecoder.XMLEncoding, (e) -> e.printStackTrace()) : new Scene<>();
 
 		if (useStripedFloor) {
 			Plane p = new Plane(Plane.XZ);
@@ -92,7 +91,7 @@ public class RayTracingTest {
 
 		if (displayDragon) {
 			Mesh dragon = (Mesh) ((Scene<ShadableSurface>) FileDecoder.decodeScene(new FileInputStream(new File("resources/dragon.ply")),
-					FileDecoder.PLYEncoding, false, null)).get(0);
+					FileDecoder.PLYEncoding, null)).get(0);
 			dragon.getShaderSet().add(new DiffuseShader());
 			dragon.setColor(new RGB(0.3, 0.4, 0.9));
 			scene.add(dragon);
