@@ -28,3 +28,5 @@ commit.txt
 
 # Docker env files (may contain tokens/secrets)
 devtools/.env
+*.iml
+.idea/
