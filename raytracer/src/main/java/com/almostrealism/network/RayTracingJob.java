@@ -84,7 +84,7 @@ public class RayTracingJob implements Job, CodeFeatures {
 	public static final String htmlPre = "<html> <head> <title>Universe in a Box</title> </head> " +
 										"<body bgcolor=\"#000000\" text=\"#ffffff\"> <center> " +
 										"<h1>Universe in a Box</h1> <img src=\"images/NetworkRender-";
-	public static final String htmlPost = ".jpg\"/> </center> </body> </html>";
+	public static final String htmlPost = ".png\"/> </center> </body> </html>";
 	
 	public static boolean verboseRender = false;
 
@@ -635,10 +635,10 @@ public class RayTracingJob implements Job, CodeFeatures {
 			File file = new File(this.jobId + "-" +
 								this.x + "-" + this.y + "-" +
 								this.w + "-" + this.h + "-" +
-								this.ssw + "-" + this.ssh + ".jpg");
+								this.ssw + "-" + this.ssh + ".png");
 
 			try {
-				ImageCanvas.encodeImageFile(v(rgb).get(), file, ImageCanvas.JPEGEncoding);
+				ImageCanvas.encodeImageFile(v(rgb).get(), file, ImageCanvas.PNGEncoding);
 			} catch (IOException e) {
 				System.out.println("RayTracingJob: IO Error");
 			}

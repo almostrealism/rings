@@ -159,8 +159,8 @@ public class RayTracingTest {
 		RealizableImage img = generateImage();
 
 		try {
-			ImageCanvas.encodeImageFile(img.get(), new File("test.jpeg"),
-						ImageCanvas.JPEGEncoding);
+			ImageCanvas.encodeImageFile(img.get(), new File("test.png"),
+						ImageCanvas.PNGEncoding);
 			System.out.println("Wrote image");
 		} catch (FileNotFoundException fnf) {
 			System.out.println("ERROR: Output file not found");

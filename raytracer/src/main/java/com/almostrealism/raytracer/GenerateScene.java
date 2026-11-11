@@ -37,7 +37,7 @@ public class GenerateScene {
 		Scene<ShadableSurface> s = new SceneFactory().construct();
 		RayTracedScene r = new RayTracedScene(new RayIntersectionEngine(s, new FogParameters()), s.getCamera(), p);
 		ImageCanvas.encodeImageFile(r.realize(p).get(),
-									new File(System.currentTimeMillis() + ".jpg"),
-									ImageCanvas.JPEGEncoding);
+									new File(System.currentTimeMillis() + ".png"),
+									ImageCanvas.PNGEncoding);
 	}
 }

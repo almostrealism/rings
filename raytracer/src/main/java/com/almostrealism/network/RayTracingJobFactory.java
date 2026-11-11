@@ -359,7 +359,7 @@ public class RayTracingJobFactory implements JobFactory {
 		
 		b.append(":: Ray Tracing Task <a href=\"images/NetworkRender-");
 		b.append(this.taskId);
-		b.append(".jpg");
+		b.append(".png");
 		b.append("\">");
 		b.append(this.taskId);
 		b.append("</a>");

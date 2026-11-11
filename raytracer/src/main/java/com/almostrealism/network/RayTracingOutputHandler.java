@@ -87,8 +87,8 @@ public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 								}
 
 								ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage().get(),
-										new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
-										ImageCanvas.JPEGEncoding);
+										new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".png"),
+										ImageCanvas.PNGEncoding);
 							} catch (InterruptedException ie) {
 								System.out.println("RayTracingOutputHandler: " + ie);
 							} catch (IOException ioe) {
@@ -131,8 +131,8 @@ public class RayTracingOutputHandler implements OutputHandler, QueryHandler {
 			}
 
 			ImageCanvas.encodeImageFile(RayTracingOutputHandler.this.getImage().get(),
-						new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".jpg"),
-						ImageCanvas.JPEGEncoding);
+						new File("images/NetworkRender-" + RayTracingOutputHandler.this.taskId + ".png"),
+						ImageCanvas.PNGEncoding);
 		} catch (IOException ioe) {
 			System.out.println("RayTracingJobOutputHandler: " + ioe);
 		}
