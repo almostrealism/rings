@@ -265,6 +265,25 @@ public class PhotonFieldJob implements JobFactory, Job {
 	@Override
 	public CompletableFuture<Void> getCompletableFuture() { return future; }
 
+	/**
+	 * Selects the wire format for this task. {@link JobFactory} and {@link Job}
+	 * both supply this default, so a class that is both must choose one; this
+	 * task travels between nodes as a factory, so the factory's choice applies.
+	 *
+	 * @return the wire format id
+	 */
+	@Override
+	public String getWireFormat() { return JobFactory.super.getWireFormat(); }
+
+	/**
+	 * Serializes this task in the factory's wire form, for the same reason as
+	 * {@link #getWireFormat()}.
+	 *
+	 * @return the serialized wire payload
+	 */
+	@Override
+	public String toWire() { return JobFactory.super.toWire(); }
+
 	public boolean isComplete() { return this.index >= this.tot; }
 	
 	public String toString() { return "PhotonFieldTask (" + this.taskid + ")"; }
